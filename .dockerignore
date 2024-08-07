@@ -1,0 +1,41 @@
+# Target directory
+/target/
+
+# Maven specific files
+.mvn/
+pom.xml.versionsBackup
+pom.xml.releaseBackup
+pom.xml.tag
+release.properties
+
+# Gradle specific files
+.gradle/
+build/
+
+# IntelliJ IDEA files
+*.iml
+.idea/
+*.ipr
+*.iws
+
+# Eclipse specific files
+.classpath
+.project
+.settings/
+
+# VS Code specific files
+.vscode/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+env.properties
+
+# Node modules if you have frontend code
+node_modules/
