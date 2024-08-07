@@ -1,8 +1,8 @@
 name: CI/CD Pipeline
 
 env:
-  IMAGE_NAME: persona-ai-app
-  CONTAINER_NAME: persona-ai-app
+  IMAGE_NAME: knock-knock-app
+  CONTAINER_NAME: knock-knock-app
 
 on:
   push:
