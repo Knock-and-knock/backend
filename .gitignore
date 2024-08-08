@@ -40,3 +40,8 @@ out/
 
 ### Package Files ###
 *.jar
+
+### Mac 실행파일 ###
+**/.DS_Store
+**/._*
+/bin/
