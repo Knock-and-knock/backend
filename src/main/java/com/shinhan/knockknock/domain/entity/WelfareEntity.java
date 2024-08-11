@@ -13,14 +13,16 @@ import lombok.*;
 public class WelfareEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
     @Column(name = "welfare_no")
     private long welfareNo;
+
     @NotNull
     @Column(name = "welfare_name")
     private String welfareName;
+
     @Column(name = "welfare_price")
     private long welfarePrice;
+
     @Column(name = "welfare_category")
     private String welfareCategory;
 }
