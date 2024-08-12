@@ -33,9 +33,10 @@ public class UserEntity {
     private String userPhone;
 
     @Column(name = "user_type", nullable = false)
-    private String userType;
+    @Enumerated(EnumType.STRING)
+    private UserRole userType;
 
-    @Column(name = "user_birth", nullable = false)
+    @Column(name = "user_birth")
     private Date userBirth;
 
     @Column(name = "user_address")
