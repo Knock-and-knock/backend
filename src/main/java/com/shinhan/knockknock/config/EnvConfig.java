@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.env;
+package com.shinhan.knockknock.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
