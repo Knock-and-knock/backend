@@ -25,7 +25,7 @@ public class CardEntity {
     private String cardNo;
 
     @Column(name= "card_cvc", nullable= false)
-    private int cardCvc;
+    private String cardCvc; // 001 의 경우 1로 취급되기 때문에 String으로 설정
 
     @Column(name= "card_ename", length = 50, nullable= false)
     private String cardEname;
@@ -45,8 +45,8 @@ public class CardEntity {
     @Column(name= "card_expiredate", nullable= false)
     private Date cardExpiredate;
 
-    @Column(name= "issue_no",nullable = false)
-    private Long issueNo;
+    @Column(name= "cardissue_no",nullable = false)
+    private Long cardIssueNo;
 
     @Column(name= "user_no", nullable = false)
     private Long userNo;
