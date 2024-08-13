@@ -29,4 +29,16 @@ public class WelfareRestController {
     Long create(@RequestBody CreateWelfareRequest request){
         return welfareService.createWelfare(request);
     }
+
+    @Operation(summary = "복지 수정")
+    @PutMapping(value = "/list", consumes = "application/json;charset=utf-8", produces = "text/plain;charset=utf-8")
+    void update(@RequestBody CreateWelfareRequest request){
+        welfareService.updateWelfare(request);
+    }
+
+    @Operation(summary = "복지 삭제")
+    @DeleteMapping("/list/{welfareNo}")
+    void delete(@PathVariable("welfareNo") Long welfareNo){
+        welfareService.deleteWelfare(welfareNo);
+    }
 }
