@@ -10,7 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1/Welfare")
+@RequestMapping("api/v1/welfare")
 @RequiredArgsConstructor
 public class WelfareRestController {
 
