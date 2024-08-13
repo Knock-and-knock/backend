@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WelfareBookResponse {
-    private long welfareBookNo;
+    private Long welfareBookNo;
     private long userId;
     private Timestamp welfareBookStartDate;
     private Timestamp welfareBookEndDate;

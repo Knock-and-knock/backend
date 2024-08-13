@@ -14,7 +14,7 @@ public class WelfareEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "welfare_no")
-    private long welfareNo;
+    private Long welfareNo;
 
     @NotNull
     @Column(name = "welfare_name")

@@ -7,7 +7,7 @@ import lombok.*;
 import java.sql.Timestamp;
 
 @Builder
-@Table(name = "WelfareBook_tb")
+@Table(name = "Welfarebook_tb")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -17,7 +17,7 @@ public class WelfareBookEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "welfarebook_no")
-    private long welfareBookNo;
+    private Long welfareBookNo;
 
     @Column(name = "user_id")
     @NotNull
