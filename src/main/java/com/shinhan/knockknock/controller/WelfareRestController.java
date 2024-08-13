@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.restcontroller;
+package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.domain.dto.CreateWelfareRequest;
 import com.shinhan.knockknock.repository.WelfareRepository;
