@@ -1,24 +1,24 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.WelfareBookRequest;
-import com.shinhan.knockknock.domain.dto.WelfareBookResponse;
+import com.shinhan.knockknock.domain.dto.CreateWelfareBookRequest;
+import com.shinhan.knockknock.domain.dto.ReadWelfareBookResponse;
 import com.shinhan.knockknock.domain.entity.WelfareBookEntity;
 
 import java.util.List;
 
 public interface WelfareBookService {
     //Create
-    Long createWelfareBook(WelfareBookRequest request);
+    Long createWelfareBook(CreateWelfareBookRequest request);
 
     //Read
-    List<WelfareBookResponse> readAll(Long welfareBookNo);
-    WelfareBookResponse readDetail(Long welfareBookNo);
+    List<ReadWelfareBookResponse> readAll(Long welfareBookNo);
+    ReadWelfareBookResponse readDetail(Long welfareBookNo);
 
     //Delete
     void deleteWelfareBook(Long welfareBookNo);
 
     //Dto -> Entity
-    default WelfareBookEntity dtoToEntity(WelfareBookRequest request){
+    default WelfareBookEntity dtoToEntity(CreateWelfareBookRequest request){
         WelfareBookEntity entity = WelfareBookEntity.builder()
                 .welfareBookNo(request.getWelfareBookNo())
                 .userId(request.getUserId())
@@ -30,8 +30,8 @@ public interface WelfareBookService {
         return entity;
     }
     //Entity -> Dto
-    default WelfareBookResponse entityToDto(WelfareBookEntity entity){
-        WelfareBookResponse response = WelfareBookResponse.builder()
+    default ReadWelfareBookResponse entityToDto(WelfareBookEntity entity){
+        ReadWelfareBookResponse response = ReadWelfareBookResponse.builder()
                 .welfareBookNo(entity.getWelfareBookNo())
                 .userId(entity.getUserId())
                 .welfareBookStartDate(entity.getWelfareBookStartDate())

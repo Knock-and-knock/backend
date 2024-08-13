@@ -21,7 +21,7 @@ public class WelfareBookEntity {
 
     @Column(name = "user_id")
     @NotNull
-    private  long userId;
+    private String userId;
 
     @Column(name = "welfarebook_startdate")
     @NotNull

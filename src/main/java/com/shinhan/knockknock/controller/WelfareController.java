@@ -1,6 +1,5 @@
 package com.shinhan.knockknock.controller;
 
-import com.shinhan.knockknock.domain.dto.WelfareResponse;
 import com.shinhan.knockknock.repository.WelfareRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
