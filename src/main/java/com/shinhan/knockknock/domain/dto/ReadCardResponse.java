@@ -9,7 +9,7 @@ import java.sql.Date;
 @Data
 @Builder
 @AllArgsConstructor
-public class CreateCardResponse {
+public class ReadCardResponse {
     //private Long cardId;
     private String cardNo;
     private String cardCvc;
@@ -18,7 +18,7 @@ public class CreateCardResponse {
     private String cardBank;
     private String cardAccount;
     private Date cardAmountDate;
-    private Date cardExpiredate;
+    private String cardExpiredate;
     //private Long issueNo;
     //private Long userNo;
 }
