@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Random;
 
 @Tag(name = "User", description = "User API")
+@CrossOrigin
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -27,35 +28,50 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "아이디 조회 성공")
     })
-    @GetMapping("/{userId}")
-    public ResponseEntity<Boolean> duplicateCheckUserId(@PathVariable String userId) {
+    @GetMapping("/validation/{userId}")
+    public ResponseEntity<UserValidationResponse> duplicateCheckUserId(@PathVariable String userId) {
         Boolean result = userService.readUserId(userId);
-        return ResponseEntity.ok(result);
+        String message = "";
+        if(result){
+            message = "사용가능한 아이디입니다.";
+        } else {
+            message = "이미 사용중인 아이디입니다.";
+        }
+        UserValidationResponse response = UserValidationResponse.builder()
+                .message(message)
+                .result(result)
+                .build();
+        return ResponseEntity.status(200).body(response);
     }
 
     @Operation(summary = "SMS 전송", description = "회원가입시 전화번호 인증을 위한 SMS 전송")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "인증번호 전송 성공"),
-            @ApiResponse(responseCode = "400", description = "인증번호 전송 실패 / 이미 가입된 전화번호")
+            @ApiResponse(responseCode = "200", description = "인증번호 전송 성공 / 실패"),
+            @ApiResponse(responseCode = "400", description = "이미 가입된 전화번호")
     })
     @PostMapping("/validation/phone")
     public ResponseEntity<UserValidationResponse> sendSms(@RequestBody Map<String, String> body, HttpSession httpSession) {
-        String validationNum = generateRandomNumber();
+        String validationNum = generateRandomNumber();  // 6자리 인증번호 생성
         String phone = body.get("phone");
-        SingleMessageSentResponse messageSentResponse = null;
         String message = "";
         boolean result = false;
-        int status = 200;
+        int status = 400;
         boolean isPresentPhone = userService.readUserPhone(phone);
-        if (isPresentPhone) {
+
+        if (!isPresentPhone) {
             message = "이미 가입된 전화번호입니다.";
-            status = 400;
         } else {
-            messageSentResponse = userService.sendSms(phone, validationNum);
-            httpSession.setAttribute("validationNum", validationNum);
-            httpSession.setMaxInactiveInterval(600);
-            message = "인증번호 전송이 완료되었습니다.";
-            result = true;
+            SingleMessageSentResponse messageSentResponse = userService.sendSms(phone, validationNum);
+            String messageStatus = messageSentResponse.getStatusCode(); // sms 전송 상태
+            if (messageStatus.matches("2000|3000|4000")) {  // 제대로 발송된 경우
+                httpSession.setAttribute("validationNum", validationNum);
+                httpSession.setMaxInactiveInterval(600);    // 10분후 세션만료(인증번호 만료)
+                message = "인증번호 전송이 완료되었습니다.";
+                result = true;
+            } else {
+                message = messageSentResponse.getStatusMessage();
+            }
+            status = 200;
         }
 
         UserValidationResponse response = UserValidationResponse.builder()
@@ -67,27 +83,26 @@ public class UserController {
 
     @Operation(summary = "인증번호 검증", description = "회원가입시 전화번호 인증을 위한 인증번호 검증")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "인증 완료"),
-            @ApiResponse(responseCode = "400", description = "인증 실패 / 만료된 인증번호")
+            @ApiResponse(responseCode = "200", description = "인증 완료 / 실패"),
+            @ApiResponse(responseCode = "400", description = "만료된 인증번호")
     })
-    @GetMapping("/validation/phone")
-    public ResponseEntity<UserValidationResponse> validationSms(@RequestBody Map<String, String> body, HttpSession httpSession){
+    @GetMapping("/validation/phone/{validation}")
+    public ResponseEntity<UserValidationResponse> validationSms(@PathVariable String validation, HttpSession httpSession){
         String validationNum = (String)httpSession.getAttribute("validationNum");
         String message = "";
         boolean result = false;
-        int status = 200;
+        int status = 400;
         if(validationNum == null) {
             message = "인증번호가 만료되었습니다. 다시 시도해주세요.";
-            status = 400;
         } else {
-            if(validationNum.equals(body.get("validation"))){
+            if(validationNum.equals(validation)){
                 message = "인증이 완료되었습니다.";
                 result = true;
                 httpSession.removeAttribute("validationNum");
             } else {
                 message = "잘못된 인증번호입니다.";
-                status = 400;
             }
+            status = 200;
         }
         UserValidationResponse response = UserValidationResponse.builder()
                 .message(message)

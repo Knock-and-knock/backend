@@ -65,18 +65,18 @@ public class UserControllerTest {
         Boolean result1 = userService.readUserId(userId1);
         Boolean result2 = userService.readUserId(userId2);
 
-        assertThat(result1).isTrue();
-        assertThat(result2).isFalse();
+        assertThat(result1).isFalse();
+        assertThat(result2).isTrue();
 
-        String url1 = "/api/users/"+userId1;
-        String url2 = "/api/users/"+userId2;
+        String url1 = "/api/users/validation/"+userId1;
+        String url2 = "/api/users/validation/"+userId2;
 
         mockMvc.perform(get(url1))
                 .andExpect(status().isOk())
-                .andExpect(content().string("true"));
+                .andExpect(content().json("{\"message\":\"이미 사용중인 아이디입니다.\", \"result\":false}"));
 
         mockMvc.perform(get(url2))
                 .andExpect(status().isOk())
-                .andExpect(content().string("false"));
+                .andExpect(content().json("{\"message\":\"사용가능한 아이디입니다.\", \"result\":true}"));
     }
 }
