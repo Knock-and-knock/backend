@@ -11,9 +11,9 @@ import java.sql.Timestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WelfareBookResponse {
+public class CreateWelfareBookRequest {
     private Long welfareBookNo;
-    private long userId;
+    private String userId;
     private Timestamp welfareBookStartDate;
     private Timestamp welfareBookEndDate;
     private boolean welfareBookIsCansle;

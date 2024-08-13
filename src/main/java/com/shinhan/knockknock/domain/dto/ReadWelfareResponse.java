@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WelfareResponse {
+public class ReadWelfareResponse {
     private Long welfareNo;
     private String welfareName;
     private long welfarePirce;
