@@ -5,6 +5,7 @@ import com.shinhan.knockknock.domain.dto.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.ReadCardResponse;
 import com.shinhan.knockknock.service.CardIssueService;
 import com.shinhan.knockknock.service.CardService;
+import com.shinhan.knockknock.service.ClovaOCRService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,8 @@ public class CardIssueRestController {
     CardIssueService cardIssueService;
     @Autowired
     CardService cardService;
+    @Autowired
+    ClovaOCRService clovaOCRService;
 
     // 카드 발급
     @PostMapping("/apply")
@@ -32,6 +35,10 @@ public class CardIssueRestController {
         return readCardResponse;
     }
 
-
+    // 신분증 인증 보류
+    @PostMapping("/auth")
+    public void ocrService() {
+        clovaOCRService.ocrService();
+    }
 
 }
