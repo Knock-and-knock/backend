@@ -1,16 +1,39 @@
 package com.shinhan.knockknock.service;
 
+import com.shinhan.knockknock.domain.dto.ConversationRoomRequest;
+import com.shinhan.knockknock.domain.dto.ConversationRoomResponse;
 import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
+
+import java.util.List;
 
 public interface ConversationRoomService {
 
     // Create
     Long createConversationRoom(Long userNo);
 
+    // Read
+    List<ConversationRoomResponse> readAllConversationRoom();
+
+    // Update
+    void updateConversationRoom(ConversationRoomRequest request);
+
+    // Delete
+    void deleteConversation(long conversationRoomNo);
+
+    // Dto -> Entity
     default ConversationRoomEntity dtoToEntity(long userId) {
-        ConversationRoomEntity entity = ConversationRoomEntity.builder()
+        return ConversationRoomEntity.builder()
                 .UserNo(userId)
                 .build();
-        return entity;
+    }
+
+    // Entity -> Dto
+    default ConversationRoomResponse entityToDto(ConversationRoomEntity entity) {
+        return ConversationRoomResponse.builder()
+                .conversationNo(entity.getConversationRoomNo())
+                .conversationStartAt(entity.getConversationRoomStartAt())
+                .conversationEndAt(entity.getConversationRoomEndAt())
+                .userNo(entity.getUserNo())
+                .build();
     }
 }
