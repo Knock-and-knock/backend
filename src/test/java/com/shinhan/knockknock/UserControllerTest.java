@@ -40,7 +40,7 @@ public class UserControllerTest {
         java.sql.Date sqlDate = new java.sql.Date(currentMilliseconds);
 
         UserEntity testUser = UserEntity.builder()
-                .userId("test01")
+                .userId("test03")
                 .userPassword("1234")
                 .userName("테스트")
                 .userIsWithdraw(false)
@@ -59,7 +59,7 @@ public class UserControllerTest {
     @DisplayName("아이디 중복체크 테스트")
     @Test
     public void duplicateCheckIdTest() throws Exception {
-        String userId1 = "test01";
+        String userId1 = "test03";
         String userId2 = "test02";
 
         Boolean result1 = userService.readUserId(userId1);
@@ -68,8 +68,8 @@ public class UserControllerTest {
         assertThat(result1).isFalse();
         assertThat(result2).isTrue();
 
-        String url1 = "/api/users/validation/"+userId1;
-        String url2 = "/api/users/validation/"+userId2;
+        String url1 = "/api/v1/users/validation/"+userId1;
+        String url2 = "/api/v1/users/validation/"+userId2;
 
         mockMvc.perform(get(url1))
                 .andExpect(status().isOk())

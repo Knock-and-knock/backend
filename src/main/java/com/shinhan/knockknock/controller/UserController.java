@@ -1,5 +1,6 @@
 package com.shinhan.knockknock.controller;
 
+import com.shinhan.knockknock.domain.dto.CreateUserRequest;
 import com.shinhan.knockknock.domain.dto.UserValidationResponse;
 import com.shinhan.knockknock.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +19,7 @@ import java.util.Random;
 @Tag(name = "User", description = "User API")
 @CrossOrigin
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -109,6 +110,26 @@ public class UserController {
                 .result(result)
                 .build();
         return ResponseEntity.status(status).body(response);
+    }
+
+    @Operation(summary = "회원가입", description = "회원가입 처리 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "가입 성공 / 실패")
+    })
+    @PostMapping("")
+    public ResponseEntity<UserValidationResponse> create(@RequestBody CreateUserRequest request) {
+        boolean result = userService.createUser(request);
+        String message = "";
+        if(result){
+            message = "회원가입에 성공하였습니다.";
+        } else {
+            message = "회원가입에 실패하였습니다.";
+        }
+        UserValidationResponse response = UserValidationResponse.builder()
+                .message(message)
+                .result(result)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     private String generateRandomNumber() {

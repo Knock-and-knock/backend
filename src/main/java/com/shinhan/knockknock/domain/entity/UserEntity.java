@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,26 +14,34 @@ import java.sql.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_tb")
+@Table(name = "user_tb", uniqueConstraints = {@UniqueConstraint(
+        name = "user_name_phone_unique",
+        columnNames={"user_name", "user_phone"}
+)})
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_no")
     private Long userNo;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id", unique = true)
+    @NotNull
     private String userId;
 
-    @Column(name = "user_password", nullable = false)
+    @Column(name = "user_password")
+    @NotNull
     private String userPassword;
 
-    @Column(name = "user_name", nullable = false)
+    @Column(name = "user_name")
+    @NotNull
     private String userName;
 
-    @Column(name = "user_phone", nullable = false)
+    @Column(name = "user_phone")
+    @NotNull
     private String userPhone;
 
-    @Column(name = "user_type", nullable = false)
+    @Column(name = "user_type")
+    @NotNull
     @Enumerated(EnumType.STRING)
     private UserRole userType;
 
@@ -54,10 +63,11 @@ public class UserEntity {
     @Column(name = "user_disease")
     private String userDisease;
 
-    @Column(name = "user_iswithdraw", nullable = false)
+    @Column(name = "user_iswithdraw")
+    @NotNull
     private boolean userIsWithdraw;
 
-    @Column(name = "user_joindate", nullable = false)
+    @Column(name = "user_joindate")
     private Date userJoinDate;
 
     @Column(name = "user_simplepassword")
