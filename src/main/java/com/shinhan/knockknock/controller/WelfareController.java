@@ -4,6 +4,7 @@ import com.shinhan.knockknock.domain.dto.CreateWelfareRequest;
 import com.shinhan.knockknock.repository.WelfareRepository;
 import com.shinhan.knockknock.service.WelfareService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/v1/welfare")
 @RequiredArgsConstructor
+@Tag(name = "Welfare", description = "복지 목록 API")
 public class WelfareController {
 
 
