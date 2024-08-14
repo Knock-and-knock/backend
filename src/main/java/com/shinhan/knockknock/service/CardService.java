@@ -7,6 +7,9 @@ import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 
 public interface CardService {
 
+    // 비동기 카드 발급 수헹
+    public void scheduleCreateCard(CardIssueEntity cardIssueEntity);
+
     // 카드 발급
     public CreateCardIssueResponse createCard(CardIssueEntity cardIssueEntity);
 

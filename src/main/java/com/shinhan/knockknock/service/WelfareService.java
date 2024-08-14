@@ -1,26 +1,26 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.WelfareRequest;
-import com.shinhan.knockknock.domain.dto.WelfareResponse;
+import com.shinhan.knockknock.domain.dto.CreateWelfareRequest;
+import com.shinhan.knockknock.domain.dto.ReadWelfareResponse;
 import com.shinhan.knockknock.domain.entity.WelfareEntity;
 
 import java.util.List;
 
 public interface WelfareService {
     //Create
-    Long createWelfare(WelfareRequest request);
+    Long createWelfare(CreateWelfareRequest request);
 
     //Read
-    List<WelfareResponse> readAll(Long welfareNo);
+    List<ReadWelfareResponse> readAll(Long welfareNo);
 
     //Update
-    void updateWelfare(WelfareRequest request);
+    void updateWelfare(CreateWelfareRequest request);
 
     //Delete
     void deleteWelfare(Long welfareNo);
 
     //Dto -> Entity
-    default WelfareEntity dtoToEntity(WelfareRequest request){
+    default WelfareEntity dtoToEntity(CreateWelfareRequest request){
         WelfareEntity entity = WelfareEntity.builder()
                 .welfareNo(request.getWelfareNo())
                 .welfareName(request.getWelfareName())
@@ -31,8 +31,8 @@ public interface WelfareService {
     }
 
     //Entity -> Dto
-    default WelfareResponse entityToDto(WelfareEntity entity){
-        WelfareResponse response = WelfareResponse.builder()
+    default ReadWelfareResponse entityToDto(WelfareEntity entity){
+        ReadWelfareResponse response = ReadWelfareResponse.builder()
                 .welfareNo(entity.getWelfareNo())
                 .welfareName(entity.getWelfareName())
                 .welfarePirce(entity.getWelfarePrice())
