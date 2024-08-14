@@ -1,7 +1,6 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.domain.dto.CreateWelfareBookRequest;
-import com.shinhan.knockknock.domain.entity.WelfareBookEntity;
 import com.shinhan.knockknock.repository.WelfareBookRepository;
 import com.shinhan.knockknock.service.WelfareBookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/welfare-book")
 @RequiredArgsConstructor
-public class WelfareBookRestController {
+public class WelfareBookController {
 
     final WelfareBookRepository welfareBookRepo;
     final WelfareBookService welfareBookService;

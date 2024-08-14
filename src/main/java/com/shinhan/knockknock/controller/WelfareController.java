@@ -5,14 +5,13 @@ import com.shinhan.knockknock.repository.WelfareRepository;
 import com.shinhan.knockknock.service.WelfareService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/welfare")
 @RequiredArgsConstructor
-public class WelfareRestController {
+public class WelfareController {
 
 
     final WelfareRepository welfareRepo;
