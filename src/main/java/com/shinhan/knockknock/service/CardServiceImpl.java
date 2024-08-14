@@ -7,11 +7,15 @@ import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 import com.shinhan.knockknock.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class CardServiceImpl implements CardService {
@@ -19,7 +23,13 @@ public class CardServiceImpl implements CardService {
     @Autowired
     CardRepository cardRepository;
 
-    // 카드발급
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+    @Async("taskExecutor")
+    public void scheduleCreateCard(CardIssueEntity cardIssueEntity) {
+        scheduler.schedule(() -> createCard(cardIssueEntity), 1, TimeUnit.MINUTES);
+    }
+
     @Override
     public CreateCardIssueResponse createCard(CardIssueEntity cardIssueEntity) {
         Random random = new Random();
@@ -41,7 +51,6 @@ public class CardServiceImpl implements CardService {
         LocalDate localDate = todayDate.toLocalDate();
         LocalDate newLocalDate = localDate.plusYears(5);
         Date expireDate = Date.valueOf(newLocalDate);
-        System.out.print(expireDate);
 
         CardEntity cardEntity = CardEntity.builder()
                 .cardNo(cardNo)

@@ -5,6 +5,7 @@ import com.shinhan.knockknock.domain.dto.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 import com.shinhan.knockknock.repository.CardIssueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,9 +21,12 @@ public class CardIssueServiceImpl implements CardIssueService {
         // CardIssueEntity 생성
         CardIssueEntity cardIssueEntity = cardIssueRepository.save(transformDTOToEntity(request));
 
-        // CardEntity 생성
-        CreateCardIssueResponse createCardIssueResponse = cardService.createCard(cardIssueEntity);
+        // 5분 후에 카드 발급 수행
+        cardService.scheduleCreateCard(cardIssueEntity);
 
-        return createCardIssueResponse;
+        return CreateCardIssueResponse.builder()
+                .message("카드 발급 요청이 접수되었습니다.")
+                .status(HttpStatus.ACCEPTED)
+                .build();
     }
 }

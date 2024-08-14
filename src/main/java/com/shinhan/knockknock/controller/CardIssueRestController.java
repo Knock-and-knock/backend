@@ -4,7 +4,6 @@ import com.shinhan.knockknock.domain.dto.CreateCardIssueRequest;
 import com.shinhan.knockknock.domain.dto.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.ReadCardResponse;
 import com.shinhan.knockknock.service.CardIssueService;
-import com.shinhan.knockknock.service.CardIssueServiceImpl;
 import com.shinhan.knockknock.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
