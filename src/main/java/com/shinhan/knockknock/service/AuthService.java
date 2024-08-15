@@ -1,7 +1,8 @@
 package com.shinhan.knockknock.service;
 
+import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.LoginUserRequest;
-import com.shinhan.knockknock.domain.dto.LoginUserResponse;
+import com.shinhan.knockknock.domain.dto.TokenResponse;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,9 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
 
-    public LoginUserResponse loginUser(LoginUserRequest request) {
+    public TokenResponse loginUser(LoginUserRequest request) {
         String userId = request.getUserId();
         String userPassword = request.getUserPassword();
         UserEntity user = userRepository.findByUserId(userId).orElse(null);
@@ -28,11 +30,10 @@ public class AuthService {
         if (!passwordEncoder.matches(userPassword, user.getUserPassword())){
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
+        String accessToken = jwtProvider.createAccessToken(user.entityToDto());
 
-        return LoginUserResponse.builder()
-                .userNo(user.getUserNo())
-                .userName(user.getUserName())
-                .role(user.getUserType())
+        return TokenResponse.builder()
+                .accessToken(accessToken)
                 .build();
     }
 }
