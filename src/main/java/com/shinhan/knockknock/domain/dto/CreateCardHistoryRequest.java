@@ -16,6 +16,6 @@ public class CreateCardHistoryRequest {
     private int cardHistoryAmount;
     private String cardHistoryShopname;
     private Timestamp cardHistoryApprove;
-    private Long cardCategory;
+    private Long cardCategoryNo;
     private String cardId;
 }
