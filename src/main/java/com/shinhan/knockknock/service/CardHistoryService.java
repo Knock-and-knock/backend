@@ -4,6 +4,8 @@ import com.shinhan.knockknock.domain.dto.CreateCardHistoryRequest;
 import com.shinhan.knockknock.domain.dto.ReadCardHistoryResponse;
 import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
 
+import java.util.List;
+
 public interface CardHistoryService {
     //Create
     Long createCardHistory(CreateCardHistoryRequest request);
