@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,19 +23,24 @@ public class CardHistoryEntity {
     private Long cardHistoryNo;
 
     @Column(name="cardhistory_amount")
+    @NotNull
     private int cardHistoryAmount;
 
     @Column(name="cardhistory_shopname")
+    @NotNull
     private String cardHistoryShopname;
 
     @Column(name="cardhistory_approve")
     @CreationTimestamp
+    @NotNull
     private Timestamp cardHistoryApprove;
 
     @Column(name= "cardcategory_no")
+    @NotNull
     private Long cardCategoryNo;
 
     @Column(name= "card_id")
-    private Long cardId;
+    @NotNull
+    private String cardId;
 
 }
