@@ -44,4 +44,9 @@ public class ConversationRoomServiceImpl implements ConversationRoomService {
                     conversationRoomRepository.save(conversationRoom);
                 });
     }
+
+    @Override
+    public void deleteConversation(long conversationRoomNo) {
+
+    }
 }

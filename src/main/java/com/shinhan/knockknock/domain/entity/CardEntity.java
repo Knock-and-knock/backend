@@ -14,7 +14,7 @@ import java.sql.Date;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "card_tb")
+@Table(name = "card_tb_1")
 public class CardEntity {
 
     @Id
