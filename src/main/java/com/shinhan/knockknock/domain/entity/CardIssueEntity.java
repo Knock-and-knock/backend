@@ -79,5 +79,13 @@ public class CardIssueEntity {
     @NotNull
     private Long userNo;
 
+    @Column(name= "cardissue_isfamily")
+    @NotNull
+    private boolean cardIssueIsFamily;
+
+    @Column(name= "cardissue_address")
+    @NotNull
+    private String cardIssueAddress;
+
 }
 

@@ -12,10 +12,13 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class CardServiceImpl implements CardService {
@@ -26,12 +29,12 @@ public class CardServiceImpl implements CardService {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @Async("taskExecutor")
-    public void scheduleCreateCard(CardIssueEntity cardIssueEntity) {
-        scheduler.schedule(() -> createCard(cardIssueEntity), 1, TimeUnit.MINUTES);
+    public void scheduleCreatePostCard(CardIssueEntity cardIssueEntity, String password) {
+        scheduler.schedule(() -> createPostCard(cardIssueEntity, password), 1, TimeUnit.MINUTES);
     }
 
     @Override
-    public CreateCardIssueResponse createCard(CardIssueEntity cardIssueEntity) {
+    public CreateCardIssueResponse createPostCard(CardIssueEntity cardIssueEntity, String password) {
         Random random = new Random();
 
         // 카드번호 생성
@@ -56,13 +59,15 @@ public class CardServiceImpl implements CardService {
                 .cardNo(cardNo)
                 .cardCvc(formattedCvc)
                 .cardEname(cardIssueEntity.getCardIssueEname())
-                .cardPassword(1234)
+                .cardPassword(password)
                 .cardBank(cardIssueEntity.getCardIssueBank())
                 .cardAccount(cardIssueEntity.getCardIssueAccount())
                 .cardAmountDate(cardIssueEntity.getCardIssueAmountDate())
                 .cardExpiredate(expireDate)
                 .cardIssueNo(cardIssueEntity.getCardIssueNo())
                 .userNo(cardIssueEntity.getUserNo())
+                .cardIsfamily(cardIssueEntity.isCardIssueIsFamily())
+                .cardAddress(cardIssueEntity.getCardIssueAddress())
                 .build();
 
         // 카드 발급
@@ -78,19 +83,27 @@ public class CardServiceImpl implements CardService {
         return createCardIssueResponse;
     }
 
-    // 카드 조회
+    // 본인 카드 조회
     @Override
-    public ReadCardResponse readGetCard(Long userNo) {
-        CardEntity cardEntity = cardRepository.findById(userNo).orElse(null);
-        ReadCardResponse readCardResponse = transformEntityToDTO(cardEntity);
+    public List<ReadCardResponse> readGetCards(Long userNo) {
+        // 여러 ID에 해당하는 CardEntity 목록 조회
+        List<CardEntity> cardEntities = cardRepository.findByUserNo(userNo);
+
+        // 각 CardEntity를 ReadCardResponse로 변환
+        List<ReadCardResponse> readCardResponses = cardEntities.stream()
+                .map(this::transformEntityToDTO)
+                .collect(Collectors.toList());
 
         // 만료 일자 형식 변환
-        String cardExpireDate = readCardResponse.getCardExpiredate();
-        String date = cardExpireDate.substring(2,7);
-        date = date.replace("-", "/");
-        readCardResponse.setCardExpiredate(date);
+        readCardResponses.forEach(readCardResponse -> {
+            String cardExpireDate = readCardResponse.getCardExpiredate();
+            String date = cardExpireDate.substring(2,7);
+            date = date.replace("-", "/");
+            readCardResponse.setCardExpiredate(date);
+        });
 
-        return readCardResponse;
+        return readCardResponses;
     }
+
 
 }

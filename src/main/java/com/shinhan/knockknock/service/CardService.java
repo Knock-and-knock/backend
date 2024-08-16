@@ -5,16 +5,18 @@ import com.shinhan.knockknock.domain.dto.ReadCardResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 
+import java.util.List;
+
 public interface CardService {
 
     // 비동기 카드 발급 수헹
-    public void scheduleCreateCard(CardIssueEntity cardIssueEntity);
+    public void scheduleCreatePostCard(CardIssueEntity cardIssueEntity, String password);
 
     // 카드 발급
-    public CreateCardIssueResponse createCard(CardIssueEntity cardIssueEntity);
+    public CreateCardIssueResponse createPostCard(CardIssueEntity cardIssueEntity, String password);
 
-    // 카드 조회
-    public ReadCardResponse readGetCard(Long userNo);
+    // 본인 카드 조회
+    public List<ReadCardResponse> readGetCards(Long userNo);
 
     // Entity -> DTO
     default ReadCardResponse transformEntityToDTO(CardEntity cardEntity){
@@ -27,7 +29,10 @@ public interface CardService {
                 .cardAccount(cardEntity.getCardAccount())
                 .cardAmountDate(cardEntity.getCardAmountDate())
                 .cardExpiredate(cardEntity.getCardExpiredate().toString())
+                .cardAddress(cardEntity.getCardAddress())
+                .cardIsFamily(cardEntity.isCardIsfamily())
                 .build();
         return readCardResponse;
     }
+
 }
