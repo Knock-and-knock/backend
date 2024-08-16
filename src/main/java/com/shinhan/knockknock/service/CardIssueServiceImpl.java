@@ -18,11 +18,14 @@ public class CardIssueServiceImpl implements CardIssueService {
 
     @Override
     public CreateCardIssueResponse createPostCardIssue(CreateCardIssueRequest request) {
+
+        String password = request.getCardIssuePassword();
+
         // CardIssueEntity 생성
         CardIssueEntity cardIssueEntity = cardIssueRepository.save(transformDTOToEntity(request));
 
-        // 5분 후에 카드 발급 수행
-        cardService.scheduleCreateCard(cardIssueEntity);
+        // 1분 후에 카드 발급 수행
+        cardService.scheduleCreatePostCard(cardIssueEntity, password);
 
         return CreateCardIssueResponse.builder()
                 .message("카드 발급 요청이 접수되었습니다.")
