@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.domain.dto;
+package com.shinhan.knockknock.domain.dto.conversationroom;
 
 import lombok.Builder;
 import lombok.Data;

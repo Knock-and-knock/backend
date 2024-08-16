@@ -1,7 +1,7 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.ConversationRoomRequest;
-import com.shinhan.knockknock.domain.dto.ConversationRoomResponse;
+import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomUpdateRequest;
+import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomResponse;
 import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public interface ConversationRoomService {
     List<ConversationRoomResponse> readAllConversationRoom();
 
     // Update
-    void updateConversationRoom(ConversationRoomRequest request);
+    void updateConversationRoom(long conversationRoomNo, ConversationRoomUpdateRequest request);
 
     // Delete
     void deleteConversation(long conversationRoomNo);

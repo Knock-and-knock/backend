@@ -1,7 +1,7 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.ConversationRoomRequest;
-import com.shinhan.knockknock.domain.dto.ConversationRoomResponse;
+import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomUpdateRequest;
+import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomResponse;
 import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
 import com.shinhan.knockknock.repository.ConversationRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class ConversationRoomServiceImpl implements ConversationRoomService {
     @Override
     public Long createConversationRoom(Long userNo) {
         ConversationRoomEntity newConversationRoom = conversationRoomRepository.save(dtoToEntity(userNo));
-        return 0L;
+        return newConversationRoom.getConversationRoomNo();
     }
 
     @Override
@@ -32,14 +32,11 @@ public class ConversationRoomServiceImpl implements ConversationRoomService {
     }
 
     @Override
-    public void updateConversationRoom(ConversationRoomRequest request) {
-        conversationRoomRepository.findById(request.getConversationNo())
+    public void updateConversationRoom(long conversationRoomNo, ConversationRoomUpdateRequest request) {
+        conversationRoomRepository.findById(conversationRoomNo)
                 .ifPresent(conversationRoom -> {
-                    conversationRoom.setConversationRoomNo(request.getConversationNo());
-
                     LocalDateTime endAt = request.getConversationEndAt();
-                    conversationRoom.setConversationRoomStartAt(endAt != null ? Timestamp.valueOf(endAt) : null);
-                    conversationRoom.setUserNo(request.getUserNo());
+                    conversationRoom.setConversationRoomEndAt(endAt != null ? Timestamp.valueOf(endAt) : null);
 
                     conversationRoomRepository.save(conversationRoom);
                 });
@@ -47,6 +44,8 @@ public class ConversationRoomServiceImpl implements ConversationRoomService {
 
     @Override
     public void deleteConversation(long conversationRoomNo) {
-
+        conversationRoomRepository
+                .findById(conversationRoomNo)
+                .ifPresent(conversationRoomRepository::delete);
     }
 }
