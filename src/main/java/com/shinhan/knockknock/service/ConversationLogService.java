@@ -1,9 +1,8 @@
 package com.shinhan.knockknock.service;
 
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRequest;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomResponse;
+import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
 import com.shinhan.knockknock.domain.entity.ConversationLogEntity;
-import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
 
 import java.util.List;
 
@@ -13,13 +12,13 @@ public interface ConversationLogService {
     Long createConversationLog(ConversationLogRequest request);
 
     // Read
-    List<ConversationRoomResponse> readAllConversationLog();
+    List<ConversationLogResponse> readAllConversationLog();
 
     // Update
-    void updateConversationLog(ConversationLogRequest request);
+    void updateConversationLog(long conversationLogNo, ConversationLogRequest request);
 
     // Delete
-    void deleteConversation(long conversationLogNo);
+    void deleteConversationLog(long conversationLogNo);
 
     // Dto -> Entity
     default ConversationLogEntity dtoToEntity(ConversationLogRequest request) {
@@ -32,12 +31,14 @@ public interface ConversationLogService {
     }
 
     // Entity -> Dto
-//    default ConversationRoomResponse entityToDto(ConversationRoomEntity entity) {
-//        return ConversationRoomResponse.builder()
-//                .conversationNo(entity.getConversationRoomNo())
-//                .conversationStartAt(entity.getConversationRoomStartAt())
-//                .conversationEndAt(entity.getConversationRoomEndAt())
-//                .userNo(entity.getUserNo())
-//                .build();
-//    }
+    default ConversationLogResponse entityToDto(ConversationLogEntity entity) {
+        return ConversationLogResponse.builder()
+                .conversationLogNo(entity.getConversationLogNo())
+                .conversationLogInput(entity.getConversationLogInput())
+                .conversationLogResponse(entity.getConversationLogResponse())
+                .conversationLogToken(entity.getConversationLogToken())
+                .conversationLogDatetime(entity.getConversationLogDatetime())
+                .conversationRoomNo(entity.getConversationRoomNo())
+                .build();
+    }
 }

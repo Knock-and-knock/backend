@@ -1,14 +1,13 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomCreateResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomUpdateRequest;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomResponse;
+import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomUpdateRequest;
 import com.shinhan.knockknock.domain.dto.conversationroom.MessageResponse;
 import com.shinhan.knockknock.service.ConversationRoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +24,8 @@ public class ConversationRoomController {
     @PostMapping("/")
     @Operation(summary = "대화방 생성", description = "특정 유저의 대화방을 생성합니다.")
     public ConversationRoomCreateResponse createConversationRoom(@RequestParam long userNo) {
-        Long id = conversationRoomService.createConversationRoom(userNo);
-        return ConversationRoomCreateResponse.builder().conversationNo(id).build();
+        Long roomNo = conversationRoomService.createConversationRoom(userNo);
+        return ConversationRoomCreateResponse.builder().conversationNo(roomNo).build();
     }
 
     @GetMapping
