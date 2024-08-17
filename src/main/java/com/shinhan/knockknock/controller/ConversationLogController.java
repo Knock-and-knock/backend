@@ -21,14 +21,14 @@ public class ConversationLogController {
     ConversationLogService conversationLogService;
 
     @PostMapping
-    @Operation(summary = "대화 내역 생성", description = "특정 대화방의 대화 내용을 추가합니다.")
+    @Operation(summary = "대화 내역 생성 [Not Use]", description = "특정 대화방의 대화 내용을 추가합니다.")
     public String createConversationRoom(ConversationLogRequest request) {
         long logNo = conversationLogService.createConversationLog(request);
         return "ok! " + logNo;
     }
 
     @GetMapping
-    @Operation(summary = "모든 대화 내역 조회", description = "모든 대화 내역을 조회합니다.")
+    @Operation(summary = "모든 대화 내역 조회 [Not Use]", description = "모든 대화 내역을 조회합니다.")
     public List<ConversationLogResponse> readAll() {
         return conversationLogService.readAllConversationLog();
     }
@@ -41,7 +41,7 @@ public class ConversationLogController {
     }
 
     @DeleteMapping("/{conversationLogNo}")
-    @Operation(summary = "대화 내역 삭제", description = "특정 대화 내역을 삭제합니다.")
+    @Operation(summary = "대화 내역 삭제 [Not Use]", description = "특정 대화 내역을 삭제합니다.")
     public ResponseEntity<MessageResponse> deleteConversationRoom(@PathVariable long conversationLogNo) {
         conversationLogService.deleteConversationLog(conversationLogNo);
         return ResponseEntity.ok(MessageResponse.builder().message("The conversation room has been successfully deleted.").build());
