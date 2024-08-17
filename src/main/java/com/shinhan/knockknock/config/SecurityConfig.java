@@ -2,7 +2,7 @@ package com.shinhan.knockknock.config;
 
 import com.shinhan.knockknock.auth.JwtAuthenticationFilter;
 import com.shinhan.knockknock.auth.JwtProvider;
-import com.shinhan.knockknock.service.CustomUserDetailsService;
+import com.shinhan.knockknock.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
-    private final CustomUserDetailsService userDetailsService;
+    private final UserRepository userRepository;
     private static final String[] WHITE_LIST = {"/api/v1/auth/**", "/api/v1/users/**",
             "/swagger-ui/**", "/v3/api-docs/**", "/error"};
 
@@ -44,7 +44,7 @@ public class SecurityConfig {
         http.formLogin(AbstractHttpConfigurer::disable);    // spring 제공 form login 비활성화
         http.httpBasic(AbstractHttpConfigurer::disable);    // HTTP 기본 인증 비활성화
 
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userDetailsService), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userRepository), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

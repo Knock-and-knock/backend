@@ -1,14 +1,14 @@
 package com.shinhan.knockknock.auth;
 
-import com.shinhan.knockknock.service.CustomUserDetailsService;
+import com.shinhan.knockknock.domain.entity.UserEntity;
+import com.shinhan.knockknock.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -17,24 +17,33 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
-    private final CustomUserDetailsService userDetailsService;
+    private final UserRepository userRepository;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring(7);
+            String accessToken = authorizationHeader.substring(7);
 
-            if(jwtProvider.validateToken(token)) {
-                String userNo = jwtProvider.getUserNo(token);
+            if(jwtProvider.validateToken(accessToken)) {
+                String userNo = jwtProvider.getUserNo(accessToken);
+                Authentication authentication = jwtProvider.getAuthentication(userNo);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                String userNo = jwtProvider.getUserNo(accessToken);
+                String refreshToken = jwtProvider.getRefreshToken(userNo);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userNo);
+                if(jwtProvider.validateToken(refreshToken)) {
+                    // access token 재발급
+                    UserEntity user = userRepository.findById(Long.parseLong(userNo))
+                            .orElseThrow(() -> new RuntimeException("User Not Found"));
+                    String newAccessToken = jwtProvider.createAccessToken(user.entityToDto());
 
-                if(userDetails != null) {
-                    UsernamePasswordAuthenticationToken usernamePasswordToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    Authentication authentication = jwtProvider.getAuthentication(userNo);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordToken);
+                    response.setHeader("Authorization", "Bearer " + newAccessToken);
                 }
             }
         }
