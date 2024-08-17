@@ -13,4 +13,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleChatbotException(ChatbotException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     }
+
+    @ExceptionHandler(TextToSpeechException.class)
+    public ResponseEntity<String> handleTextToSpeechException(TextToSpeechException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
 }
