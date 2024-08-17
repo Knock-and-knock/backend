@@ -16,24 +16,36 @@ public class JwtProvider {
 
     private final Key key;
     private final long accessExpirationTime;
+    private final long refreshExpirationTime;
 
-    public JwtProvider(@Value("${jwt.secret}") String secretKey, @Value("${jwt.access-expiration-time}") long accessExpirationTime) {
+    public JwtProvider(@Value("${jwt.secret}") String secretKey,
+                       @Value("${jwt.access-expiration-time}") long accessExpirationTime,
+                       @Value("${jwt.refresh-expiration-time}") long refreshExpirationTime) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.accessExpirationTime = accessExpirationTime;
+        this.refreshExpirationTime = refreshExpirationTime;
     }
 
     public String createAccessToken(LoginUserResponse user){
-        return createToken(user, accessExpirationTime);
-    }
-
-    private String createToken(LoginUserResponse user, Long expirationTime){
         Claims claims = Jwts.claims();
         claims.put("userNo", user.getUserNo());
         claims.put("userId", user.getUserId());
         claims.put("userName", user.getUserName());
         claims.put("userType", user.getUserType());
 
+        return createToken(user, accessExpirationTime, claims);
+    }
+
+    public String createRefreshToken(LoginUserResponse loginUserResponse) {
+        Claims claims = Jwts.claims();
+        claims.put("userNo", loginUserResponse.getUserNo());
+        claims.put("userType", loginUserResponse.getUserType());
+
+        return createToken(loginUserResponse, refreshExpirationTime, claims);
+    }
+
+    private String createToken(LoginUserResponse user, Long expirationTime, Claims claims){
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime tokenValidity = now.plusSeconds(expirationTime);
 

@@ -20,4 +20,8 @@ public class TokenEntity {
 
     @Column(name = "refresh_token")
     private String refreshToken;
+
+    @OneToOne
+    @JoinColumn(name = "user_no", referencedColumnName = "user_no")
+    private UserEntity user;
 }
