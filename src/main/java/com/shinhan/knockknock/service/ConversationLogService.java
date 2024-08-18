@@ -14,7 +14,7 @@ public interface ConversationLogService {
     // Read
     List<ConversationLogResponse> readAllConversationLog();
 
-    List<ConversationLogResponse> readByConversationRoomId(long conversationRoomNo);
+    List<ConversationLogResponse> findLast5ByConversationRoomNo(long conversationRoomNo);
 
     // Update
     void updateConversationLog(long conversationLogNo, ConversationLogRequest request);

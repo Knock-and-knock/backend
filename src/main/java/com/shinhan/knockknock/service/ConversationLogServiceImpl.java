@@ -5,6 +5,9 @@ import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRespons
 import com.shinhan.knockknock.domain.entity.ConversationLogEntity;
 import com.shinhan.knockknock.repository.ConversationLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,8 +30,8 @@ public class ConversationLogServiceImpl implements ConversationLogService {
     }
 
     @Override
-    public List<ConversationLogResponse> readByConversationRoomId(long conversationRoomNo) {
-        return conversationLogRepository.findByConversationRoomNoOrderByConversationLogDatetimeAsc(conversationRoomNo).stream().map(this::entityToDto).toList();
+    public List<ConversationLogResponse> findLast5ByConversationRoomNo(long conversationRoomNo) {
+        return conversationLogRepository.findLast5ByConversationRoomNo(conversationRoomNo).stream().map(this::entityToDto).toList();
     }
 
     @Override

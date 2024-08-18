@@ -27,7 +27,7 @@ public class ConversationService {
         log.info("📌 Received conversation request: input={}, conversationRoomNo={}", request.getInput(), request.getConversationRoomNo());
 
         // 이전 대화내용 조회
-        List<ConversationLogResponse> conversationLogs = conversationLogService.readByConversationRoomId(request.getConversationRoomNo());
+        List<ConversationLogResponse> conversationLogs = conversationLogService.findLast5ByConversationRoomNo(request.getConversationRoomNo());
 
         // Chatbot 답변 생성
         ChatbotResponse response = chatbotService.chatbot(request, conversationLogs);

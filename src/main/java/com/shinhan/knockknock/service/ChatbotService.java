@@ -1,5 +1,6 @@
 package com.shinhan.knockknock.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
@@ -78,6 +79,7 @@ public class ChatbotService {
      */
     private HttpEntity<Map<String, Object>> createChatbotRequest(String input, List<ConversationLogResponse> conversationLogs) {
         List<Map<String, String>> messagesList = createMessagesList(input, conversationLogs);
+        System.out.println(messagesList);
 
         // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -90,6 +92,9 @@ public class ChatbotService {
 
         // messagesList를 배열로 변환하여 requestBody에 추가
         requestBody.put("messages", messagesList.toArray(new Map[0]));
+
+        // JSON 변환 및 출력
+//        printChatbotRequest(requestBody);
 
         return new HttpEntity<>(requestBody, headers);
     }
@@ -121,7 +126,7 @@ public class ChatbotService {
 
             Map<String, String> assistantMessage = new HashMap<>();
             assistantMessage.put("role", "assistant");
-            assistantMessage.put("content", log.getConversationLogInput());
+            assistantMessage.put("content", log.getConversationLogResponse());
             messagesList.add(assistantMessage);
         }
 
@@ -143,7 +148,7 @@ public class ChatbotService {
      * @return ChatbotResponse   파싱된 응답 데이터를 담은 객체
      * @throws Exception  JSON 파싱 중 오류 발생 시 던짐
      */
-    public ChatbotResponse parseResponse(String jsonResponse) throws Exception {
+    private ChatbotResponse parseResponse(String jsonResponse) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(jsonResponse);
 
@@ -155,5 +160,15 @@ public class ChatbotService {
 
         // DTO로 변환
         return new ChatbotResponse(content, promptTokens, completionTokens, totalTokens);
+    }
+
+    private void printChatbotRequest(Map<String, Object> requestBody){
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String jsonRequestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestBody);
+            System.out.println("Final JSON Request Body:\n" + jsonRequestBody);
+        } catch (JsonProcessingException e) {
+            System.err.println("Failed to convert request body to JSON: " + e.getMessage());
+        }
     }
 }
