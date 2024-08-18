@@ -8,11 +8,17 @@ import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRespons
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRequest;
 import com.shinhan.knockknock.exception.ChatbotException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +33,9 @@ public class ChatbotService {
     @Value("${MODEL_NAME}")
     private String modelName;
 
+    @Value("classpath:prompts/system.prompt")
+    private Resource systemPromptResource;
+
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
 
     /**
@@ -34,10 +43,11 @@ public class ChatbotService {
      * 메소드명   : chatbot
      * 설명       : OpenAI API를 호출하여 챗봇 응답을 가져옵니다.
      * </pre>
-     * @param request            사용자가 입력한 메시지를 포함한 요청 데이터
-     * @param conversationLogs   이전 대화 로그 리스트
+     *
+     * @param request          사용자가 입력한 메시지를 포함한 요청 데이터
+     * @param conversationLogs 이전 대화 로그 리스트
      * @return ChatbotResponse   챗봇의 응답을 담은 객체
-     * @throws ChatbotException  응답 파싱에 실패한 경우 발생
+     * @throws ChatbotException 응답 파싱에 실패한 경우 발생
      */
     public ChatbotResponse chatbot(ConversationRequest request, List<ConversationLogResponse> conversationLogs) {
         // RestTemplate 객체 생성
@@ -73,13 +83,13 @@ public class ChatbotService {
      * 메소드명   : createChatbotRequest
      * 설명       : Chatbot API에 요청할 본문 데이터를 생성합니다.
      * </pre>
-     * @param input              사용자가 입력한 메시지
-     * @param conversationLogs   이전 대화 로그 리스트
-     * @return HttpEntity<Map<String, Object>>   생성된 요청 본문 데이터와 헤더가 포함된 HttpEntity 객체
+     *
+     * @param input            사용자가 입력한 메시지
+     * @param conversationLogs 이전 대화 로그 리스트
+     * @return HttpEntity<Map < String, Object>>   생성된 요청 본문 데이터와 헤더가 포함된 HttpEntity 객체
      */
     private HttpEntity<Map<String, Object>> createChatbotRequest(String input, List<ConversationLogResponse> conversationLogs) {
         List<Map<String, String>> messagesList = createMessagesList(input, conversationLogs);
-        System.out.println(messagesList);
 
         // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -104,17 +114,20 @@ public class ChatbotService {
      * 메소드명   : createMessagesList
      * 설명       : 사용자의 입력과 대화 로그를 기반으로 챗봇 API에 전달할 메시지 리스트를 생성합니다.
      * </pre>
-     * @param input              사용자가 입력한 메시지
-     * @param conversationLogs   이전 대화 로그 리스트
-     * @return List<Map<String, String>>  생성된 메시지 리스트
+     *
+     * @param input            사용자가 입력한 메시지
+     * @param conversationLogs 이전 대화 로그 리스트
+     * @return List<Map < String, String>>  생성된 메시지 리스트
      */
     private List<Map<String, String>> createMessagesList(String input, List<ConversationLogResponse> conversationLogs) {
         List<Map<String, String>> messagesList = new ArrayList<>();
 
         // 시스템 메시지 추가
+        String systemPrompt = loadSystemPrompt();
+
         Map<String, String> systemMessage = new HashMap<>();
         systemMessage.put("role", "system");
-        systemMessage.put("content", "You are a helpful assistant.");
+        systemMessage.put("content", systemPrompt);
         messagesList.add(systemMessage);
 
         // 대화 로그 추가
@@ -139,14 +152,24 @@ public class ChatbotService {
         return messagesList;
     }
 
+    private String loadSystemPrompt() {
+        try {
+            Path path = Paths.get(systemPromptResource.getURI());
+            return Files.readString(path, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new ChatbotException("Failed to load system prompt", e);
+        }
+    }
+
     /**
      * <pre>
      * 메소드명   : parseResponse
      * 설명       : Chatbot API로부터 받은 JSON 응답을 파싱하여 ChatbotResponse 객체로 변환합니다.
      * </pre>
-     * @param jsonResponse   API로부터 받은 JSON 응답
+     *
+     * @param jsonResponse API로부터 받은 JSON 응답
      * @return ChatbotResponse   파싱된 응답 데이터를 담은 객체
-     * @throws Exception  JSON 파싱 중 오류 발생 시 던짐
+     * @throws Exception JSON 파싱 중 오류 발생 시 던짐
      */
     private ChatbotResponse parseResponse(String jsonResponse) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -162,7 +185,7 @@ public class ChatbotService {
         return new ChatbotResponse(content, promptTokens, completionTokens, totalTokens);
     }
 
-    private void printChatbotRequest(Map<String, Object> requestBody){
+    private void printChatbotRequest(Map<String, Object> requestBody) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String jsonRequestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestBody);
