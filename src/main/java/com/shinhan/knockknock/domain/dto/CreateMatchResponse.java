@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateMatchResponse {
-    private String protectorUserName;
-    private String protegeUserName;
+    private String matchProtectorName;
+    private String matchProtegeName;
     private long protectorUserNo;
     private long protegeUserNo;
+    private String message;
 }
