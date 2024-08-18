@@ -27,6 +27,11 @@ public class ConversationLogServiceImpl implements ConversationLogService {
     }
 
     @Override
+    public List<ConversationLogResponse> readByConversationRoomId(long conversationRoomNo) {
+        return conversationLogRepository.findByConversationRoomNoOrderByConversationLogDatetimeAsc(conversationRoomNo).stream().map(this::entityToDto).toList();
+    }
+
+    @Override
     public void updateConversationLog(long conversationLogNo, ConversationLogRequest request) {
         conversationLogRepository.findById(conversationLogNo)
                 .ifPresent(conversationLogEntity -> {
@@ -35,7 +40,7 @@ public class ConversationLogServiceImpl implements ConversationLogService {
                     conversationLogEntity.setConversationLogToken(request.getConversationLogToken());
 
                     conversationLogRepository.save(conversationLogEntity);
-        });
+                });
     }
 
     @Override

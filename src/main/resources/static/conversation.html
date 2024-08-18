@@ -122,16 +122,13 @@
 
         const startTime = Date.now();
 
-        console.log(userInput);
-        console.log(JSON.stringify({ input: userInput }));
-
         try {
             const response = await fetch(`/api/v1/conversation`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ input: userInput })
+                body: JSON.stringify({ input: userInput, conversationRoomNo:1 })
             });
 
             const audioBlob = await response.blob();

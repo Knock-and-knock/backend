@@ -23,10 +23,10 @@ public class ConversationLogEntity {
     @Column(name = "conversationlog_no")
     private long conversationLogNo;
 
-    @Column(name = "conversationlog_input")
+    @Column(name = "conversationlog_input", columnDefinition = "TEXT")
     private String conversationLogInput;
 
-    @Column(name = "conversationlog_response")
+    @Column(name = "conversationlog_response", columnDefinition = "TEXT")
     private String conversationLogResponse;
 
     @Column(name = "conversationlog_token")

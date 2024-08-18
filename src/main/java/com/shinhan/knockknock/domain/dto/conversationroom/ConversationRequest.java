@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class ConversationRequest {
 
     private String input;
+    private long conversationRoomNo;
 
 }

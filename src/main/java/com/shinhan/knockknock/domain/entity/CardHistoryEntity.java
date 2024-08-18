@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "cardhistory_tb")
+@Table(name = "cardhistory_tb_1")
 public class CardHistoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
