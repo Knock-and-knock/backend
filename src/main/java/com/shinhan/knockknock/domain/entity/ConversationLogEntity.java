@@ -36,7 +36,7 @@ public class ConversationLogEntity {
     @CreationTimestamp
     private Timestamp conversationLogDatetime;
 
-    @Column(name = "conversationroom_no")
-    @NotNull
-    private long conversationRoomNo;
+    @ManyToOne
+    @JoinColumn(name = "conversationroom_no", nullable = false)
+    private ConversationRoomEntity conversationRoom;
 }

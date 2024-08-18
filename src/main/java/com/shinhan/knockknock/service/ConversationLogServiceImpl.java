@@ -3,7 +3,9 @@ package com.shinhan.knockknock.service;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRequest;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
 import com.shinhan.knockknock.domain.entity.ConversationLogEntity;
+import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
 import com.shinhan.knockknock.repository.ConversationLogRepository;
+import com.shinhan.knockknock.repository.ConversationRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ConversationLogServiceImpl implements ConversationLogService {
@@ -18,10 +21,20 @@ public class ConversationLogServiceImpl implements ConversationLogService {
     @Autowired
     ConversationLogRepository conversationLogRepository;
 
+    @Autowired
+    ConversationRoomRepository conversationRoomRepository;
+
     @Override
     public Long createConversationLog(ConversationLogRequest request) {
-        ConversationLogEntity entity = conversationLogRepository.save(dtoToEntity(request));
-        return entity.getConversationLogNo();
+        Optional<ConversationRoomEntity> conversationRoomOpt = conversationRoomRepository.findById(request.getConversationRoomNo());
+
+        if (conversationRoomOpt.isPresent()) {
+            ConversationRoomEntity conversationRoom = conversationRoomOpt.get();
+            ConversationLogEntity conversationLog = dtoToEntity(request, conversationRoom);
+            return conversationLogRepository.save(conversationLog).getConversationLogNo();
+        } else {
+            throw new RuntimeException("Conversation Room not found with ID: " + request.getConversationRoomNo());
+        }
     }
 
     @Override

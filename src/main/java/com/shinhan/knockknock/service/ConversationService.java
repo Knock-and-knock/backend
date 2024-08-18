@@ -20,8 +20,12 @@ public class ConversationService {
 
     @Autowired
     TextToSpeechService textToSpeechService;
+
     @Autowired
     ConversationLogService conversationLogService;
+
+    @Autowired
+    ConversationRoomService conversationRoomService;
 
     public byte[] conversation(ConversationRequest request) {
         log.info("📌 Received conversation request: input={}, conversationRoomNo={}", request.getInput(), request.getConversationRoomNo());
@@ -40,6 +44,7 @@ public class ConversationService {
                 .conversationRoomNo(request.getConversationRoomNo())
                 .build();
         conversationLogService.createConversationLog(conversationLog);
+        conversationRoomService.updateConversationRoomEndAt(request.getConversationRoomNo());
 
         // 음성 데이터 생성
         byte[] audioData = textToSpeechService.convertTextToSpeech(response.getContent());

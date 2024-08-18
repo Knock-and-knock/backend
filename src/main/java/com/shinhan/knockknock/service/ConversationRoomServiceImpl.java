@@ -43,6 +43,15 @@ public class ConversationRoomServiceImpl implements ConversationRoomService {
     }
 
     @Override
+    public void updateConversationRoomEndAt(long conversationRoomNo) {
+        conversationRoomRepository.findById(conversationRoomNo)
+                .ifPresent(conversationRoom -> {
+                    conversationRoom.setConversationRoomEndAt(Timestamp.valueOf(LocalDateTime.now()));
+                    conversationRoomRepository.save(conversationRoom);
+                });
+    }
+
+    @Override
     public void deleteConversation(long conversationRoomNo) {
         conversationRoomRepository
                 .findById(conversationRoomNo)
