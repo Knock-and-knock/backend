@@ -76,10 +76,10 @@ public class UserEntity {
     @Column(name = "user_simplepassword")
     private String userSimplePassword;
 
-    @OneToOne(mappedBy = "userProtectorNo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "userProtectorNo")
     private MatchEntity matchProtector;
 
-    @OneToOne(mappedBy = "userProtegeNo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "userProtegeNo")
     private MatchEntity matchProtege;
 
     public LoginUserResponse entityToDto() {

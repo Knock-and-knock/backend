@@ -2,6 +2,7 @@ package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.domain.dto.CreateMatchRequest;
 import com.shinhan.knockknock.domain.dto.CreateMatchResponse;
+import com.shinhan.knockknock.domain.dto.DeleteMatchResponse;
 import com.shinhan.knockknock.domain.dto.UpdateMatchRequest;
 import com.shinhan.knockknock.service.MatchService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,10 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "매칭", description = "매칭 api")
 @Controller
@@ -64,5 +62,23 @@ public class MatchController {
         return ResponseEntity.status(404).body(CreateMatchResponse.builder()
                 .message(message)
                 .build());
+    }
+
+    @Operation(summary = "매칭 중단", description = "피보호자가 매칭을 중단하는 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "응답 성공"),
+            @ApiResponse(responseCode = "404", description = "응답 실패")
+    })
+    @DeleteMapping("/{matchNo}")
+    public ResponseEntity<DeleteMatchResponse> deleteMatch(@PathVariable("matchNo") Long matchNo) {
+        DeleteMatchResponse response = new DeleteMatchResponse();
+        try{
+            matchService.deleteMatch(matchNo);
+            response.setMessage("매칭이 중단되었습니다.");
+            return ResponseEntity.status(200).body(response);
+        } catch (RuntimeException e) {
+            response.setMessage(e.getMessage());
+            return ResponseEntity.status(404).body(response);
+        }
     }
 }

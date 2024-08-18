@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -40,9 +41,13 @@ public class MatchServiceImpl implements MatchService {
                         .matchProtegeName(request.getMatchProtegeName())
                         .userProtectorNo(protectorUser)
                         .userProtegeNo(protegeUser)
+                        .matchStatus("WAIT")
                         .build());
+
         if (match.getMatchStatus().equals("ACCEPT")) {
             throw new RuntimeException("이미 매칭된 회원입니다.");
+        } else if (match.getMatchStatus().equals("REJECT")) {
+            match.setMatchStatus("WAIT");
         }
 
         MatchEntity newMatch = matchRepository.save(match);
@@ -80,5 +85,24 @@ public class MatchServiceImpl implements MatchService {
         MatchEntity updateMatch = matchRepository.save(match);
 
         return entityToDto(updateMatch);
+    }
+
+    @Override
+    public void deleteMatch(long matchNo) {
+        // 로그인한 user entity 조회
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+
+        MatchEntity match = matchRepository.findById(matchNo)
+                .orElseThrow(() -> new NoSuchElementException("Match not found."));
+
+        if (user.getUserType().toString().equals("PROTEGE")
+                && Objects.equals(user.getUserNo(), match.getUserProtegeNo().getUserNo())
+                && match.getMatchStatus().equals("ACCEPT")) {
+            matchRepository.delete(match);
+        } else {
+            throw new RuntimeException("잘못된 접근입니다.");
+        }
     }
 }

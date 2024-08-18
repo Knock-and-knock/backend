@@ -8,6 +8,7 @@ import com.shinhan.knockknock.domain.entity.MatchEntity;
 public interface MatchService {
     CreateMatchResponse createMatch(CreateMatchRequest request);
     CreateMatchResponse updateMatch(UpdateMatchRequest request);
+    void deleteMatch(long matchNo);
 
     default CreateMatchResponse entityToDto(MatchEntity match) {
         return CreateMatchResponse.builder()
