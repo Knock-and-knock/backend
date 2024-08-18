@@ -34,6 +34,7 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
 	implementation("com.googlecode.json-simple:json-simple:1.1.1")
+	testImplementation 'com.h2database:h2'
 
 }
 
@@ -43,4 +44,10 @@ tasks.named('test') {
 
 springBoot {
 	mainClass = 'com.shinhan.knockknock.BackendApplication'
+}
+
+test {
+	environment 'DB_URL', 'jdbc:postgresql://122.128.54.136:54322/knock-knock'
+	environment 'DB_USERNAME', 'postgres'
+	environment 'DB_PASSWORD', '1q2w3e'
 }
