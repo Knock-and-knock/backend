@@ -14,5 +14,6 @@ public class CreateMatchResponse {
     private String matchProtegeName;
     private long protectorUserNo;
     private long protegeUserNo;
+    private String matchStatus;
     private String message;
 }
