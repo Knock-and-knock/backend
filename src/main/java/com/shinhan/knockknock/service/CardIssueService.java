@@ -25,6 +25,8 @@ public interface CardIssueService {
                 .cardIssueIsHighrisk(request.isCardIssueIsHighrisk())
                 .cardIssuePurpose(request.getCardIssuePurpose())
                 .userNo(request.getUserNo())
+                .cardIssueIsFamily(request.isCardIssueIsFamily())
+                .cardIssueAddress(request.getCardIssueAddress())
                 .build();
 
         return cardIssueEntity;

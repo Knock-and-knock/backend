@@ -21,4 +21,6 @@ public class ReadCardResponse {
     private String cardExpiredate;
     //private Long issueNo;
     //private Long userNo;
+    private String cardAddress;
+    private boolean cardIsFamily;
 }
