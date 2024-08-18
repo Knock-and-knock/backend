@@ -6,6 +6,7 @@ import com.shinhan.knockknock.domain.dto.UpdateMatchRequest;
 import com.shinhan.knockknock.domain.entity.MatchEntity;
 
 public interface MatchService {
+    CreateMatchResponse readMatch();
     CreateMatchResponse createMatch(CreateMatchRequest request);
     CreateMatchResponse updateMatch(UpdateMatchRequest request);
     void deleteMatch(long matchNo);

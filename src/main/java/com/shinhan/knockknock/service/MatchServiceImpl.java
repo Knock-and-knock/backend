@@ -23,6 +23,16 @@ public class MatchServiceImpl implements MatchService {
     private final MatchRepository matchRepository;
 
     @Override
+    public CreateMatchResponse readMatch() {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
+        MatchEntity match = matchRepository.findByUserProtectorNoOrUserProtegeNo(user, user)
+                .orElseThrow(() -> new NoSuchElementException("Match not found"));
+        return entityToDto(match);
+    }
+
+    @Override
     public CreateMatchResponse createMatch(CreateMatchRequest request) {
         // 로그인된 사용자 인증 정보로 보호자 UserEntity 객체 가져오기
         String protectorId = SecurityContextHolder.getContext().getAuthentication().getName();

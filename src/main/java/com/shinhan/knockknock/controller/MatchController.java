@@ -22,6 +22,24 @@ public class MatchController {
 
     private final MatchService matchService;
 
+    @Operation(summary = "매칭 조회", description = "매칭 정보 조회하는 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "매칭 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "매칭 조회 실패")
+    })
+    @GetMapping()
+    public ResponseEntity<CreateMatchResponse> readMatch() {
+        try {
+            CreateMatchResponse response = matchService.readMatch();
+            response.setMessage("조회 성공");
+            return ResponseEntity.status(200).body(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(CreateMatchResponse.builder()
+                    .message("매칭 정보가 없습니다.")
+                    .build());
+        }
+    }
+
     @Operation(summary = "매칭 요청", description = "보호자가 매칭 요청을 보내는 api")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "매칭 요청 성공"),
@@ -72,7 +90,7 @@ public class MatchController {
     @DeleteMapping("/{matchNo}")
     public ResponseEntity<DeleteMatchResponse> deleteMatch(@PathVariable("matchNo") Long matchNo) {
         DeleteMatchResponse response = new DeleteMatchResponse();
-        try{
+        try {
             matchService.deleteMatch(matchNo);
             response.setMessage("매칭이 중단되었습니다.");
             return ResponseEntity.status(200).body(response);
