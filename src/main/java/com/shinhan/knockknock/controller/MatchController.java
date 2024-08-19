@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "매칭", description = "매칭 api")
+@Tag(name = "매칭", description = "매칭 API")
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/match")

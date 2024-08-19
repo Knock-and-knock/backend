@@ -9,22 +9,15 @@ import com.shinhan.knockknock.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,10 +27,10 @@ public class UserControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     UserService userService;
 
-    @MockBean
+    @Autowired
     UserRepository userRepository;
 
     @BeforeEach
@@ -56,28 +49,26 @@ public class UserControllerTest {
     @DisplayName("아이디 중복체크 테스트")
     @Test
     public void duplicateCheckIdTest() throws Exception {
-        String userId1 = "test03";
+        // given
+        String userId1 = "protector01";
         String userId2 = "test02";
 
-        Boolean result1 = userService.readUserId(userId1);
-        Boolean result2 = userService.readUserId(userId2);
+        boolean result1 = userService.readUserId(userId1);
+        boolean result2 = userService.readUserId(userId2);
 
-        assertThat(result1).isFalse();
-        assertThat(result2).isTrue();
+        // when & then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/validation/"+userId1))
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("이미 사용중인 아이디입니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.result").value(result1));
 
-        String url1 = "/api/v1/users/validation/"+userId1;
-        String url2 = "/api/v1/users/validation/"+userId2;
-
-        mockMvc.perform(get(url1))
-                .andExpect(status().isOk())
-                .andExpect(content().json("{\"message\":\"이미 사용중인 아이디입니다.\", \"result\":false}"));
-
-        mockMvc.perform(get(url2))
-                .andExpect(status().isOk())
-                .andExpect(content().json("{\"message\":\"사용가능한 아이디입니다.\", \"result\":true}"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/validation/"+userId2))
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("사용가능한 아이디입니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.result").value(result2));
     }
 
-    @DisplayName("회원가입 테스트")
+    @DisplayName("회원가입 성공 테스트")
     @Test
     public void testUserSignupSuccess() throws Exception {
         // given
@@ -85,16 +76,13 @@ public class UserControllerTest {
                 .userId("test02")
                 .userPassword("1234")
                 .userName("테스트02")
-                .userPhone("01012341234")
+                .userPhone("01056785678")
                 .userType(UserRoleEnum.PROTEGE)
                 .build();
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody1 = objectMapper.writeValueAsString(request);
 
-        // when
-        Mockito.when(userService.createUser(request)).thenReturn(true);
-
-        // then
+        // when & then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users")
                         .content(requestBody1)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -104,25 +92,22 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.result").value("true"));
     }
 
-    @DisplayName("회원가입 테스트")
+    @DisplayName("회원가입 실패 테스트")
     @Test
     public void testUserSignupFail() throws Exception {
         // given
         CreateUserRequest request = CreateUserRequest.builder()
                 .userId("test01")
                 .userPassword("1234")
-                .userName("테스트02")
-                .userPhone("01012345678")
+                .userName("테스트01")
+                .userPhone("01012341234")
                 .userType(UserRoleEnum.PROTEGE)
                 .userSimplePassword("123456")
                 .build();
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody1 = objectMapper.writeValueAsString(request);
 
-        // when
-        Mockito.when(userService.createUser(request)).thenReturn(false);
-
-        // then
+        // when & then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users")
                         .content(requestBody1)
                         .contentType(MediaType.APPLICATION_JSON))
