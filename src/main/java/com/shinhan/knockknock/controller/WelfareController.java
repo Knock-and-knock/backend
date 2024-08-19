@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/v1/welfare")
 @RequiredArgsConstructor
-@Tag(name = "Welfare", description = "복지 목록 API")
+@Tag(name = "복지리스트", description = "복지 목록 API")
 public class WelfareController {
 
 
