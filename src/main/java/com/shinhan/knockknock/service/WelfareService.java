@@ -33,7 +33,6 @@ public interface WelfareService {
     //Entity -> Dto
     default ReadWelfareResponse entityToDto(WelfareEntity entity){
         ReadWelfareResponse response = ReadWelfareResponse.builder()
-                .welfareNo(entity.getWelfareNo())
                 .welfareName(entity.getWelfareName())
                 .welfarePirce(entity.getWelfarePrice())
                 .welfareCategory(entity.getWelfareCategory())

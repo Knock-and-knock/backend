@@ -24,7 +24,7 @@ public class WelfareBookController {
         model.addAttribute("welfareBook", welfareBookRepo.findAll());
     }
 
-    @Operation(summary = "복지 예약 조회 detail", description = "복지 예약 내역 중 하나를 조회하는 API입니다.")
+    @Operation(summary = "복지 예약 조회 detail [Not Use]", description = "복지 예약 내역 중 하나를 조회하는 API입니다.")
     @GetMapping("/{welfareBookNo}")
     void readDetail(@PathVariable("welfareBookNo") Long welfareBookNo, Model model){
         model.addAttribute("welfareBookDetail", welfareBookRepo.findById(welfareBookNo));

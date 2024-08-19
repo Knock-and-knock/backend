@@ -28,21 +28,17 @@ public class WelfareController {
     final WelfareService welfareService;
 
     @Operation(summary = "복지 목록 전체 조회", description = "복지 목록을 전부 조회하는 API입니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "복지목록 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "복지목록이 존재하지 않습니다.")
-    })
     @GetMapping
-    public ResponseEntity<ReadWelfareResponse> readAll() {
+    public ResponseEntity<?> readAll() {
         try {
             List<ReadWelfareResponse> welfareList = welfareService.readAll();
-            return ResponseEntity.status(200).body((ReadWelfareResponse) welfareList);
+            return ResponseEntity.ok(welfareList);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(404).body(ReadWelfareResponse.builder().build());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
-    @Operation(summary = "복지 생성", description = "복지서비스를 생성하는 API입니다.")
+    @Operation(summary = "복지 생성 [Not Use]", description = "복지서비스를 생성하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "복지목록 생성 성공"),
             @ApiResponse(responseCode = "404", description = "복지목록 생성 실패")
@@ -57,7 +53,7 @@ public class WelfareController {
         }
     }
 
-    @Operation(summary = "복지 수정", description = "복지서비스를 수정하는 API입니다.")
+    @Operation(summary = "복지 수정 [Not Use]", description = "복지서비스를 수정하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "복지목록 수정 성공"),
             @ApiResponse(responseCode = "404", description = "복지목록 수정 실패")
@@ -74,7 +70,7 @@ public class WelfareController {
         }
     }
 
-    @Operation(summary = "복지 삭제", description = "복지서비스를 삭제하는 API입니다.")
+    @Operation(summary = "복지 삭제 [Not Use]", description = "복지서비스를 삭제하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "복지목록 삭제 성공"),
             @ApiResponse(responseCode = "404", description = "복지목록 삭제 실패")
