@@ -22,8 +22,5 @@ FROM openjdk:17-jdk-slim
 # 빌드 단계에서 생성된 jar 파일을 복사
 COPY --from=builder /app/build/libs/*.jar /app/app.jar
 
-# 포트 설정 (필요에 따라 수정)
-EXPOSE 8080
-
 # 애플리케이션 실행
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.config.location=/app/config/env.properties"]
