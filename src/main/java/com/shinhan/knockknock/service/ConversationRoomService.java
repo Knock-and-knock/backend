@@ -17,6 +17,8 @@ public interface ConversationRoomService {
     // Update
     void updateConversationRoom(long conversationRoomNo, ConversationRoomUpdateRequest request);
 
+    void updateConversationRoomEndAt(long conversationRoomNo);
+
     // Delete
     void deleteConversation(long conversationRoomNo);
 

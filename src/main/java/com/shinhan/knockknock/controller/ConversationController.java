@@ -26,7 +26,6 @@ public class ConversationController {
 
     @PostMapping
     public ResponseEntity<byte[]> conversation(@RequestBody ConversationRequest request) {
-        System.out.println(request);
         byte[] audioData = conversationService.conversation(request);
 
         StreamingResponseBody stream = outputStream -> {

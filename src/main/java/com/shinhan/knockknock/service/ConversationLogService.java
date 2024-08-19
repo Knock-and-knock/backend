@@ -3,6 +3,7 @@ package com.shinhan.knockknock.service;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRequest;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
 import com.shinhan.knockknock.domain.entity.ConversationLogEntity;
+import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
 
 import java.util.List;
 
@@ -14,6 +15,8 @@ public interface ConversationLogService {
     // Read
     List<ConversationLogResponse> readAllConversationLog();
 
+    List<ConversationLogResponse> findLast5ByConversationRoomNo(long conversationRoomNo);
+
     // Update
     void updateConversationLog(long conversationLogNo, ConversationLogRequest request);
 
@@ -21,12 +24,12 @@ public interface ConversationLogService {
     void deleteConversationLog(long conversationLogNo);
 
     // Dto -> Entity
-    default ConversationLogEntity dtoToEntity(ConversationLogRequest request) {
+    default ConversationLogEntity dtoToEntity(ConversationLogRequest request, ConversationRoomEntity conversationRoom) {
         return ConversationLogEntity.builder()
                 .conversationLogInput(request.getConversationLogInput())
                 .conversationLogResponse(request.getConversationLogResponse())
                 .conversationLogToken(request.getConversationLogToken())
-                .conversationRoomNo(request.getConversationRoomNo())
+                .conversationRoom(conversationRoom)
                 .build();
     }
 
@@ -38,7 +41,7 @@ public interface ConversationLogService {
                 .conversationLogResponse(entity.getConversationLogResponse())
                 .conversationLogToken(entity.getConversationLogToken())
                 .conversationLogDatetime(entity.getConversationLogDatetime())
-                .conversationRoomNo(entity.getConversationRoomNo())
+                .conversationRoomNo(entity.getConversationRoom().getConversationRoomNo())
                 .build();
     }
 }

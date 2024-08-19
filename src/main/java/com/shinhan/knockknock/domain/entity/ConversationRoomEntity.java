@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -33,4 +34,7 @@ public class ConversationRoomEntity {
     @Column(name = "user_no")
     @NotNull
     private long UserNo;
+
+    @OneToMany(mappedBy = "conversationRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConversationLogEntity> conversationLogs;
 }
