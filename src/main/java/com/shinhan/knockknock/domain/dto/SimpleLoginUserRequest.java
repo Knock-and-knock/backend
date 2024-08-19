@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginUserRequest {
-    private String userId;
-    private String userPassword;
+public class SimpleLoginUserRequest {
+    private long userNo;
+    private String userSimplePassword;
     private LoginTypeEnum loginType;
 }
