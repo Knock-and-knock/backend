@@ -23,4 +23,4 @@ FROM openjdk:17-jdk-slim
 COPY --from=builder /app/build/libs/*.jar /app/app.jar
 
 # 애플리케이션 실행
-CMD ["java", "-jar", "-Dspring.config.location=file:/app/config/env.properties", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
