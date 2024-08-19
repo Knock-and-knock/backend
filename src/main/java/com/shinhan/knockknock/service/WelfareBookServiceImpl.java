@@ -26,10 +26,10 @@ public class WelfareBookServiceImpl implements WelfareBookService{
     }
 
     @Override
-    public List<ReadWelfareBookResponse> readAll(Long welfareBookNo) {
-        List<WelfareBookEntity> entityList = welfareBookRepo.findAllById(Collections.singleton(welfareBookNo));
-        Function<WelfareBookEntity, ReadWelfareBookResponse> fn = en->entityToDto(en);
-        return entityList.stream().map(fn).collect(Collectors.toList());
+    public List<ReadWelfareBookResponse> readAll() {
+        List<WelfareBookEntity> entityList = welfareBookRepo.findAll();
+        Function<WelfareBookEntity, ReadWelfareBookResponse> function = entity->entityToDto(entity);
+        return entityList.stream().map(function).collect(Collectors.toList());
     }
 
     @Override

@@ -18,5 +18,5 @@ public class CreateWelfareBookRequest {
     private Timestamp welfareBookEndDate;
     private boolean welfareBookIsCansle;
     private boolean welfareBookIsComplete;
-    private long welfareNo;
+    private Long welfareNo;
 }
