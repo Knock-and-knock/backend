@@ -28,4 +28,7 @@ public class CreateCardIssueRequest {
     private String cardIssuePurpose;
     private Timestamp cardIssueIssueDate;
     private Long userNo;
+    private String cardIssueAddress;
+    private boolean cardIssueIsFamily;
+    private String cardIssuePassword;
 }
