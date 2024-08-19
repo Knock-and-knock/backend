@@ -56,8 +56,11 @@ public class MatchServiceImpl implements MatchService {
 
         if (match.getMatchStatus().equals("ACCEPT")) {
             throw new RuntimeException("이미 매칭된 회원입니다.");
-        } else if (match.getMatchStatus().equals("REJECT")) {
+        } else if (match.getMatchStatus().equals("REJECT") |
+        match.getMatchStatus().equals("WAIT")) {
             match.setMatchStatus("WAIT");
+            match.setMatchProtectorName(request.getMatchProtectorName());
+            match.setMatchProtegeName(request.getMatchProtegeName());
         }
 
         MatchEntity newMatch = matchRepository.save(match);
