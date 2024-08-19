@@ -31,3 +31,30 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+  deploy-to-server:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: 2222
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            podman login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} docker.io
+
+            # Pull the latest image
+            podman pull docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+            # Stop and remove the existing container
+            #podman stop ${{ env.CONTAINER_NAME }} || true
+            #podman rm ${{ env.CONTAINER_NAME }} || true
+
+            # Run the new container
+            #podman run -d --name ${{ env.CONTAINER_NAME }} -p 20000:8000 -v /root/security/knock-knock-ai/.env:/app/.env docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+            # Clean up unused Docker images
+            #podman image prune -af
