@@ -18,26 +18,26 @@ public class WelfareBookController {
     final WelfareBookRepository welfareBookRepo;
     final WelfareBookService welfareBookService;
 
-    @Operation(summary = "복지 예약 전체 조회")
-    @GetMapping("/regist")
+    @Operation(summary = "복지 예약 전체 조회", description = "복지 예약 내역을 전부 조회하는 API입니다.")
+    @GetMapping
     void readAll(Model model){
         model.addAttribute("welfareBook", welfareBookRepo.findAll());
     }
 
-    @Operation(summary = "복지 예약 조회 detail")
-    @GetMapping("/regist/{welfareBookNo}")
+    @Operation(summary = "복지 예약 조회 detail", description = "복지 예약 내역 중 하나를 조회하는 API입니다.")
+    @GetMapping("/{welfareBookNo}")
     void readDetail(@PathVariable("welfareBookNo") Long welfareBookNo, Model model){
         model.addAttribute("welfareBookDetail", welfareBookRepo.findById(welfareBookNo));
     }
 
-    @Operation(summary = "복지 예약 하기")
-    @PostMapping("/regist")
+    @Operation(summary = "복지 예약 하기" , description = "복지서비스를 예약하는 API입니다.")
+    @PostMapping
     Long create(@RequestBody CreateWelfareBookRequest request){
         return welfareBookService.createWelfareBook(request);
     }
 
-    @Operation(summary = "복지 예약 취소")
-    @DeleteMapping("/regist/{welfareBookNo}")
+    @Operation(summary = "복지 예약 취소", description = "복지서비스 예약을 취소하는 API입니다.")
+    @DeleteMapping("/{welfareBookNo}")
     void delete(@PathVariable("welfareBookNo") Long welfareBookNo){
         welfareBookService.deleteWelfareBook(welfareBookNo);
     }

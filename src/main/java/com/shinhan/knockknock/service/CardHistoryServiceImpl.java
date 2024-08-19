@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,11 @@ public class CardHistoryServiceImpl implements CardHistoryService{
     @Override
     public List<ReadCardHistoryResponse> readAll() {
         List<CardHistoryEntity> entityList = cardHistoryRepo.findAll();
-        Function<CardHistoryEntity, ReadCardHistoryResponse> function = entity -> entityToDto(entity);
+        if (entityList.isEmpty()) {
+            // 조회 결과가 없을 때 예외를 던짐
+            throw new NoSuchElementException("카드 내역이 존재하지 않습니다.");
+        }
+        Function<CardHistoryEntity, ReadCardHistoryResponse> function = this::entityToDto;
         return entityList.stream().map(function).collect(Collectors.toList());
     }
 }

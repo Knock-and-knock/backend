@@ -11,7 +11,7 @@ public interface WelfareService {
     Long createWelfare(CreateWelfareRequest request);
 
     //Read
-    List<ReadWelfareResponse> readAll(Long welfareNo);
+    List<ReadWelfareResponse> readAll();
 
     //Update
     void updateWelfare(CreateWelfareRequest request);
