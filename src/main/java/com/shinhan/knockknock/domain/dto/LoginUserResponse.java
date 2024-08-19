@@ -10,11 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateUserRequest {
+public class LoginUserResponse {
+    private Long userNo;
     private String userId;
     private String userPassword;
     private String userName;
-    private String userPhone;
     private UserRole userType;
     private String userSimplePassword;
+    private String message;
 }

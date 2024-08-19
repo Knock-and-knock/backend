@@ -1,10 +1,10 @@
-package com.shinhan.knockknock.restcontroller;
+package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.domain.dto.CreateWelfareBookRequest;
-import com.shinhan.knockknock.domain.entity.WelfareBookEntity;
 import com.shinhan.knockknock.repository.WelfareBookRepository;
 import com.shinhan.knockknock.service.WelfareBookService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/welfare-book")
 @RequiredArgsConstructor
-public class WelfareBookRestController {
+@Tag(name = "복지 예약 내역", description = "복지 예약 목록 API")
+public class WelfareBookController {
 
     final WelfareBookRepository welfareBookRepo;
     final WelfareBookService welfareBookService;
