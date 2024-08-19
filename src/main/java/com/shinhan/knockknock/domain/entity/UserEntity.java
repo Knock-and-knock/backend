@@ -1,5 +1,6 @@
 package com.shinhan.knockknock.domain.entity;
 
+import com.shinhan.knockknock.domain.dto.LoginUserResponse;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -72,4 +73,15 @@ public class UserEntity {
 
     @Column(name = "user_simplepassword")
     private String userSimplePassword;
+
+    public LoginUserResponse entityToDto() {
+        return LoginUserResponse.builder()
+                .userNo(this.userNo)
+                .userId(this.userId)
+                .userPassword(this.userPassword)
+                .userName(this.userName)
+                .userType(this.userType)
+                .userSimplePassword(this.userSimplePassword)
+                .build();
+    }
 }

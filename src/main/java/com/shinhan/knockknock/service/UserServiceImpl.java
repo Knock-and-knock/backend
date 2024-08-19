@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Boolean readUserId(String userId) {
-        UserEntity findUser = userRepository.findByUserId(userId);
+        UserEntity findUser = userRepository.findByUserId(userId).orElse(null);
         return findUser == null;
     }
 
