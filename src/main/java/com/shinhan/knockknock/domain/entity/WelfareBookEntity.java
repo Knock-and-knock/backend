@@ -39,5 +39,5 @@ public class WelfareBookEntity {
 
     @Column(name = "welfare_no")
     @NotNull
-    private long welfareNo;
+    private Long welfareNo;
 }

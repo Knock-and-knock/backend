@@ -27,8 +27,8 @@ public class WelfareServiceImpl implements WelfareService{
     @Override
     public List<ReadWelfareResponse> readAll(Long welfareNo) {
         List<WelfareEntity> entityList = welfareRepo.findAllById(Collections.singleton(welfareNo));
-        Function<WelfareEntity, ReadWelfareResponse> fn = en->entityToDto(en);
-        return entityList.stream().map(fn).collect(Collectors.toList());
+        Function<WelfareEntity, ReadWelfareResponse> function = entity->entityToDto(entity);
+        return entityList.stream().map(function).collect(Collectors.toList());
     }
 
     @Override
@@ -37,6 +37,8 @@ public class WelfareServiceImpl implements WelfareService{
             welfare.setWelfareName(request.getWelfareName());
             welfare.setWelfarePrice(request.getWelfarePirce());
             welfare.setWelfareCategory(request.getWelfareCategory());
+            // 변경된 엔티티를 다시 저장하여 데이터베이스에 반영합니다.
+            welfareRepo.save(welfare);
         });
     }
 
