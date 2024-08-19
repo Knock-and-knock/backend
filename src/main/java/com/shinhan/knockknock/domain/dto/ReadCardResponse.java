@@ -3,12 +3,14 @@ package com.shinhan.knockknock.domain.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ReadCardResponse {
     //private Long cardId;
     private String cardNo;
@@ -23,4 +25,5 @@ public class ReadCardResponse {
     //private Long userNo;
     private String cardAddress;
     private boolean cardIsFamily;
+    private String cardResponseMessage;
 }

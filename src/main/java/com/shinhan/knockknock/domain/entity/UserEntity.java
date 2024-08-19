@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 @Data
@@ -47,6 +47,7 @@ public class UserEntity {
     private UserRole userType;
 
     @Column(name = "user_birth")
+    @Temporal(TemporalType.DATE)
     private Date userBirth;
 
     @Column(name = "user_address")
@@ -69,10 +70,17 @@ public class UserEntity {
     private boolean userIsWithdraw;
 
     @Column(name = "user_joindate")
+    @Temporal(TemporalType.DATE)
     private Date userJoinDate;
 
     @Column(name = "user_simplepassword")
     private String userSimplePassword;
+
+    @OneToOne(mappedBy = "userProtectorNo")
+    private MatchEntity matchProtector;
+
+    @OneToOne(mappedBy = "userProtegeNo")
+    private MatchEntity matchProtege;
 
     public LoginUserResponse entityToDto() {
         return LoginUserResponse.builder()
@@ -83,5 +91,12 @@ public class UserEntity {
                 .userType(this.userType)
                 .userSimplePassword(this.userSimplePassword)
                 .build();
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.userJoinDate == null) {
+            this.userJoinDate = new Date();
+        }
     }
 }

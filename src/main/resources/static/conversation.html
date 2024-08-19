@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>챗봇 대화</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .chat-container {
+            width: 500px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-log {
+            flex: 1;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .chat-log p {
+            margin: 5px 0;
+        }
+        .chat-input {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .chat-input button {
+            padding: 10px;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 4px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background-color: #218838;
+        }
+        .audio-player {
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        .audio-player audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .loading {
+            font-style: italic;
+            color: #888;
+        }
+        .response-time {
+            font-size: 12px;
+            color: #666;
+        }
+        .tts-selection {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-log" id="chatLog"></div>
+    <div class="tts-selection">
+        <label for="ttsOption">TTS 옵션 선택:</label>
+        <select id="ttsOption">
+            <option value="alloy">Alloy</option>
+        </select>
+    </div>
+    <div class="chat-input">
+        <input type="text" id="userInput" placeholder="내용을 입력하세요" onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()">보내기</button>
+    </div>
+    <div class="audio-player" id="audioPlayer">
+        <h3>음성 재생</h3>
+        <audio id="ttsAudio" controls></audio>
+    </div>
+</div>
+
+<script>
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    }
+
+    async function sendMessage() {
+        const userInput = document.getElementById('userInput').value;
+        if (userInput.trim() === "") {
+            return;
+        }
+
+        const chatLog = document.getElementById('chatLog');
+        const userMessage = document.createElement('p');
+        userMessage.textContent = `사용자: ${userInput}`;
+        chatLog.appendChild(userMessage);
+
+        const loadingMessage = document.createElement('p');
+        loadingMessage.textContent = '챗봇: 로딩 중...';
+        loadingMessage.classList.add('loading');
+        chatLog.appendChild(loadingMessage);
+
+        const startTime = Date.now();
+
+        try {
+            const response = await fetch(`/api/v1/conversation`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ input: userInput, conversationRoomNo:1 })
+            });
+
+            const audioBlob = await response.blob();
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const ttsAudio = document.getElementById('ttsAudio');
+            ttsAudio.src = audioUrl;
+            ttsAudio.play();
+
+            const endTime = Date.now();
+            const responseTime = endTime - startTime;
+
+            loadingMessage.textContent = '챗봇: 응답 완료';
+            const responseTimeMessage = document.createElement('p');
+            responseTimeMessage.textContent = `응답 시간: ${responseTime} ms`;
+            responseTimeMessage.classList.add('response-time');
+            chatLog.appendChild(responseTimeMessage);
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+
+        chatLog.scrollTop = chatLog.scrollHeight;
+        document.getElementById('userInput').value = '';
+    }
+</script>
+
+</body>
+</html>
