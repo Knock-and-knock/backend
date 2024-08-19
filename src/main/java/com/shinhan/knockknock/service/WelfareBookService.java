@@ -11,7 +11,7 @@ public interface WelfareBookService {
     Long createWelfareBook(CreateWelfareBookRequest request);
 
     //Read
-    List<ReadWelfareBookResponse> readAll(Long welfareBookNo);
+    List<ReadWelfareBookResponse> readAll();
     ReadWelfareBookResponse readDetail(Long welfareBookNo);
 
     //Delete
@@ -26,6 +26,7 @@ public interface WelfareBookService {
                 .welfareBookEndDate(request.getWelfareBookEndDate())
                 .welfareBookIsCansle(request.isWelfareBookIsCansle())
                 .welfareBookIsComplete(request.isWelfareBookIsComplete())
+                .welfareNo(request.getWelfareNo())
                 .build();
         return entity;
     }
@@ -38,6 +39,7 @@ public interface WelfareBookService {
                 .welfareBookEndDate(entity.getWelfareBookEndDate())
                 .welfareBookIsCansle(entity.isWelfareBookIsCansle())
                 .welfareBookIsComplete(entity.isWelfareBookIsComplete())
+                .welfareNo(entity.getWelfareNo())
                 .build();
         return response;
     }

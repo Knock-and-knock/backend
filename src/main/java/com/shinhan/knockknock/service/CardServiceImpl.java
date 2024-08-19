@@ -4,6 +4,7 @@ import com.shinhan.knockknock.domain.dto.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.ReadCardResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
+import com.shinhan.knockknock.repository.CardIssueRepository;
 import com.shinhan.knockknock.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,26 +13,31 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class CardServiceImpl implements CardService {
 
     @Autowired
     CardRepository cardRepository;
+    @Autowired
+    CardIssueRepository cardIssueRepository;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @Async("taskExecutor")
-    public void scheduleCreateCard(CardIssueEntity cardIssueEntity) {
-        scheduler.schedule(() -> createCard(cardIssueEntity), 1, TimeUnit.MINUTES);
+    public void scheduleCreatePostCard(CardIssueEntity cardIssueEntity, String password) {
+        scheduler.schedule(() -> createPostCard(cardIssueEntity, password), 1, TimeUnit.MINUTES);
     }
 
     @Override
-    public CreateCardIssueResponse createCard(CardIssueEntity cardIssueEntity) {
+    public CreateCardIssueResponse createPostCard(CardIssueEntity cardIssueEntity, String password) {
         Random random = new Random();
 
         // 카드번호 생성
@@ -56,13 +62,15 @@ public class CardServiceImpl implements CardService {
                 .cardNo(cardNo)
                 .cardCvc(formattedCvc)
                 .cardEname(cardIssueEntity.getCardIssueEname())
-                .cardPassword(1234)
+                .cardPassword(password)
                 .cardBank(cardIssueEntity.getCardIssueBank())
                 .cardAccount(cardIssueEntity.getCardIssueAccount())
                 .cardAmountDate(cardIssueEntity.getCardIssueAmountDate())
                 .cardExpiredate(expireDate)
                 .cardIssueNo(cardIssueEntity.getCardIssueNo())
                 .userNo(cardIssueEntity.getUserNo())
+                .cardIsfamily(cardIssueEntity.isCardIssueIsFamily())
+                .cardAddress(cardIssueEntity.getCardIssueAddress())
                 .build();
 
         // 카드 발급
@@ -78,19 +86,43 @@ public class CardServiceImpl implements CardService {
         return createCardIssueResponse;
     }
 
-    // 카드 조회
+    // 본인 카드 조회
     @Override
-    public ReadCardResponse readGetCard(Long userNo) {
-        CardEntity cardEntity = cardRepository.findById(userNo).orElse(null);
-        ReadCardResponse readCardResponse = transformEntityToDTO(cardEntity);
+    public List<ReadCardResponse> readGetCards(Long userNo) {
+        int countCardIssue = 0;
+        // 여러 ID에 해당하는 CardEntity 목록 조회
+        List<CardEntity> cardEntities = cardRepository.findByUserNo(userNo);
 
-        // 만료 일자 형식 변환
-        String cardExpireDate = readCardResponse.getCardExpiredate();
-        String date = cardExpireDate.substring(2,7);
-        date = date.replace("-", "/");
-        readCardResponse.setCardExpiredate(date);
+        if(cardEntities.isEmpty()){ // 1. if 발급된 카드가 없다
+            countCardIssue = cardIssueRepository.countByUserNo(userNo);
+            // System.out.println("카드이슈건수: " + countCardIssue);
+            if (countCardIssue == 0){ // 2. if CardIssue 테이블에 신청 정보가 없다 -> 발급된 카드가 없습니다.
+                ReadCardResponse readCardResponse = new ReadCardResponse();
+                readCardResponse.setCardResponseMessage("발급된 카드가 없습니다.");
+                return Collections.singletonList(readCardResponse); // 단건 메시지 응답
+            } else { // 3. CardIssue 테이블에 신청 정보가 있다 -> 발급 대기중입니다.
+                ReadCardResponse response = new ReadCardResponse();
+                response.setCardResponseMessage("카드 발급이 대기 중입니다.");
+                return Collections.singletonList(response); // 단건 메시지 응답
+            }
 
-        return readCardResponse;
+        } else {
+            // 각 CardEntity를 ReadCardResponse로 변환
+            List<ReadCardResponse> readCardResponses = cardEntities.stream()
+                    .map(this::transformEntityToDTO)
+                    .collect(Collectors.toList());
+
+            // 만료 일자 형식 변환
+            readCardResponses.forEach(readCardResponse -> {
+                String cardExpireDate = readCardResponse.getCardExpiredate();
+                String date = cardExpireDate.substring(2, 7);
+                date = date.replace("-", "/");
+                readCardResponse.setCardExpiredate(date);
+            });
+
+            return readCardResponses;
+        }
     }
+
 
 }

@@ -36,7 +36,7 @@ public class CardEntity {
 
     @Column(name= "card_password")
     @NotNull
-    private int cardPassword;
+    private String cardPassword;
 
     @Column(name= "card_bank")
     @NotNull
@@ -61,4 +61,12 @@ public class CardEntity {
     @Column(name= "user_no")
     @NotNull
     private Long userNo;
+
+    @Column(name= "card_isfamily")
+    @NotNull
+    private boolean cardIsfamily;
+
+    @Column(name= "card_address")
+    @NotNull
+    private String cardAddress;
 }
