@@ -29,7 +29,6 @@ public interface CardHistoryService {
     //Entity -> Dto
     default ReadCardHistoryResponse entityToDto(CardHistoryEntity entity){
         ReadCardHistoryResponse response = ReadCardHistoryResponse.builder()
-                .cardHistoryNo(entity.getCardHistoryNo())
                 .cardHistoryAmount(entity.getCardHistoryAmount())
                 .cardHistoryShopname(entity.getCardHistoryShopname())
                 .cardHistoryApprove(entity.getCardHistoryApprove())

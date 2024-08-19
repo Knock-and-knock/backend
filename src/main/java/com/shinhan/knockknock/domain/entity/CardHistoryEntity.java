@@ -35,12 +35,14 @@ public class CardHistoryEntity {
     @NotNull
     private Timestamp cardHistoryApprove;
 
-    @Column(name= "cardcategory_no")
+    @ManyToOne
+    @JoinColumn(name= "cardcategory_no")
     @NotNull
-    private Long cardCategoryNo;
+    private CardCategoryEntity cardCategoryNo;
 
-    @Column(name= "card_id")
+    @ManyToOne
+    @JoinColumn(name= "card_id")
     @NotNull
-    private String cardId;
+    private CardEntity cardId;
 
 }

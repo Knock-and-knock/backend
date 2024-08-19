@@ -3,7 +3,6 @@ package com.shinhan.knockknock.controller;
 import com.shinhan.knockknock.domain.dto.CreateCardCategoryRequest;
 import com.shinhan.knockknock.domain.dto.CreateCardHistoryRequest;
 import com.shinhan.knockknock.domain.dto.ReadCardHistoryResponse;
-import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
 import com.shinhan.knockknock.repository.CardHistoryRepository;
 import com.shinhan.knockknock.service.CardCategoryService;
 import com.shinhan.knockknock.service.CardHistoryService;
@@ -32,7 +31,8 @@ public class CardHistoryController {
     @Operation(summary = "카드 내역 전체 조회", description = "카드 사용 내역을 전부 조회하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "카드내역 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "카드내역이 존재하지 않습니다.")
+            @ApiResponse(responseCode = "404", description = "카드내역이 존재하지 않습니다."),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping
     public ResponseEntity<?> readAll() {
@@ -40,20 +40,42 @@ public class CardHistoryController {
             List<ReadCardHistoryResponse> cardHistories = cardHistoryService.readAll();
             return ResponseEntity.ok(cardHistories);
         } catch (NoSuchElementException e) {
-            // 조회 결과가 없을 때 404 상태 코드로 응답
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카드 내역 조회 중 서버 오류가 발생했습니다.");
         }
     }
 
-    @Operation(summary = "카드 내역 생성", description = "카드 사용시 내역을 생성하는 API입니다.")
+    @Operation(summary = "카드 내역 생성 [Not Use]", description = "카드 사용시 내역을 생성하는 API입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "카드내역 생성 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류로 인한 카드내역 생성 실패")
+    })
     @PostMapping
-    Long create(@RequestBody CreateCardHistoryRequest request){
-        return cardHistoryService.createCardHistory(request);
+    public ResponseEntity<?> create(@RequestBody CreateCardHistoryRequest request) {
+        try {
+            Long cardHistoryNo = cardHistoryService.createCardHistory(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(cardHistoryNo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카드 내역 생성 중 오류가 발생했습니다.");
+        }
     }
 
-    @Operation(summary = "카드 내역 카테고리 수정", description = "카드 내역중 카테고리를 수정하는 API입니다.")
+    @Operation(summary = "카드 내역 카테고리 수정 [Not Use]", description = "카드 내역중 카테고리를 수정하는 API입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "카드 카테고리 수정 성공"),
+            @ApiResponse(responseCode = "404", description = "해당 카드 카테고리가 존재하지 않습니다."),
+            @ApiResponse(responseCode = "500", description = "서버 오류로 인한 수정 실패")
+    })
     @PutMapping(consumes = "application/json;charset=utf-8", produces = "text/plain;charset=utf-8")
-    void update(@RequestBody CreateCardCategoryRequest request){
-        cardCategoryService.updateCardCategory(request);
+    public ResponseEntity<?> update(@RequestBody CreateCardCategoryRequest request) {
+        try {
+            cardCategoryService.updateCardCategory(request);
+            return ResponseEntity.ok("카드 카테고리가 성공적으로 수정되었습니다.");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카드 카테고리 수정 중 오류가 발생했습니다.");
+        }
     }
 }
