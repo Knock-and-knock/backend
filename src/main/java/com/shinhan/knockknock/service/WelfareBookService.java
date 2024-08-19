@@ -20,7 +20,7 @@ public interface WelfareBookService {
     //Dto -> Entity
     default WelfareBookEntity dtoToEntity(CreateWelfareBookRequest request){
         WelfareBookEntity entity = WelfareBookEntity.builder()
-                //.welfareBookNo(request.getWelfareBookNo())
+                .welfareBookNo(request.getWelfareBookNo())
                 .welfareBookStartDate(request.getWelfareBookStartDate())
                 .welfareBookEndDate(request.getWelfareBookEndDate())
                 .welfareBookIsCansle(request.isWelfareBookIsCansle())
@@ -33,7 +33,6 @@ public interface WelfareBookService {
     //Entity -> Dto
     default ReadWelfareBookResponse entityToDto(WelfareBookEntity entity){
         ReadWelfareBookResponse response = ReadWelfareBookResponse.builder()
-                //.welfareBookNo(entity.getWelfareBookNo())
                 .welfareBookStartDate(entity.getWelfareBookStartDate())
                 .welfareBookEndDate(entity.getWelfareBookEndDate())
                 .welfareBookIsCansle(entity.isWelfareBookIsCansle())
