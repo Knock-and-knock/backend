@@ -3,7 +3,7 @@ package com.shinhan.knockknock.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinhan.knockknock.domain.dto.CreateUserRequest;
 import com.shinhan.knockknock.domain.entity.UserEntity;
-import com.shinhan.knockknock.domain.entity.UserRole;
+import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import com.shinhan.knockknock.repository.UserRepository;
 import com.shinhan.knockknock.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +47,7 @@ public class UserControllerTest {
                 .userPassword("1234")
                 .userName("테스트")
                 .userPhone("01012345678")
-                .userType(UserRole.PROTEGE)
+                .userType(UserRoleEnum.PROTEGE)
                 .userSimplePassword("123456")
                 .build();
         userRepository.save(testUser);
@@ -86,7 +86,7 @@ public class UserControllerTest {
                 .userPassword("1234")
                 .userName("테스트02")
                 .userPhone("01012341234")
-                .userType(UserRole.PROTEGE)
+                .userType(UserRoleEnum.PROTEGE)
                 .build();
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody1 = objectMapper.writeValueAsString(request);
@@ -113,7 +113,7 @@ public class UserControllerTest {
                 .userPassword("1234")
                 .userName("테스트02")
                 .userPhone("01012345678")
-                .userType(UserRole.PROTEGE)
+                .userType(UserRoleEnum.PROTEGE)
                 .userSimplePassword("123456")
                 .build();
         ObjectMapper objectMapper = new ObjectMapper();

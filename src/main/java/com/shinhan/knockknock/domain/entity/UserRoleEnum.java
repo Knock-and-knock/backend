@@ -1,5 +1,5 @@
 package com.shinhan.knockknock.domain.entity;
 
-public enum UserRole {
+public enum UserRoleEnum {
     PROTECTOR, PROTEGE
 }
