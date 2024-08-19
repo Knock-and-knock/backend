@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.Random;
 
-@Tag(name = "User", description = "User API")
+@Tag(name = "회원", description = "회원 API")
 @CrossOrigin
 @RestController
 @RequestMapping("/api/v1/users")
@@ -112,7 +112,7 @@ public class UserController {
         return ResponseEntity.status(status).body(response);
     }
 
-    @Operation(summary = "회원가입", description = "회원가입 처리 api")
+    @Operation(summary = "회원가입 [In Progress]", description = "회원가입 처리 api")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "가입 성공 / 실패")
     })
