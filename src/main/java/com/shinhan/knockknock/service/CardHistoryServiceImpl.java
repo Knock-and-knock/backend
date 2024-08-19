@@ -18,7 +18,7 @@ public class CardHistoryServiceImpl implements CardHistoryService{
     CardHistoryRepository cardHistoryRepo;
     @Override
     public Long createCardHistory(CreateCardHistoryRequest request) {
-        CardHistoryEntity newCardHistory = cardHistoryRepo.save(dtoToEntity(request))
+        CardHistoryEntity newCardHistory = cardHistoryRepo.save(dtoToEntity(request));
         return newCardHistory.getCardHistoryNo();
     }
 

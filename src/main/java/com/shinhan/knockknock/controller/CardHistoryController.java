@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/card-history")
 @RequiredArgsConstructor
-@Tag(name = "CardHistory", description = "카드 내역 목록 API")
+@Tag(name = "카드 내역", description = "카드 내역 목록 API")
 public class CardHistoryController {
 
     final CardHistoryRepository cardHistoryRepo;
