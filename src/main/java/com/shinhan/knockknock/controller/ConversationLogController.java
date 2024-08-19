@@ -21,29 +21,29 @@ public class ConversationLogController {
     ConversationLogService conversationLogService;
 
     @PostMapping
-    @Operation(summary = "대화 내역 생성", description = "특정 대화방의 대화 내용을 추가합니다.")
-    public String createConversationRoom(ConversationLogRequest request) {
+    @Operation(summary = "대화 내역 생성 [Not Use]", description = "특정 대화방의 대화 내용을 추가합니다.")
+    public String createConversationLog(@RequestBody ConversationLogRequest request) {
         long logNo = conversationLogService.createConversationLog(request);
         return "ok! " + logNo;
     }
 
     @GetMapping
-    @Operation(summary = "모든 대화 내역 조회", description = "모든 대화 내역을 조회합니다.")
-    public List<ConversationLogResponse> readAll() {
+    @Operation(summary = "모든 대화 내역 조회 [Not Use]", description = "모든 대화 내역을 조회합니다.")
+    public List<ConversationLogResponse> getAllConversationLogs() {
         return conversationLogService.readAllConversationLog();
     }
 
     @PutMapping("/{conversationLogNo}")
     @Operation(summary = "대화 내역 수정 [In Progress]", description = "특정 대화 내역을 수정합니다.")
-    public ResponseEntity<MessageResponse> updateConversationRoom(@PathVariable long conversationLogNo, @RequestBody ConversationLogRequest request) {
+    public ResponseEntity<MessageResponse> updateConversationLog(@PathVariable long conversationLogNo, @RequestBody ConversationLogRequest request) {
         conversationLogService.updateConversationLog(conversationLogNo, request);
-        return ResponseEntity.ok(MessageResponse.builder().message("The conversation room has been successfully updated.").build());
+        return ResponseEntity.ok(MessageResponse.builder().message("The conversation log has been successfully updated.").build());
     }
 
     @DeleteMapping("/{conversationLogNo}")
-    @Operation(summary = "대화 내역 삭제", description = "특정 대화 내역을 삭제합니다.")
-    public ResponseEntity<MessageResponse> deleteConversationRoom(@PathVariable long conversationLogNo) {
+    @Operation(summary = "대화 내역 삭제 [Not Use]", description = "특정 대화 내역을 삭제합니다.")
+    public ResponseEntity<MessageResponse> deleteConversationLog(@PathVariable long conversationLogNo) {
         conversationLogService.deleteConversationLog(conversationLogNo);
-        return ResponseEntity.ok(MessageResponse.builder().message("The conversation room has been successfully deleted.").build());
+        return ResponseEntity.ok(MessageResponse.builder().message("The conversation log has been successfully deleted.").build());
     }
 }

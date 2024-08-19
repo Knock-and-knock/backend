@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.swagger;
+package com.shinhan.knockknock.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
