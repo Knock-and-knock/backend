@@ -1,5 +1,6 @@
 package com.shinhan.knockknock.domain.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateWelfareRequest {
+    @Schema(example = "1")
     private Long welfareNo;
+    @Schema(example = "복지 서비스 이름")
     private String welfareName;
+    @Schema(example = "10000")
     private long welfarePirce;
+    @Schema(example = "돌봄")
     private String welfareCategory;
 }

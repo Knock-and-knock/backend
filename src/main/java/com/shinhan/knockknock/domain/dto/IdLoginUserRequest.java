@@ -1,6 +1,5 @@
 package com.shinhan.knockknock.domain.dto;
 
-import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,12 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginUserResponse {
-    private Long userNo;
+public class IdLoginUserRequest {
     private String userId;
     private String userPassword;
-    private String userName;
-    private UserRoleEnum userType;
-    private String userSimplePassword;
-    private String message;
 }

@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -44,7 +45,7 @@ public class UserEntity {
     @Column(name = "user_type")
     @NotNull
     @Enumerated(EnumType.STRING)
-    private UserRole userType;
+    private UserRoleEnum userType;
 
     @Column(name = "user_birth")
     @Temporal(TemporalType.DATE)
@@ -81,6 +82,9 @@ public class UserEntity {
 
     @OneToOne(mappedBy = "userProtegeNo")
     private MatchEntity matchProtege;
+
+    @OneToMany(mappedBy = "userNo", fetch = FetchType.LAZY)
+    private List<CardEntity> cards;
 
     public LoginUserResponse entityToDto() {
         return LoginUserResponse.builder()
