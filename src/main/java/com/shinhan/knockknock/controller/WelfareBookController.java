@@ -28,7 +28,7 @@ public class WelfareBookController {
             @ApiResponse(responseCode = "200", description = "복지 예약 조회 성공"),
             @ApiResponse(responseCode = "400", description = "복지 예약 조회 실패")
     })
-    @GetMapping("/user/{userNo}")
+    @GetMapping("/{userNo}")
     public ResponseEntity<?> readAllByUserNo(@PathVariable("userNo") Long userNo) {
         try {
             List<ReadWelfareBookResponse> welfareBooks = welfareBookService.readAllByUserNo(userNo);
