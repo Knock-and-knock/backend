@@ -2,6 +2,7 @@ package com.shinhan.knockknock.domain.dto;
 
 import com.shinhan.knockknock.domain.entity.CardCategoryEntity;
 import com.shinhan.knockknock.domain.entity.CardEntity;
+import com.shinhan.knockknock.domain.entity.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,4 +26,6 @@ public class ReadCardHistoryResponse {
     private CardCategoryEntity cardCategoryNo;
     @Schema(example = "1")
     private CardEntity cardId;
+    @Schema(example = "홍길동")
+    private String userName;
 }

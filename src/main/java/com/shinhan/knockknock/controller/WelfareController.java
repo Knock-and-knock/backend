@@ -23,11 +23,15 @@ import java.util.NoSuchElementException;
 @Tag(name = "복지 목록", description = "복지 목록 API")
 public class WelfareController {
 
-
     final WelfareRepository welfareRepo;
     final WelfareService welfareService;
 
     @Operation(summary = "복지 목록 전체 조회", description = "복지 목록을 전부 조회하는 API입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "복지목록 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "복지 목록이 존재하지 않습니다."),
+            @ApiResponse(responseCode = "500", description = "서버 오류로 인한 복지목록 조회 실패")
+    })
     @GetMapping
     public ResponseEntity<?> readAll() {
         try {
@@ -35,13 +39,15 @@ public class WelfareController {
             return ResponseEntity.ok(welfareList);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("복지 목록 조회 중 서버 오류가 발생했습니다.");
         }
     }
 
     @Operation(summary = "복지 생성 [Not Use]", description = "복지서비스를 생성하는 API입니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "복지목록 생성 성공"),
-            @ApiResponse(responseCode = "404", description = "복지목록 생성 실패")
+            @ApiResponse(responseCode = "201", description = "복지목록 생성 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류로 인한 복지목록 생성 실패")
     })
     @PostMapping
     public ResponseEntity<Long> create(@RequestBody CreateWelfareRequest request) {
@@ -56,7 +62,8 @@ public class WelfareController {
     @Operation(summary = "복지 수정 [Not Use]", description = "복지서비스를 수정하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "복지목록 수정 성공"),
-            @ApiResponse(responseCode = "404", description = "복지목록 수정 실패")
+            @ApiResponse(responseCode = "404", description = "해당 복지 서비스가 존재하지 않습니다."),
+            @ApiResponse(responseCode = "500", description = "서버 오류로 인한 복지목록 수정 실패")
     })
     @PutMapping(consumes = "application/json;charset=utf-8", produces = "text/plain;charset=utf-8")
     public ResponseEntity<String> update(@RequestBody CreateWelfareRequest request) {
@@ -66,14 +73,15 @@ public class WelfareController {
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("복지 서비스 수정에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("복지 서비스 수정 중 서버 오류가 발생했습니다.");
         }
     }
 
     @Operation(summary = "복지 삭제 [Not Use]", description = "복지서비스를 삭제하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "복지목록 삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "복지목록 삭제 실패")
+            @ApiResponse(responseCode = "404", description = "해당 복지 서비스가 존재하지 않습니다."),
+            @ApiResponse(responseCode = "500", description = "서버 오류로 인한 복지목록 삭제 실패")
     })
     @DeleteMapping("/{welfareNo}")
     public ResponseEntity<String> delete(@PathVariable("welfareNo") Long welfareNo) {
@@ -83,7 +91,7 @@ public class WelfareController {
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("복지 서비스 삭제에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("복지 서비스 삭제 중 서버 오류가 발생했습니다.");
         }
     }
 }

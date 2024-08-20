@@ -3,7 +3,6 @@ package com.shinhan.knockknock.controller;
 import com.shinhan.knockknock.domain.dto.CreateCardCategoryRequest;
 import com.shinhan.knockknock.domain.dto.CreateCardHistoryRequest;
 import com.shinhan.knockknock.domain.dto.ReadCardHistoryResponse;
-import com.shinhan.knockknock.repository.CardHistoryRepository;
 import com.shinhan.knockknock.service.CardCategoryService;
 import com.shinhan.knockknock.service.CardHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,14 +23,13 @@ import java.util.NoSuchElementException;
 @Tag(name = "카드 내역", description = "카드 내역 목록 API")
 public class CardHistoryController {
 
-    final CardHistoryRepository cardHistoryRepo;
     final CardHistoryService cardHistoryService;
     final CardCategoryService cardCategoryService;
 
     @Operation(summary = "카드 내역 전체 조회", description = "카드 사용 내역을 전부 조회하는 API입니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "카드내역 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "카드내역이 존재하지 않습니다."),
+            @ApiResponse(responseCode = "200", description = "카드 내역 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "카드 내역이 존재하지 않습니다."),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping
@@ -46,10 +44,10 @@ public class CardHistoryController {
         }
     }
 
-    @Operation(summary = "카드 내역 생성 [Not Use]", description = "카드 사용시 내역을 생성하는 API입니다.")
+    @Operation(summary = "카드 내역 생성", description = "카드 사용시 내역을 생성하는 API입니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "카드내역 생성 성공"),
-            @ApiResponse(responseCode = "500", description = "서버 오류로 인한 카드내역 생성 실패")
+            @ApiResponse(responseCode = "201", description = "카드 내역 생성 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류로 인한 카드 내역 생성 실패")
     })
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CreateCardHistoryRequest request) {
@@ -61,7 +59,7 @@ public class CardHistoryController {
         }
     }
 
-    @Operation(summary = "카드 내역 카테고리 수정 [Not Use]", description = "카드 내역중 카테고리를 수정하는 API입니다.")
+    @Operation(summary = "카드 내역 카테고리 수정", description = "카드 내역 중 카테고리를 수정하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "카드 카테고리 수정 성공"),
             @ApiResponse(responseCode = "404", description = "해당 카드 카테고리가 존재하지 않습니다."),
