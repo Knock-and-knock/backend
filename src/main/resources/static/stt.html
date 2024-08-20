@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>챗봇 대화</title>
+    <title>음성 인식 챗봇</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -34,27 +34,21 @@
         .chat-log p {
             margin: 5px 0;
         }
-        .chat-input {
+        .voice-controls {
             display: flex;
+            justify-content: space-between;
             margin-bottom: 10px;
         }
-        .chat-input input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .chat-input button {
+        .voice-controls button {
             padding: 10px;
             border: none;
-            background-color: #28a745;
+            background-color: #007bff;
             color: white;
             border-radius: 4px;
-            margin-left: 5px;
             cursor: pointer;
         }
-        .chat-input button:hover {
-            background-color: #218838;
+        .voice-controls button:hover {
+            background-color: #0056b3;
         }
         .audio-player {
             border-top: 1px solid #ddd;
@@ -72,24 +66,15 @@
             font-size: 12px;
             color: #666;
         }
-        .tts-selection {
-            margin-bottom: 10px;
-        }
     </style>
 </head>
 <body>
 
 <div class="chat-container">
     <div class="chat-log" id="chatLog"></div>
-    <div class="tts-selection">
-        <label for="ttsOption">TTS 옵션 선택:</label>
-        <select id="ttsOption">
-            <option value="alloy">Alloy</option>
-        </select>
-    </div>
-    <div class="chat-input">
-        <input type="text" id="userInput" placeholder="내용을 입력하세요" onkeypress="handleKeyPress(event)">
-        <button onclick="sendMessage()">보내기</button>
+    <div class="voice-controls">
+        <button onclick="startAutoRecord()">🎙️ 음성 인식 시작</button>
+        <button onclick="endRecord()">🛑 음성 인식 종료</button>
     </div>
     <div class="audio-player" id="audioPlayer">
         <h3>음성 재생</h3>
@@ -99,6 +84,53 @@
 
 <script>
     let accessToken = '';
+    let recognition;
+    let autoRecognition = false; // 음성 인식의 자동 시작 상태를 제어하는 변수
+
+    // ----- 현재 브라우저에서 API 사용이 유효한가를 검증
+    function availabilityFunc() {
+        try {
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = "ko"; // 음성인식에 사용되고 반환될 언어를 설정한다.
+            recognition.maxAlternatives = 5; //음성 인식결과를 5개 까지 보여준다.
+
+            recognition.addEventListener("speechstart", () => {
+                console.log("음성 인식 중...");
+            });
+
+            recognition.addEventListener("speechend", () => {
+                console.log("음성 인식 종료");
+                // 음성 인식이 종료되더라도 자동으로 시작하지 않음
+                // 재생이 끝나면 자동으로 시작될 예정
+            });
+
+            // 음성인식 결과를 반환하고 자동으로 챗봇으로 전송
+            recognition.addEventListener("result", (e) => {
+                const recognizedText = e.results[0][0].transcript;
+                sendMessage(recognizedText);
+            });
+
+            if (!recognition) {
+                alert("현재 브라우저는 음성 인식을 지원하지 않습니다.");
+            }
+        } catch (e) {
+            alert("현재 브라우저는 음성 인식을 지원하지 않습니다.");
+        }
+    }
+
+    // 음성 인식을 자동으로 시작하는 함수
+    function startAutoRecord() {
+        autoRecognition = true;
+        recognition.start();
+        console.log("음성 인식 자동 시작");
+    }
+
+    // 🛑 클릭 시 종료(안 눌러도 음성인식은 알아서 종료됨)
+    function endRecord() {
+        autoRecognition = false;
+        recognition.stop(); // 음성인식을 중단하고 중단까지의 결과를 반환
+        console.log("음성 인식 중단");
+    }
 
     async function login() {
         const loginData = {
@@ -127,14 +159,7 @@
         }
     }
 
-    function handleKeyPress(event) {
-        if (event.key === 'Enter') {
-            sendMessage();
-        }
-    }
-
-    async function sendMessage() {
-        const userInput = document.getElementById('userInput').value;
+    async function sendMessage(userInput) {
         if (userInput.trim() === "") {
             return;
         }
@@ -176,16 +201,25 @@
             responseTimeMessage.classList.add('response-time');
             chatLog.appendChild(responseTimeMessage);
 
+            // 음성 재생이 끝났을 때 음성 인식을 자동으로 다시 시작
+            ttsAudio.onended = () => {
+                if (autoRecognition) {
+                    recognition.start();
+                }
+            };
+
         } catch (error) {
             console.error('Error:', error);
         }
 
         chatLog.scrollTop = chatLog.scrollHeight;
-        document.getElementById('userInput').value = '';
     }
 
-    // 페이지 로드 시 로그인 시도
-    window.onload = login;
+    // 페이지 로드 시 로그인 시도 및 음성 인식 기능 준비
+    window.addEventListener("load", () => {
+        login();
+        availabilityFunc();
+    });
 </script>
 
 </body>
