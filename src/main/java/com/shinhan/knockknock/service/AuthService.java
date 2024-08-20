@@ -1,7 +1,8 @@
 package com.shinhan.knockknock.service;
 
 import com.shinhan.knockknock.auth.JwtProvider;
-import com.shinhan.knockknock.domain.dto.LoginUserRequest;
+import com.shinhan.knockknock.domain.dto.IdLoginUserRequest;
+import com.shinhan.knockknock.domain.dto.SimpleLoginUserRequest;
 import com.shinhan.knockknock.domain.dto.TokenResponse;
 import com.shinhan.knockknock.domain.entity.TokenEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
@@ -22,7 +23,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
-    public TokenResponse loginUser(LoginUserRequest request) {
+    public TokenResponse loginUser(IdLoginUserRequest request) {
         String userId = request.getUserId();
         String userPassword = request.getUserPassword();
         UserEntity user = userRepository.findByUserId(userId).orElse(null);
@@ -34,6 +35,23 @@ public class AuthService {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
 
+        return issueToken(user);
+    }
+
+    public TokenResponse simpleLoginUser(SimpleLoginUserRequest request) {
+        String simplePassword = request.getUserSimplePassword();
+
+        UserEntity user = userRepository.findById(request.getUserNo())
+                .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
+
+        if (!passwordEncoder.matches(simplePassword, user.getUserSimplePassword())) {
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+        }
+
+        return issueToken(user);
+    }
+
+    private TokenResponse issueToken(UserEntity user) {
         // access, refresh 토큰 발급
         String accessToken = jwtProvider.createAccessToken(user.entityToDto());
         String refreshToken = jwtProvider.createRefreshToken(user.entityToDto());
