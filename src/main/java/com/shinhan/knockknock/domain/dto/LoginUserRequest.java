@@ -30,5 +30,4 @@ public class LoginUserRequest {
     private String loginType;
     @Schema(example = "string")
     private String userSimplePassword;
-    private String loginType;
 }
