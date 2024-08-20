@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -118,18 +120,28 @@ public class UserController {
     })
     @PostMapping("")
     public ResponseEntity<UserValidationResponse> create(@RequestBody CreateUserRequest request) {
-        boolean result = userService.createUser(request);
         String message = "";
-        if(result){
+        int status = 200;
+        boolean result = false;
+        try{
+            result = userService.createUser(request);
             message = "회원가입에 성공하였습니다.";
-        } else {
-            message = "회원가입에 실패하였습니다.";
+        } catch (DuplicateKeyException e) {
+            message = e.getMessage();
+            status = 409;
+        } catch (DataIntegrityViolationException e) {
+            message = e.getMessage();
+            status = 400;
+        } catch (Exception e) {
+            message = e.getMessage();
+            status = 500;
         }
+
         UserValidationResponse response = UserValidationResponse.builder()
                 .message(message)
                 .result(result)
                 .build();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(status).body(response);
     }
 
     private String generateRandomNumber() {
