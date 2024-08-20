@@ -54,7 +54,7 @@ jobs:
             podman rm ${{ env.CONTAINER_NAME }} || true
 
             # Run the new container
-            podman run -d --name ${{ env.CONTAINER_NAME }} -p 20000:8000 -v /root/security/knock-knock/env.properties:/config/env.properties docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            podman run -d --name ${{ env.CONTAINER_NAME }} -p 20000:9090 -v /root/security/knock-knock/env.properties:/config/env.properties docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
             # Clean up unused Docker images
             podman image prune -af
