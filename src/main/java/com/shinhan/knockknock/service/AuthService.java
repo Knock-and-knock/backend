@@ -47,8 +47,9 @@ public class AuthService {
         tokenRepository.save(tokenEntity);
 
         return TokenResponse.builder()
+                .userNo(user.getUserNo())
+                .userType(user.getUserType())
                 .accessToken(accessToken)
-                .refreshToken(refreshToken)
                 .build();
     }
 }

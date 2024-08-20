@@ -1,6 +1,6 @@
 package com.shinhan.knockknock.domain.dto;
 
-import com.shinhan.knockknock.domain.entity.UserRole;
+import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +15,6 @@ public class CreateUserRequest {
     private String userPassword;
     private String userName;
     private String userPhone;
-    private UserRole userType;
+    private UserRoleEnum userType;
     private String userSimplePassword;
 }
