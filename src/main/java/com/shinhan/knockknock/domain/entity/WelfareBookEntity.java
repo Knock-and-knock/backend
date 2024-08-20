@@ -19,10 +19,6 @@ public class WelfareBookEntity {
     @Column(name = "welfarebook_no")
     private Long welfareBookNo;
 
-    @Column(name = "user_id")
-    @NotNull
-    private String userId;
-
     @Column(name = "welfarebook_startdate")
     @NotNull
     private Timestamp welfareBookStartDate;
@@ -37,7 +33,13 @@ public class WelfareBookEntity {
     @Column(name = "welfarebook_iscomplete")
     private boolean welfareBookIsComplete;
 
-    @Column(name = "welfare_no")
+    @ManyToOne
+    @JoinColumn(name = "user_no")
     @NotNull
-    private Long welfareNo;
+    private UserEntity userNo;
+
+    @ManyToOne
+    @JoinColumn(name = "welfare_no")
+    @NotNull
+    private WelfareEntity welfareNo;
 }

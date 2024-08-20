@@ -11,7 +11,7 @@ public interface WelfareService {
     Long createWelfare(CreateWelfareRequest request);
 
     //Read
-    List<ReadWelfareResponse> readAll(Long welfareNo);
+    List<ReadWelfareResponse> readAll();
 
     //Update
     void updateWelfare(CreateWelfareRequest request);
@@ -33,7 +33,6 @@ public interface WelfareService {
     //Entity -> Dto
     default ReadWelfareResponse entityToDto(WelfareEntity entity){
         ReadWelfareResponse response = ReadWelfareResponse.builder()
-                .welfareNo(entity.getWelfareNo())
                 .welfareName(entity.getWelfareName())
                 .welfarePirce(entity.getWelfarePrice())
                 .welfareCategory(entity.getWelfareCategory())

@@ -29,7 +29,6 @@ public interface CardCategoryService {
     //Entity -> Dto
     default ReadCardCategoryResponse entityToDto(CardCategoryEntity entity){
         ReadCardCategoryResponse response = ReadCardCategoryResponse.builder()
-                .cardCategoryNo(entity.getCardCategoryNo())
                 .cardCategoryName(entity.getCardCategoryName())
                 .build();
         return response;

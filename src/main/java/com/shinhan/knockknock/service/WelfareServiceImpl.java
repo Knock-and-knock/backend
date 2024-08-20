@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -25,25 +26,30 @@ public class WelfareServiceImpl implements WelfareService{
     }
 
     @Override
-    public List<ReadWelfareResponse> readAll(Long welfareNo) {
-        List<WelfareEntity> entityList = welfareRepo.findAllById(Collections.singleton(welfareNo));
-        Function<WelfareEntity, ReadWelfareResponse> function = entity->entityToDto(entity);
+    public List<ReadWelfareResponse> readAll() {
+        List<WelfareEntity> entityList = welfareRepo.findAll();
+        if (entityList.isEmpty()) {
+            throw new NoSuchElementException("복지 목록이 존재하지 않습니다.");
+        }
+        Function<WelfareEntity, ReadWelfareResponse> function = this::entityToDto;
         return entityList.stream().map(function).collect(Collectors.toList());
     }
 
     @Override
     public void updateWelfare(CreateWelfareRequest request) {
-        welfareRepo.findById(request.getWelfareNo()).ifPresent(welfare ->{
-            welfare.setWelfareName(request.getWelfareName());
-            welfare.setWelfarePrice(request.getWelfarePirce());
-            welfare.setWelfareCategory(request.getWelfareCategory());
-            // 변경된 엔티티를 다시 저장하여 데이터베이스에 반영합니다.
-            welfareRepo.save(welfare);
-        });
+        WelfareEntity welfare = welfareRepo.findById(request.getWelfareNo())
+                .orElseThrow(() -> new NoSuchElementException("해당 복지 서비스가 존재하지 않습니다."));
+        welfare.setWelfareName(request.getWelfareName());
+        welfare.setWelfarePrice(request.getWelfarePirce());
+        welfare.setWelfareCategory(request.getWelfareCategory());
+        welfareRepo.save(welfare);
     }
 
     @Override
     public void deleteWelfare(Long welfareNo) {
+        if (!welfareRepo.existsById(welfareNo)) {
+            throw new NoSuchElementException("해당 복지 서비스가 존재하지 않습니다.");
+        }
         welfareRepo.deleteById(welfareNo);
     }
 }
