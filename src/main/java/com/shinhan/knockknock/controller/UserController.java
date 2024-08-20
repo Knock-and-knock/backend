@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.domain.dto.CreateUserRequest;
+import com.shinhan.knockknock.domain.dto.UserValidationRequest;
 import com.shinhan.knockknock.domain.dto.UserValidationResponse;
 import com.shinhan.knockknock.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,7 +16,6 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 import java.util.Random;
 
 @Tag(name = "회원", description = "회원 API")
@@ -53,9 +53,9 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "이미 가입된 전화번호")
     })
     @PostMapping("/validation/phone")
-    public ResponseEntity<UserValidationResponse> sendSms(@RequestBody Map<String, String> body, HttpSession httpSession) {
+    public ResponseEntity<UserValidationResponse> sendSms(@RequestBody UserValidationRequest request, HttpSession httpSession) {
         String validationNum = generateRandomNumber();  // 6자리 인증번호 생성
-        String phone = body.get("phone");
+        String phone = request.getPhone();
         String message = "";
         boolean result = false;
         int status = 400;
