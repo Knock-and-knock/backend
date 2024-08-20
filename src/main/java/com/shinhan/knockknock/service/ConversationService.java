@@ -16,6 +16,9 @@ import java.util.List;
 public class ConversationService {
 
     @Autowired
+    ChainService chainService;
+
+    @Autowired
     ChatbotService chatbotService;
 
     @Autowired
@@ -34,7 +37,7 @@ public class ConversationService {
         List<ConversationLogResponse> conversationLogs = conversationLogService.findLast5ByConversationRoomNo(request.getConversationRoomNo());
 
         // Chatbot 답변 생성
-        ChatbotResponse response = chatbotService.chatbot(request, conversationLogs);
+        ChatbotResponse response = chainService.chain(request);
 
         // 대화 내역 저장
         ConversationLogRequest conversationLog = ConversationLogRequest.builder()
