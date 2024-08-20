@@ -1,7 +1,7 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.CreateWelfareBookRequest;
-import com.shinhan.knockknock.domain.dto.ReadWelfareBookResponse;
+import com.shinhan.knockknock.domain.dto.welfarebook.CreateWelfareBookRequest;
+import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
 import com.shinhan.knockknock.domain.entity.WelfareBookEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.domain.entity.WelfareEntity;

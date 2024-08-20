@@ -1,12 +1,9 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.CreateCardHistoryRequest;
-import com.shinhan.knockknock.domain.dto.ReadCardHistoryResponse;
-import com.shinhan.knockknock.domain.entity.CardCategoryEntity;
+import com.shinhan.knockknock.domain.dto.cardhistory.CreateCardHistoryRequest;
+import com.shinhan.knockknock.domain.dto.cardhistory.ReadCardHistoryResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
-import com.shinhan.knockknock.domain.entity.UserEntity;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 

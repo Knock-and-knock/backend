@@ -1,7 +1,7 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.CreateCardCategoryRequest;
-import com.shinhan.knockknock.domain.dto.ReadCardCategoryResponse;
+import com.shinhan.knockknock.domain.dto.cardcategory.CreateCardCategoryRequest;
+import com.shinhan.knockknock.domain.dto.cardcategory.ReadCardCategoryResponse;
 import com.shinhan.knockknock.domain.entity.CardCategoryEntity;
 import com.shinhan.knockknock.repository.CardCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;

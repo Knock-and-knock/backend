@@ -1,6 +1,6 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.CreateWelfareRequest;
+import com.shinhan.knockknock.domain.dto.welfare.CreateWelfareRequest;
 import com.shinhan.knockknock.domain.entity.WelfareEntity;
 import com.shinhan.knockknock.repository.WelfareRepository;
 import org.junit.jupiter.api.DisplayName;

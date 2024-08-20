@@ -1,8 +1,8 @@
 package com.shinhan.knockknock.controller;
 
-import com.shinhan.knockknock.domain.dto.CreateCardCategoryRequest;
-import com.shinhan.knockknock.domain.dto.CreateCardHistoryRequest;
-import com.shinhan.knockknock.domain.dto.ReadCardHistoryResponse;
+import com.shinhan.knockknock.domain.dto.cardcategory.CreateCardCategoryRequest;
+import com.shinhan.knockknock.domain.dto.cardhistory.CreateCardHistoryRequest;
+import com.shinhan.knockknock.domain.dto.cardhistory.ReadCardHistoryResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.repository.CardRepository;
 import com.shinhan.knockknock.service.CardCategoryService;

@@ -1,7 +1,7 @@
 package com.shinhan.knockknock.controller;
 
-import com.shinhan.knockknock.domain.dto.CreateWelfareBookRequest;
-import com.shinhan.knockknock.domain.dto.ReadWelfareBookResponse;
+import com.shinhan.knockknock.domain.dto.welfarebook.CreateWelfareBookRequest;
+import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
 import com.shinhan.knockknock.service.WelfareBookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.domain.dto;
+package com.shinhan.knockknock.domain.dto.welfarebook;
 
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.domain.entity.WelfareEntity;
@@ -14,7 +14,9 @@ import java.sql.Timestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReadWelfareBookResponse {
+public class CreateWelfareBookRequest {
+    @Schema(example = "1")
+    private Long welfareBookNo;
     @Schema(example = "2024-08-08 09:00")
     private Timestamp welfareBookStartDate;
     @Schema(example = "2024-08-08 13:00")
