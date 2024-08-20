@@ -1,7 +1,7 @@
 package com.shinhan.knockknock.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shinhan.knockknock.domain.dto.LoginUserRequest;
+import com.shinhan.knockknock.domain.dto.IdLoginUserRequest;
 import com.shinhan.knockknock.domain.dto.TokenResponse;
 import com.shinhan.knockknock.service.AuthService;
 import org.junit.jupiter.api.DisplayName;
@@ -38,16 +38,15 @@ public class AuthControllerTest {
     @DisplayName("아이디/패스워드 로그인 성공 테스트")
     public void testLoginSuccess() throws Exception {
         // given
-        LoginUserRequest request = LoginUserRequest.builder()
+        IdLoginUserRequest request = IdLoginUserRequest.builder()
                 .userId("protector01")
                 .userPassword("1234")
-                .loginType("NORMAL")
                 .build();
 
         TokenResponse response = authService.loginUser(request);
 
         // when & then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/login/normal")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(MockMvcResultHandlers.print())
@@ -60,10 +59,9 @@ public class AuthControllerTest {
     @DisplayName("아이디/패스워드 로그인 실패 테스트 - 존재하지 않는 아이디")
     public void testLoginFailUserNotFound() throws Exception {
         // given
-        LoginUserRequest request = LoginUserRequest.builder()
-                .userId("test01")
+        IdLoginUserRequest request = IdLoginUserRequest.builder()
+                .userId("protector04")
                 .userPassword("1234")
-                .loginType("NORMAL")
                 .build();
 
         Exception exception = assertThrows(UsernameNotFoundException.class, () -> {
@@ -71,7 +69,7 @@ public class AuthControllerTest {
         });
 
         // when & then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/login/normal")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(MockMvcResultHandlers.print())
@@ -83,10 +81,9 @@ public class AuthControllerTest {
     @DisplayName("아이디/패스워드 로그인 실패 테스트 - 비밀번호 불일치")
     public void testLoginFailBadCredentials() throws Exception {
         // given
-        LoginUserRequest request = LoginUserRequest.builder()
+        IdLoginUserRequest request = IdLoginUserRequest.builder()
                 .userId("protector01")
                 .userPassword("123456")
-                .loginType("NORMAL")
                 .build();
 
         Exception exception = assertThrows(BadCredentialsException.class, () -> {
@@ -94,7 +91,7 @@ public class AuthControllerTest {
         });
 
         // when & then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/login/normal")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(MockMvcResultHandlers.print())

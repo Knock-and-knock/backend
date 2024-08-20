@@ -26,7 +26,9 @@ public class CreateWelfareBookRequest {
     @Schema(example = "")
     private boolean welfareBookIsComplete;
     @Schema(example = "1")
-    private UserEntity userNo;
-    @Schema(example = "1")
-    private WelfareEntity welfareNo;
+    private Long userNo;
+    @Schema(example = "가정 돌봄")
+    private String welfareName;
+    @Schema(example = "6000")
+    private Long welfarePirce;
 }

@@ -2,10 +2,11 @@ package com.shinhan.knockknock.domain.dto;
 
 import lombok.*;
 
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-public class SimpleLoginUserRequest extends LoginUserRequest{
+public class SimpleLoginUserRequest{
     private long userNo;
     private String userSimplePassword;
 
