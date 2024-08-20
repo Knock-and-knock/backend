@@ -7,6 +7,7 @@ import com.shinhan.knockknock.service.CardIssueService;
 import com.shinhan.knockknock.service.CardService;
 import com.shinhan.knockknock.service.ClovaOCRService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/v1/card")
+@Tag(name = "카드", description = "카드 발급, 조회 API")
 public class CardController {
 
     @Autowired
@@ -32,7 +34,7 @@ public class CardController {
     따라서 비동기 작업 수행시 202로 변경 (test 위해서)
      */
     @Operation(summary = "카드 발급", description= "발급 신청 폼 받고 1분 후 카드 발급")
-    @PostMapping("/apply")
+    @PostMapping
     @ResponseStatus(HttpStatus.ACCEPTED) // 비동기 테스트 위해서 ACCEPTED로 가도록 추가
     public CreateCardIssueResponse createCardIssue(@RequestBody CreateCardIssueRequest request) {
         CreateCardIssueResponse createCardIssueResponse = cardIssueService.createPostCardIssue(request);
@@ -40,7 +42,7 @@ public class CardController {
     }
 
     @Operation(summary = "본인 카드 조회", description ="발급 신청 후 비동기로 발급되어 1분 후 조회 가능")
-    @GetMapping("/read/{userNo}")
+    @GetMapping("/{userNo}")
     public List<ReadCardResponse> readDetail(@PathVariable("userNo") Long userNo) {
         return (List<ReadCardResponse>)cardService.readGetCards(userNo);
     }

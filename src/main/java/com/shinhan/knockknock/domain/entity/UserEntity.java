@@ -45,7 +45,7 @@ public class UserEntity {
     @Column(name = "user_type")
     @NotNull
     @Enumerated(EnumType.STRING)
-    private UserRole userType;
+    private UserRoleEnum userType;
 
     @Column(name = "user_birth")
     @Temporal(TemporalType.DATE)
