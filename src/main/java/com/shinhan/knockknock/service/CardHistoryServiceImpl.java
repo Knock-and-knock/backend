@@ -2,6 +2,7 @@ package com.shinhan.knockknock.service;
 
 import com.shinhan.knockknock.domain.dto.CreateCardHistoryRequest;
 import com.shinhan.knockknock.domain.dto.ReadCardHistoryResponse;
+import com.shinhan.knockknock.domain.entity.CardCategoryEntity;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
@@ -28,6 +29,7 @@ public class CardHistoryServiceImpl implements CardHistoryService {
     @Override
     public Long createCardHistory(CreateCardHistoryRequest request) {
         try {
+            // DTO를 엔티티로 변환하고 저장
             CardHistoryEntity newCardHistory = cardHistoryRepo.save(dtoToEntity(request));
             return newCardHistory.getCardHistoryNo();
         } catch (DataAccessException e) {
@@ -40,15 +42,16 @@ public class CardHistoryServiceImpl implements CardHistoryService {
     @Override
     public List<ReadCardHistoryResponse> readAll() {
         try {
+            // 모든 카드 내역 조회
             List<CardHistoryEntity> entityList = cardHistoryRepo.findAll();
             if (entityList.isEmpty()) {
                 throw new NoSuchElementException("카드 내역이 존재하지 않습니다.");
             }
 
+            // 각 카드 내역을 DTO로 변환
             return entityList.stream().map(entity -> {
-                UserEntity user = userRepository.findById(entity.getCardId().getUserNo())
-                        .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
-                return entityToDto(entity, user);
+                CardEntity card = entity.getCard(); // CardEntity 가져오기
+                return entityToDto(entity, card);
             }).collect(Collectors.toList());
 
         } catch (NoSuchElementException e) {
@@ -67,4 +70,31 @@ public class CardHistoryServiceImpl implements CardHistoryService {
         return relatedUser.getUserName();
     }
 
+    @Override
+    public CardHistoryEntity dtoToEntity(CreateCardHistoryRequest request) {
+        // DTO를 엔티티로 변환
+        return CardHistoryEntity.builder()
+                .cardHistoryNo(request.getCardHistoryNo())
+                .cardHistoryAmount(request.getCardHistoryAmount())
+                .cardHistoryShopname(request.getCardHistoryShopname())
+                .cardHistoryApprove(request.getCardHistoryApprove())
+                .cardCategory(CardCategoryEntity.builder().cardCategoryNo(request.getCardCategoryNo()).build())
+                .card(CardEntity.builder().cardId(request.getCardNo()).build())
+                .build();
+    }
+
+    @Override
+    public ReadCardHistoryResponse entityToDto(CardHistoryEntity entity, CardEntity card) {
+        // 엔티티를 DTO로 변환
+        return ReadCardHistoryResponse.builder()
+                .cardHistoryAmount(entity.getCardHistoryAmount())
+                .cardHistoryShopname(entity.getCardHistoryShopname())
+                .cardHistoryApprove(entity.getCardHistoryApprove())
+                .cardCategoryNo(entity.getCardCategoryNo())
+                .cardNo(entity.getCardId())
+                .cardBank(card.getCardBank())
+                .cardAccount(card.getCardAccount())
+                .isCardFamily(card.isCardIsfamily())
+                .build();
+    }
 }

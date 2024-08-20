@@ -30,7 +30,7 @@ public class WelfareBookServiceTest {
     public void testCreateWelfareBook() {
         // Given
         CreateWelfareBookRequest request = CreateWelfareBookRequest.builder()
-                .userId("user123")
+                .userNo(1)
                 .welfareBookStartDate(Timestamp.valueOf("2024-08-01 10:00:00"))
                 .welfareBookEndDate(Timestamp.valueOf("2024-08-31 18:00:00"))
                 .welfareBookIsCansle(false)

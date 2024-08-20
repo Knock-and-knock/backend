@@ -40,7 +40,7 @@ public class MatchServiceImpl implements MatchService {
                 .orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다."));
 
         // 피보호자 계정 존재 여부 확인
-        UserEntity protegeUser = userRepository.findByUserNameAndUserPhone(
+        UserEntity protegeUser = userRepository.findByCards_CardBankAndCards_CardAccountAndCards_CardIsfamilyFalse(
                         request.getProtegeName(), request.getProtegePhone())
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
 
