@@ -1,17 +1,12 @@
 package com.shinhan.knockknock.domain.dto;
 
-import com.shinhan.knockknock.domain.entity.LoginTypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SimpleLoginUserRequest {
+@Getter
+public class SimpleLoginUserRequest extends LoginUserRequest{
     private long userNo;
     private String userSimplePassword;
-    private LoginTypeEnum loginType;
+
 }
