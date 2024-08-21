@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.domain.dto;
+package com.shinhan.knockknock.domain.dto.cardhistory;
 
 import com.shinhan.knockknock.domain.entity.CardCategoryEntity;
 import com.shinhan.knockknock.domain.entity.CardEntity;
@@ -23,9 +23,12 @@ public class ReadCardHistoryResponse {
     @Schema(example = "2024-08-08 17:30")
     private Timestamp cardHistoryApprove;
     @Schema(example = "1")
-    private CardCategoryEntity cardCategoryNo;
+    private Long cardCategoryNo;
     @Schema(example = "1")
-    private CardEntity cardId;
-    @Schema(example = "홍길동")
-    private String userName;
-}
+    private Long cardNo;
+    @Schema(example = "신한은행")
+    private String cardBank;
+    @Schema(example = "1234-1234-1234")
+    private String cardAccount;
+    @Schema(example = "True")
+    private boolean isCardFamily;}
