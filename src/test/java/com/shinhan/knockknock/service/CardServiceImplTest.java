@@ -4,9 +4,11 @@ import com.shinhan.knockknock.domain.dto.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.ReadCardResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
+import com.shinhan.knockknock.repository.CardIssueRepository;
 import com.shinhan.knockknock.repository.CardRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,6 +33,9 @@ public class CardServiceImplTest {
 
     @MockBean
     private CardRepository cardRepository;
+
+    @MockBean
+    private CardIssueRepository cardIssueRepository;
 
     @Test
     @DisplayName("scheduleCreatePostCard 메소드 테스트")

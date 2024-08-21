@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Example</title>
+</head>
+<body>
+<h1>Notification Example</h1>
+
+<!-- Button to subscribe as user 1 -->
+<button id="subscribe-btn">Subscribe as User 1</button>
+
+<!-- Notification list -->
+<div id="notifications" style="display:none;">
+    <h2>Incoming Notifications:</h2>
+    <ul id="notification-list">
+        <!-- Notifications will appear here -->
+    </ul>
+</div>
+
+<script>
+    let eventSource;
+
+    // 1. 구독 버튼
+    document.getElementById('subscribe-btn').addEventListener('click', function() {
+        // userNo로 구독을 만들어야 함
+        eventSource = new EventSource('http://localhost:9090/api/v1/notification/1');
+
+        // sse 이벤틑 듣기
+        eventSource.addEventListener('userNo1', event => {
+            console.log('Received event:', event.data);
+            const notificationList = document.getElementById('notification-list');
+            const newNotification = document.createElement('li');
+            newNotification.textContent = event.data;
+            notificationList.appendChild(newNotification);
+        });
+
+        // Handle connection errors
+        eventSource.onerror = function() {
+            console.error('Connection error occurred.');
+            eventSource.close();
+        };
+
+        document.getElementById('subscribe-btn').style.display = 'none';
+        document.getElementById('notifications').style.display = 'block';
+    });
+</script>
+</body>
+</html>
