@@ -21,7 +21,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "로그인 [In Progress]", description = "아이디/패스워드, 간편비밀번호 로그인을 위한 api")
+    @Operation(summary = "아이디/패스워드 로그인", description = "아이디/패스워드 로그인을 위한 api")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "401", description = "로그인 실패")
@@ -40,6 +40,11 @@ public class AuthController {
         return ResponseEntity.status(200).body(response);
     }
 
+    @Operation(summary = "비밀번호 로그인", description = "간편비밀번호 로그인을 위한 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인 실패")
+    })
     @PostMapping("/login/simple")
     public ResponseEntity<TokenResponse> simpleLogin(@RequestBody SimpleLoginUserRequest request) {
         TokenResponse response = null;
