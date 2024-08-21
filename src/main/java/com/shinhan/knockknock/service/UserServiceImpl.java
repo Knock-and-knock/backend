@@ -2,6 +2,7 @@ package com.shinhan.knockknock.service;
 
 import com.shinhan.knockknock.domain.dto.CreateUserRequest;
 import com.shinhan.knockknock.domain.dto.ReadUserResponse;
+import com.shinhan.knockknock.domain.dto.UpdateUserRequest;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import com.shinhan.knockknock.repository.UserRepository;
@@ -17,9 +18,10 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
@@ -92,55 +94,48 @@ public class UserServiceImpl implements UserService{
     @Override
     public ReadUserResponse readUser(long userNo) {
         UserEntity user = userRepository.findById(userNo)
-                .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
-        //System.out.println(user);
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
+
         ReadUserResponse readUserResponse = null;
         if(user.getUserType().equals(UserRoleEnum.PROTECTOR)){  // 보호자인 경우
             if(user.getMatchProtector() != null && user.getMatchProtector().getMatchStatus().equals("ACCEPT")) { // 매칭 정보가 있는 경우
                 UserEntity protege = user.getMatchProtector().getUserProtege();
-                readUserResponse = ReadUserResponse.builder()
-                        .userNo(user.getUserNo())
-                        .userId(user.getUserId())
-                        .userName(user.getUserName())
-                        .userType(user.getUserType())
-                        .userPhone(user.getUserPhone())
-                        .protegeName(protege.getUserName())
-                        .protegeBirth(protege.getUserBirth())
-                        .protegeGender(protege.getUserGender())
-                        .protegeHeight(protege.getUserHeight())
-                        .protegeWeight(protege.getUserWeight())
-                        .protegeDisease(protege.getUserDisease())
-                        .protegeAddress(protege.getUserAddress())
-                        .build();
+                readUserResponse = entityToDtoProtector(user, protege);
             } else {    // 매칭 정보가 없는 경우 본인 정보만 조회
-                readUserResponse = ReadUserResponse.builder()
-                        .userNo(user.getUserNo())
-                        .userId(user.getUserId())
-                        .userName(user.getUserName())
-                        .userPhone(user.getUserPhone())
-                        .userType(user.getUserType())
-                        .build();
+                readUserResponse = entityToDtoProtector(user, user);
             }
         } else if(user.getUserType().equals(UserRoleEnum.PROTEGE)){ // 피보호자인 경우
-            readUserResponse = ReadUserResponse.builder()
-                    .userNo(user.getUserNo())
-                    .userId(user.getUserId())
-                    .userName(user.getUserName())
-                    .userType(user.getUserType())
-                    .userPhone(user.getUserPhone())
-                    .protegeName(user.getUserName())
-                    .protegeBirth(user.getUserBirth())
-                    .protegeGender(user.getUserGender())
-                    .protegeHeight(user.getUserHeight())
-                    .protegeWeight(user.getUserWeight())
-                    .protegeDisease(user.getUserDisease())
-                    .protegeAddress(user.getUserAddress())
-                    .build();
+            readUserResponse = entityToDtoProtector(user, user);
         } else {
             throw new RuntimeException("잘못된 요청입니다.");
         }
 
         return readUserResponse;
+    }
+
+    @Override
+    public ReadUserResponse updateUser(long userNo, UpdateUserRequest request) {
+        UserEntity user = userRepository.findById(userNo)
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
+
+        ReadUserResponse response = null;
+        if(user.getUserType().equals(UserRoleEnum.PROTECTOR)){
+            if(user.getMatchProtector() != null && user.getMatchProtector().getMatchStatus().equals("ACCEPT")) {
+                UserEntity protege = user.getMatchProtector().getUserProtege();
+                UserEntity setProtege = setUpdateInfo(protege, request);
+                userRepository.save(setProtege);
+                response = entityToDtoProtector(user, setProtege);
+            } else {
+                throw new RuntimeException("매칭 정보가 없습니다.");
+            }
+        } else if(user.getUserType().equals(UserRoleEnum.PROTEGE)){
+            UserEntity setProtege = setUpdateInfo(user, request);
+            userRepository.save(setProtege);
+            response = entityToDtoProtector(setProtege, setProtege);
+        } else {
+            throw new RuntimeException("잘못된 요청입니다.");
+        }
+        return response;
     }
 
     private SingleMessageSentResponse sendMessage(String phone, String validationNum) {
@@ -151,5 +146,16 @@ public class UserServiceImpl implements UserService{
         message.setText("[똑똑] 인증번호는 [" + validationNum + "] 입니다.");
 
         return this.defualtMessageService.sendOne(new SingleMessageSendingRequest(message));
+    }
+
+    private UserEntity setUpdateInfo(UserEntity user, UpdateUserRequest request) {
+        user.setUserBirth(request.getUserBirth());
+        user.setUserGender(request.getUserGender());
+        user.setUserAddress(request.getUserAddress());
+        user.setUserHeight(request.getUserHeight());
+        user.setUserWeight(request.getUserWeight());
+        user.setUserDisease(request.getUserDisease());
+
+        return user;
     }
 }

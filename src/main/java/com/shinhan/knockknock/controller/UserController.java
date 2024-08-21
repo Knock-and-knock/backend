@@ -1,10 +1,7 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.auth.JwtProvider;
-import com.shinhan.knockknock.domain.dto.CreateUserRequest;
-import com.shinhan.knockknock.domain.dto.ReadUserResponse;
-import com.shinhan.knockknock.domain.dto.UserValidationRequest;
-import com.shinhan.knockknock.domain.dto.UserValidationResponse;
+import com.shinhan.knockknock.domain.dto.*;
 import com.shinhan.knockknock.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 @Tag(name = "회원", description = "회원 API")
@@ -39,7 +37,7 @@ public class UserController {
     public ResponseEntity<UserValidationResponse> duplicateCheckUserId(@PathVariable String userId) {
         Boolean result = userService.readUserId(userId);
         String message = "";
-        if(result){
+        if (result) {
             message = "사용가능한 아이디입니다.";
         } else {
             message = "이미 사용중인 아이디입니다.";
@@ -93,7 +91,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "만료된 인증번호")
     })
     @PostMapping("/validation/number")
-    public ResponseEntity<UserValidationResponse> validationSms(@RequestBody UserValidationRequest request){
+    public ResponseEntity<UserValidationResponse> validationSms(@RequestBody UserValidationRequest request) {
         /*HttpSession httpSession = request.getSession(false);
         String validationNum = (String)httpSession.getAttribute("validationNum");
         System.out.println(httpSession.getId());
@@ -101,15 +99,15 @@ public class UserController {
         System.out.println("세션인증번호="+validationNum);*/
         String validation = request.getValidationNum();
         String validationNum = validationMap.get(request.getPhone());
-        System.out.println("validation="+validation);
-        System.out.println("validationMap2="+validationMap);
+        System.out.println("validation=" + validation);
+        System.out.println("validationMap2=" + validationMap);
         String message = "";
         boolean result = false;
         int status = 400;
-        if(validationNum == null) {
+        if (validationNum == null) {
             message = "인증번호가 만료되었습니다. 다시 시도해주세요.";
         } else {
-            if(validationNum.equals(validation)){
+            if (validationNum.equals(validation)) {
                 message = "인증이 완료되었습니다.";
                 result = true;
                 validationMap.remove(request.getPhone());
@@ -135,7 +133,7 @@ public class UserController {
         String message = "";
         int status = 200;
         boolean result = false;
-        try{
+        try {
             result = userService.createUser(request);
             message = "회원가입에 성공하였습니다.";
         } catch (DuplicateKeyException e) {
@@ -172,6 +170,34 @@ public class UserController {
                     .message(e.getMessage())
                     .build());
         }
+    }
+
+    @Operation(summary = "회원 정보 수정", description = "마이페이지 부가 정보 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "정보 수정 성공"),
+            @ApiResponse(responseCode = "404", description = "회원 조회 실패"),
+            @ApiResponse(responseCode = "400", description = "정보 수정 불가")
+    })
+    @PutMapping
+    public ResponseEntity<ReadUserResponse> updateUser(
+            @RequestHeader("Authorization") String header,
+            @RequestBody UpdateUserRequest request) {
+        long userNo = jwtProvider.getUserNoFromHeader(header);
+        int status = 400;
+        String message = "";
+        try {
+            ReadUserResponse response = userService.updateUser(userNo, request);
+            return ResponseEntity.status(200).body(response);
+        } catch (NoSuchElementException e) {
+            status = 404;
+            message = e.getMessage();
+        } catch (Exception e){
+            message = e.getMessage();
+        }
+
+        return ResponseEntity.status(status).body(ReadUserResponse.builder()
+                .message(message)
+                .build());
     }
 
     private String generateRandomNumber() {
