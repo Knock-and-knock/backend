@@ -34,6 +34,9 @@ public class WelfareBookEntity {
     @Column(name = "welfarebook_iscomplete")
     private boolean welfareBookIsComplete;
 
+    @Column(name = "welfarebook_totalprice")
+    private Long welfareBookTotalPrice;
+
     @ManyToOne
     @JoinColumn(name = "user_no")
     @NotNull

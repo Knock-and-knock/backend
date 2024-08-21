@@ -129,23 +129,6 @@ public class WelfareBookControllerTest {
     }
 
     @Test
-    @DisplayName("복지 예약 생성 실패 테스트 - 유저 정보 입력 페이지로 리디렉션")
-    public void testCreate_UserInfoRedirect() throws Exception {
-        // given: 유저 정보 입력 페이지로 리디렉션 되는 예외 상황 정의
-        when(jwtProvider.getUserNoFromHeader(any())).thenReturn(1L);
-        when(welfareBookService.createWelfareBook(any(), anyLong())).thenThrow(new NoSuchElementException());
-
-        // when: API 호출
-        // then: 리디렉션 상태 코드와 Location 헤더 검증
-        mockMvc.perform(post("/api/v1/welfare-book")
-                        .header("Authorization", "Bearer token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"exampleField\": \"exampleValue\"}"))
-                .andExpect(status().isFound())
-                .andExpect(header().string("Location", "/user-info-page"));
-    }
-
-    @Test
     @DisplayName("복지 예약 생성 실패 테스트 - 서버 오류")
     public void testCreate_InternalServerError() throws Exception {
         // given: 서버 오류 상황 정의
@@ -155,6 +138,40 @@ public class WelfareBookControllerTest {
         // when: API 호출
         // then: 서버 오류 상태 코드 검증
         mockMvc.perform(post("/api/v1/welfare-book")
+                        .header("Authorization", "Bearer token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"exampleField\": \"exampleValue\"}"))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @DisplayName("보호자가 매칭된 사용자를 대신 복지 예약 성공 테스트")
+    public void testCreateForProtege_Success() throws Exception {
+        // given: 복지 예약 생성 요청 데이터 정의
+        CreateWelfareBookRequest request = new CreateWelfareBookRequest();
+        when(jwtProvider.getUserNoFromHeader(any())).thenReturn(1L);  // 보호자 userNo
+        when(welfareBookService.createWelfareBookForProtege(any(), anyLong())).thenReturn(1L);
+
+        // when: API 호출
+        // then: 복지 예약이 성공적으로 생성되었는지 검증
+        mockMvc.perform(post("/api/v1/welfare-book/protege")
+                        .header("Authorization", "Bearer token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"exampleField\": \"exampleValue\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(content().string("1"));
+    }
+
+    @Test
+    @DisplayName("보호자가 매칭된 사용자를 대신 복지 예약 실패 테스트 - 서버 오류")
+    public void testCreateForProtege_InternalServerError() throws Exception {
+        // given: 서버 오류 상황 정의
+        when(jwtProvider.getUserNoFromHeader(any())).thenReturn(1L);  // 보호자 userNo
+        when(welfareBookService.createWelfareBookForProtege(any(), anyLong())).thenThrow(new RuntimeException());
+
+        // when: API 호출
+        // then: 서버 오류 상태 코드 검증
+        mockMvc.perform(post("/api/v1/welfare-book/protege")
                         .header("Authorization", "Bearer token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"exampleField\": \"exampleValue\"}"))

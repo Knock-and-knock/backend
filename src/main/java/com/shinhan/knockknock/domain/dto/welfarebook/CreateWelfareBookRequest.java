@@ -73,4 +73,8 @@ public class CreateWelfareBookRequest {
     @Schema(example = "6000")
     @NotNull
     private Long welfarePrice;
+
+    @Schema(example = "24000")
+    @NotNull
+    private Long welfareBookTotalPrice;
 }

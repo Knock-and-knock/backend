@@ -63,6 +63,19 @@ public class WelfareBookServiceImpl implements WelfareBookService {
         return newWelfareBook.getWelfareBookNo();
     }
 
+    // DTO -> Entity 변환, 총금액 포함
+    public WelfareBookEntity dtoToEntity(CreateWelfareBookRequest request, UserEntity user, WelfareEntity welfare) {
+        return WelfareBookEntity.builder()
+                .welfareBookStartDate(request.getWelfareBookStartDate())
+                .welfareBookEndDate(request.getWelfareBookEndDate())
+                .welfareBookIsCansle(request.isWelfareBookIsCansle())
+                .welfareBookIsComplete(request.isWelfareBookIsComplete())
+                .user(user)
+                .welfare(welfare)
+                .welfareBookTotalPrice(request.getWelfareBookTotalPrice())  // 프론트엔드에서 계산된 총금액 저장
+                .build();
+    }
+
     @Override
     public List<ReadWelfareBookResponse> readAllByUserNo(Long userNo) {
         // userNo 별로 복지 예약 내역 조회
@@ -89,4 +102,5 @@ public class WelfareBookServiceImpl implements WelfareBookService {
         welfareBookRepo.deleteById(welfareBookNo);
     }
 }
+
 
