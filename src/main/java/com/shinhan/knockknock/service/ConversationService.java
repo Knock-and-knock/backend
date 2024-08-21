@@ -19,9 +19,6 @@ public class ConversationService {
     ChainService chainService;
 
     @Autowired
-    ChatbotService chatbotService;
-
-    @Autowired
     TextToSpeechService textToSpeechService;
 
     @Autowired
@@ -32,9 +29,6 @@ public class ConversationService {
 
     public byte[] conversation(ConversationRequest request) {
         log.info("📌 Received conversation request: input={}, conversationRoomNo={}", request.getInput(), request.getConversationRoomNo());
-
-        // 이전 대화내용 조회
-        List<ConversationLogResponse> conversationLogs = conversationLogService.findLast5ByConversationRoomNo(request.getConversationRoomNo());
 
         // Chatbot 답변 생성
         ChatbotResponse response = chainService.chain(request);

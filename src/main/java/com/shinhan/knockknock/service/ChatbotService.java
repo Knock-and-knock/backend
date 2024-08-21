@@ -7,6 +7,7 @@ import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRequest;
 import com.shinhan.knockknock.exception.ChatbotException;
+import kotlin.jvm.internal.TypeReference;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -33,48 +34,20 @@ public class ChatbotService {
     @Value("${MODEL_NAME}")
     private String modelName;
 
-    @Value("classpath:prompts/chatbot_chain_system.prompt")
-    private Resource systemPromptResource;
-
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
 
-    //    public ChatbotResponse chatbot(ConversationRequest request, List<ConversationLogResponse> conversationLogs) {
-//        // RestTemplate 객체 생성
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        // 요청 생성
-//        HttpEntity<Map<String, Object>> requestEntity = createChatbotRequest(request.getInput(), conversationLogs);
-//
-//        // API 호출 및 응답 받기
-//        ResponseEntity<String> responseEntity = restTemplate.exchange(
-//                UriComponentsBuilder.fromHttpUrl(API_URL).toUriString(),
-//                HttpMethod.POST,
-//                requestEntity,
-//                String.class
-//        );
-//
-//        // 응답 상태 코드 확인 및 처리
-//        if (responseEntity.getStatusCode() == HttpStatus.OK) {
-//            try {
-//                return parseResponse(responseEntity.getBody());
-//            } catch (Exception e) {
-//                throw new ChatbotException("Failed to parse chatbot response", e);
-//            }
-//        }
-//
-//        return ChatbotResponse.builder()
-//                .content("Error: " + responseEntity.getStatusCode())
-//                .build();
-//    }
-    public void classificationChain(String input) {
+    public String classificationChain(List<Map<String, String>> classificationPrompt) throws JsonProcessingException {
+        ChatbotResponse response = getChatbotResponse(classificationPrompt);
+        System.out.println(response);
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getContent());
+
+        return rootNode.path("taskNumber").asText();
     }
 
-    public ChatbotResponse chatbotChain(ConversationRequest request, List<ConversationLogResponse> conversationLogs) {
-        String systemPrompt = loadSystemPrompt(systemPromptResource);
-        List<Map<String, String>> messagesList = createMessagesList(systemPrompt, request.getInput(), conversationLogs);
-
-        return getChatbotResponse(messagesList);
+    public ChatbotResponse chatbotChain(List<Map<String, String>> chatbotPrompt) {
+        return getChatbotResponse(chatbotPrompt);
     }
 
     private ChatbotResponse getChatbotResponse(List<Map<String, String>> messagesList) {
@@ -93,7 +66,7 @@ public class ChatbotService {
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
         // JSON 변환 및 출력
-        //printChatbotRequest(requestBody);
+//        printChatbotRequest(requestBody);
 
         // RestTemplate 객체 생성
         RestTemplate restTemplate = new RestTemplate();
@@ -120,16 +93,7 @@ public class ChatbotService {
                 .build();
     }
 
-    /**
-     * <pre>
-     * 메소드명   : createMessagesList
-     * 설명       : 사용자의 입력과 대화 로그를 기반으로 챗봇 API에 전달할 메시지 리스트를 생성합니다.
-     * </pre>
-     *
-     * @param input            사용자가 입력한 메시지
-     * @param conversationLogs 이전 대화 로그 리스트
-     * @return List<Map < String, String>>  생성된 메시지 리스트
-     */
+
     private List<Map<String, String>> createMessagesList(String systemPrompt, String input, List<ConversationLogResponse> conversationLogs) {
         List<Map<String, String>> messagesList = new ArrayList<>();
 
@@ -158,15 +122,6 @@ public class ChatbotService {
         messagesList.add(userMessage1);
 
         return messagesList;
-    }
-
-    private String loadSystemPrompt(Resource systemPromptResource) {
-        try {
-            Path path = Paths.get(systemPromptResource.getURI());
-            return Files.readString(path, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new ChatbotException("Failed to load system prompt", e);
-        }
     }
 
     /**
