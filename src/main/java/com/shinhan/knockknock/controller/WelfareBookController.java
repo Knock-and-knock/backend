@@ -8,9 +8,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -61,21 +63,27 @@ public class WelfareBookController {
     @Operation(summary = "복지 예약 하기", description = "복지 서비스를 예약하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "복지 예약 생성 성공"),
-            @ApiResponse(responseCode = "302", description = "사용자 정보 입력 페이지로 이동"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청, 입력된 값이 없음"),
             @ApiResponse(responseCode = "500", description = "복지 예약 생성 실패")
     })
     @PostMapping
-    public ResponseEntity<Long> create(
+    public ResponseEntity<?> create(
             @RequestHeader("Authorization") String header,
-            @RequestBody CreateWelfareBookRequest request) {
+            @Valid @RequestBody CreateWelfareBookRequest request,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력된 값이 없습니다.");
+        }
+
         Long userNo = jwtProvider.getUserNoFromHeader(header);
         try {
             Long welfareBookNo = welfareBookService.createWelfareBook(request, userNo);
             return ResponseEntity.status(HttpStatus.CREATED).body(welfareBookNo);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("/user-info-page")).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("사용자 또는 복지 항목이 존재하지 않습니다.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("복지 예약 생성 중 오류가 발생했습니다.");
         }
     }
 

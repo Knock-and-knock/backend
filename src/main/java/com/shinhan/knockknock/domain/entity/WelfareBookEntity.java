@@ -60,6 +60,8 @@ public class WelfareBookEntity {
     @NotNull
     private WelfareEntity welfare;
 
+    public Long getWelfareNo(){ return welfare.getWelfareNo();}
+
     public String getWelfareName(){
         return welfare.getWelfareName();
     }

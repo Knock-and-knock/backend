@@ -22,7 +22,6 @@ public interface WelfareBookService {
     // DTO -> Entity
     default WelfareBookEntity dtoToEntity(CreateWelfareBookRequest request, UserEntity user, WelfareEntity welfare) {
         return WelfareBookEntity.builder()
-                .welfareBookNo(request.getWelfareBookNo())
                 .welfareBookStartDate(request.getWelfareBookStartDate())
                 .welfareBookEndDate(request.getWelfareBookEndDate())
                 .welfareBookIsCansle(request.isWelfareBookIsCansle())
