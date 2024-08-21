@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.cardhistory;
 
 import com.shinhan.knockknock.domain.dto.cardhistory.CreateCardHistoryRequest;
 import com.shinhan.knockknock.domain.dto.cardhistory.ReadCardHistoryResponse;

@@ -1,8 +1,8 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.domain.entity.CardEntity;
-import com.shinhan.knockknock.service.CardCategoryService;
-import com.shinhan.knockknock.service.CardHistoryService;
+import com.shinhan.knockknock.service.cardcategory.CardCategoryService;
+import com.shinhan.knockknock.service.cardhistory.CardHistoryService;
 import com.shinhan.knockknock.repository.CardRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

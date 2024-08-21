@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.welfarebook;
 
 import com.shinhan.knockknock.domain.dto.welfarebook.CreateWelfareBookRequest;
 import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;

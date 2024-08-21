@@ -3,7 +3,7 @@ package com.shinhan.knockknock.controller;
 import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.welfarebook.CreateWelfareBookRequest;
 import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
-import com.shinhan.knockknock.service.WelfareBookService;
+import com.shinhan.knockknock.service.welfarebook.WelfareBookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
 

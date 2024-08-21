@@ -3,7 +3,7 @@ package com.shinhan.knockknock.controller;
 import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.welfarebook.CreateWelfareBookRequest;
 import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
-import com.shinhan.knockknock.service.WelfareBookService;
+import com.shinhan.knockknock.service.welfarebook.WelfareBookService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
