@@ -45,6 +45,11 @@ public class ConversationLogServiceImpl implements ConversationLogService {
     }
 
     @Override
+    public List<ConversationLogResponse> findLastNByConversationRoomNo(int number, long conversationRoomNo) {
+        return conversationLogRepository.findLastNByConversationRoomNo(number, conversationRoomNo).stream().map(this::entityToDto).toList();
+    }
+
+    @Override
     public void updateConversationLog(long conversationLogNo, ConversationLogRequest request) {
         conversationLogRepository.findById(conversationLogNo)
                 .ifPresent(conversationLogEntity -> {

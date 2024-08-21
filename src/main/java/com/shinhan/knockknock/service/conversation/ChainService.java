@@ -1,9 +1,7 @@
 package com.shinhan.knockknock.service.conversation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRequest;
+import com.shinhan.knockknock.domain.dto.conversationroom.*;
 import com.shinhan.knockknock.service.WelfareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,40 +28,55 @@ public class ChainService {
 
         try {
             // 이전 대화내용 조회
-            List<ConversationLogResponse> conversationLogs = conversationLogService.findLast5ByConversationRoomNo(request.getConversationRoomNo());
+            List<ConversationLogResponse> conversationLogs = conversationLogService.findLastNByConversationRoomNo(5, request.getConversationRoomNo());
 
             // 사용자 입력에 따른 작업 분류
-            List<Map<String, String>> classificationPrompt = promptService.classificationPrompt(request.getInput());
-            String mainTaskNo = chatbotService.classificationChain(classificationPrompt).trim();
+            List<Map<String, String>> classificationPrompt = promptService.classificationPrompt(input, conversationLogs);
+
+            ClassificationResponse classificationResult = chatbotService.classificationChain(classificationPrompt);
+            String mainTaskNo = classificationResult.getMainTaskNumber();
+            String subTaskNo = classificationResult.getSubTaskNumber();
+
             System.out.println("mainTaskNo: " + mainTaskNo);
+            System.out.println("subTaskNo: " + subTaskNo);
 
             // Prompt 제작
-            List<Map<String, String>> chatbotPrompt;
             switch (mainTaskNo) {
                 case "001" -> {
-                    chatbotPrompt = welfareService(input, conversationLogs);
+                    return welfareService(subTaskNo, input, conversationLogs);
                 }
                 default -> {
-                    chatbotPrompt = dailyConversation(input, conversationLogs);
+                    return dailyConversation(input, conversationLogs);
                 }
             }
-
-            // Chatbot 답변 생성
-            ChatbotResponse response = chatbotService.chatbotChain(chatbotPrompt);
-
-            return response;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private List<Map<String, String>> dailyConversation(String input, List<ConversationLogResponse> conversationLogs){
+    private ChatbotResponse dailyConversation(String input, List<ConversationLogResponse> conversationLogs) {
         List<String> promptFilePathList = Collections.singletonList("prompts/basic.prompt");
-        return promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
+        List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
+        return chatbotService.chatbotChain(chatbotPrompt);
     }
 
-    private List<Map<String, String>> welfareService(String input, List<ConversationLogResponse> conversationLogs) {
+    private ChatbotResponse welfareService(String subTaskNo, String input, List<ConversationLogResponse> conversationLogs) throws JsonProcessingException {
+        InstructionResponse instructionResult = null;
+        switch (subTaskNo) {
+            case "001-02" -> {
+                List<Map<String, String>> instructionPrompt = promptService.instructionPrompt(input, conversationLogs);
+                instructionResult = chatbotService.instructionChain(instructionPrompt);
+            }
+        }
         List<String> promptFilePathList = Arrays.asList("prompts/basic.prompt", "prompts/welfare.prompt");
-        return promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
+        List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
+        ChatbotResponse response = chatbotService.chatbotChain(chatbotPrompt);
+
+        if (instructionResult != null){
+            response.setActionRequired(instructionResult.getActionRequired());
+            response.setServiceNumber(instructionResult.getServiceNumber());
+        }
+
+        return response;
     }
 }

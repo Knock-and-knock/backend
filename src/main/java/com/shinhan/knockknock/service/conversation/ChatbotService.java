@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ClassificationResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
+import com.shinhan.knockknock.domain.dto.conversationroom.InstructionResponse;
 import com.shinhan.knockknock.exception.ChatbotException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -29,18 +30,27 @@ public class ChatbotService {
 
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
 
-    public String classificationChain(List<Map<String, String>> classificationPrompt) throws JsonProcessingException {
+    public ClassificationResponse classificationChain(List<Map<String, String>> classificationPrompt) throws JsonProcessingException {
         ChatbotResponse response = getChatbotResponse(classificationPrompt);
-        System.out.println(response);
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(response.getContent());
 
-        ClassificationResponse.builder()
-                .mainTaskNumber(rootNode.path("mainTaskNumber").asText())
-                .subTaskNumber(rootNode.path("subTaskNumber").asText())
+        return ClassificationResponse.builder()
+                .mainTaskNumber(rootNode.path("mainTaskNumber").asText().trim())
+                .subTaskNumber(rootNode.path("subTaskNumber").asText().trim())
                 .build();
-        return rootNode.path("mainTaskNumber").asText();
+    }
+
+    public InstructionResponse instructionChain(List<Map<String, String>> instructionPrompt) throws JsonProcessingException {
+        ChatbotResponse response = getChatbotResponse(instructionPrompt);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getContent());
+        return InstructionResponse.builder()
+                .actionRequired(rootNode.path("actionRequired").asText().trim())
+                .serviceNumber(rootNode.path("serviceNumber").asText().trim())
+                .build();
     }
 
     public ChatbotResponse chatbotChain(List<Map<String, String>> chatbotPrompt) {
@@ -142,7 +152,12 @@ public class ChatbotService {
         int totalTokens = rootNode.path("usage").path("total_tokens").asInt();
 
         // DTO로 변환
-        return new ChatbotResponse(content, promptTokens, completionTokens, totalTokens);
+        return ChatbotResponse.builder()
+                .content(content)
+                .promptTokens(promptTokens)
+                .completionTokens(completionTokens)
+                .totalTokens(totalTokens)
+                .build();
     }
 
     private void printChatbotRequest(Map<String, Object> requestBody) {
