@@ -10,23 +10,25 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/conversation-room")
-@Tag(name = "대화방", description = "대화 방 관련 API 입니다.")
+@Tag(name = "대화방", description = "대화 방 관련 API")
 public class ConversationRoomController {
 
     @Autowired
     ConversationRoomService conversationRoomService;
 
-    @PostMapping("/")
-    @Operation(summary = "대화방 생성", description = "특정 유저의 대화방을 생성합니다.")
-    public ConversationRoomCreateResponse createConversationRoom(@RequestParam long userNo) {
+    @PostMapping
+    @Operation(summary = "대화방 생성", description = "로그인 한 유저의 대화방을 생성합니다.")
+    public ConversationRoomCreateResponse createConversationRoom() {
+        long userNo = 1L;
         Long roomNo = conversationRoomService.createConversationRoom(userNo);
-        return ConversationRoomCreateResponse.builder().conversationNo(roomNo).build();
+        return ConversationRoomCreateResponse.builder().conversationRoomNo(roomNo).build();
     }
 
     @GetMapping
@@ -36,7 +38,7 @@ public class ConversationRoomController {
     }
 
     @PutMapping("/{conversationRoomNo}")
-    @Operation(summary = "대화방 수정 [Not Use] [In Progress]", description = "특정 대화방을 수정합니다.")
+    @Operation(summary = "대화방 수정 [Not Use]", description = "특정 대화방을 수정합니다.")
     public ResponseEntity<MessageResponse> updateConversationRoom(@PathVariable long conversationRoomNo, @RequestBody ConversationRoomUpdateRequest request) {
         conversationRoomService.updateConversationRoom(conversationRoomNo, request);
         return ResponseEntity.ok(MessageResponse.builder().message("The conversation room has been successfully updated.").build());

@@ -16,7 +16,7 @@ import java.util.List;
 public class ConversationService {
 
     @Autowired
-    ChatbotService chatbotService;
+    ChainService chainService;
 
     @Autowired
     TextToSpeechService textToSpeechService;
@@ -30,11 +30,8 @@ public class ConversationService {
     public byte[] conversation(ConversationRequest request) {
         log.info("📌 Received conversation request: input={}, conversationRoomNo={}", request.getInput(), request.getConversationRoomNo());
 
-        // 이전 대화내용 조회
-        List<ConversationLogResponse> conversationLogs = conversationLogService.findLast5ByConversationRoomNo(request.getConversationRoomNo());
-
         // Chatbot 답변 생성
-        ChatbotResponse response = chatbotService.chatbot(request, conversationLogs);
+        ChatbotResponse response = chainService.chain(request);
 
         // 대화 내역 저장
         ConversationLogRequest conversationLog = ConversationLogRequest.builder()
