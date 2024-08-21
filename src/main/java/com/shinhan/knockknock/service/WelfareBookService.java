@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface WelfareBookService {
     // Create
-    Long createWelfareBook(CreateWelfareBookRequest request);
+    Long createWelfareBook(CreateWelfareBookRequest request, Long userNo);
 
     // Read
     List<ReadWelfareBookResponse> readAllByUserNo(Long userNo);
@@ -39,9 +39,9 @@ public interface WelfareBookService {
                 .welfareBookEndDate(entity.getWelfareBookEndDate())
                 .welfareBookIsCansle(entity.isWelfareBookIsCansle())
                 .welfareBookIsComplete(entity.isWelfareBookIsComplete())
-                .userNo(entity.getUserNo())
-                .welfareName(entity.getWelfareName())
-                .welfarePirce(entity.getWelfarePrice())
+                .userNo(entity.getUser().getUserNo())
+                .welfareName(entity.getWelfare().getWelfareName())
+                .welfarePrice(entity.getWelfare().getWelfarePrice())
                 .build();
     }
 }

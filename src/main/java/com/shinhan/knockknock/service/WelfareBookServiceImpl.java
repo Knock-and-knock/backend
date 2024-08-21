@@ -28,11 +28,18 @@ public class WelfareBookServiceImpl implements WelfareBookService {
     WelfareRepository welfareRepository;
 
     @Override
-    public Long createWelfareBook(CreateWelfareBookRequest request) {
+    public Long createWelfareBook(CreateWelfareBookRequest request, Long userNo) {
         // UserEntity와 WelfareEntity를 조회하여 엔티티에 설정
-        UserEntity user = userRepository.findById(request.getUserNo())
+        UserEntity user = userRepository.findById(userNo)
                 .orElseThrow(() -> new NoSuchElementException("해당 사용자가 존재하지 않습니다."));
-        WelfareEntity welfare = welfareRepository.findByWelfareNameAndWelfarePrice(request.getWelfareName(), request.getWelfarePirce())
+
+        // 사용자 정보 체크
+        if (user.getUserBirth() == null || user.getUserAddress() == null || user.getUserGender() == 0
+                || user.getUserHeight() == 0 || user.getUserWeight() == 0 || user.getUserDisease() == null) {
+            throw new NoSuchElementException("사용자 정보가 완전하지 않습니다.");
+        }
+
+        WelfareEntity welfare = welfareRepository.findByWelfareNameAndWelfarePrice(request.getWelfareName(), request.getWelfarePrice())
                 .orElseThrow(() -> new NoSuchElementException("해당 복지 항목이 존재하지 않습니다."));
 
         WelfareBookEntity newWelfareBook = welfareBookRepo.save(dtoToEntity(request, user, welfare));

@@ -19,14 +19,14 @@ public class ReadWelfareBookResponse {
     private Timestamp welfareBookStartDate;
     @Schema(example = "2024-08-08 13:00")
     private Timestamp welfareBookEndDate;
-    @Schema(example = "")
+    @Schema(example = "false")
     private boolean welfareBookIsCansle;
-    @Schema(example = "")
+    @Schema(example = "true")
     private boolean welfareBookIsComplete;
     @Schema(example = "1")
     private Long userNo;
     @Schema(example = "가정 돌봄")
     private String welfareName;
     @Schema(example = "6000")
-    private Long welfarePirce;
+    private Long welfarePrice;
 }

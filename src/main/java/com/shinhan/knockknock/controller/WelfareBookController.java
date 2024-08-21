@@ -1,5 +1,6 @@
 package com.shinhan.knockknock.controller;
 
+import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.welfarebook.CreateWelfareBookRequest;
 import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
 import com.shinhan.knockknock.service.WelfareBookService;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -23,13 +25,16 @@ public class WelfareBookController {
 
     private final WelfareBookService welfareBookService;
 
-    @Operation(summary = "복지 예약 전체 조회", description = "특정 사용자(userNo)의 복지 예약 내역을 전부 조회하는 API입니다.")
+    private final JwtProvider jwtProvider;
+
+    @Operation(summary = "복지 예약 전체 조회", description = "특정 사용자의 복지 예약 내역을 전부 조회하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "복지 예약 조회 성공"),
             @ApiResponse(responseCode = "400", description = "복지 예약 조회 실패")
     })
-    @GetMapping("/{userNo}")
-    public ResponseEntity<?> readAllByUserNo(@PathVariable("userNo") Long userNo) {
+    @GetMapping
+    public ResponseEntity<?> readAllByUserNo(@RequestHeader("Authorization") String header) {
+        Long userNo = jwtProvider.getUserNoFromHeader(header);
         try {
             List<ReadWelfareBookResponse> welfareBooks = welfareBookService.readAllByUserNo(userNo);
             return ResponseEntity.ok(welfareBooks);
@@ -56,15 +61,19 @@ public class WelfareBookController {
     @Operation(summary = "복지 예약 하기", description = "복지 서비스를 예약하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "복지 예약 생성 성공"),
+            @ApiResponse(responseCode = "302", description = "사용자 정보 입력 페이지로 이동"),
             @ApiResponse(responseCode = "500", description = "복지 예약 생성 실패")
     })
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody CreateWelfareBookRequest request) {
+    public ResponseEntity<Long> create(
+            @RequestHeader("Authorization") String header,
+            @RequestBody CreateWelfareBookRequest request) {
+        Long userNo = jwtProvider.getUserNoFromHeader(header);
         try {
-            Long welfareBookNo = welfareBookService.createWelfareBook(request);
+            Long welfareBookNo = welfareBookService.createWelfareBook(request, userNo);
             return ResponseEntity.status(HttpStatus.CREATED).body(welfareBookNo);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("/user-info-page")).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
