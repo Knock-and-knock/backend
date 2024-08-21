@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.CreateWelfareRequest;
+import com.shinhan.knockknock.domain.dto.welfare.CreateWelfareRequest;
+import com.shinhan.knockknock.domain.dto.welfare.ReadWelfareResponse;
 import com.shinhan.knockknock.domain.entity.WelfareEntity;
 import com.shinhan.knockknock.repository.WelfareRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,7 +47,7 @@ public class WelfareServiceTest {
         assertThat(savedEntity.getWelfareCategory()).isEqualTo("건강");
     }
 
-    /*@Test
+    @Test
     @DisplayName("복지 항목 조회 테스트")
     public void testReadAllWelfare() {
         // Given
@@ -56,7 +59,7 @@ public class WelfareServiceTest {
         Long welfareNo = welfareService.createWelfare(request);
 
         // When
-        List<ReadWelfareResponse> welfareList = welfareService.readAll(welfareNo);
+        List<ReadWelfareResponse> welfareList = welfareService.readAll();
 
         // Then
         assertThat(welfareList).hasSize(1);
@@ -64,7 +67,7 @@ public class WelfareServiceTest {
         assertThat(response.getWelfareName()).isEqualTo("퇴직 연금");
         assertThat(response.getWelfarePirce()).isEqualTo(5000L);
         assertThat(response.getWelfareCategory()).isEqualTo("퇴직");
-    }*/
+    }
 
     @Test
     @DisplayName("복지 항목 수정 테스트")
