@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRequest;
+import com.shinhan.knockknock.domain.dto.conversationroom.ConversationResponse;
 import com.shinhan.knockknock.service.conversation.ConversationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.OutputStream;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/conversation")
@@ -27,20 +31,17 @@ public class ConversationController {
 
     @PostMapping
     @Operation(summary = "말동무 대화 [In Progress]", description = "말동무의 답변을 생성합니다.")
-    public ResponseEntity<byte[]> conversation(@RequestBody ConversationRequest request) {
+    public ResponseEntity<ConversationResponse> conversation(@RequestBody ConversationRequest request) {
         byte[] audioData = conversationService.conversation(request);
 
-        StreamingResponseBody stream = outputStream -> {
-            // 스트림으로 데이터를 전송
-            try (OutputStream os = outputStream) {
-                os.write(audioData);
-                os.flush();
-            }
-        };
+        // 오디오 데이터를 Base64로 인코딩
+        String audioBase64 = Base64.getEncoder().encodeToString(audioData);
+
+        // DTO 생성
+        ConversationResponse response = new ConversationResponse("Your conversation message here", audioBase64);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("audio/wav"));
-        headers.setContentDispositionFormData("attachment", "speech.wav");
-        return new ResponseEntity<>(audioData, headers, HttpStatus.OK);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 }
