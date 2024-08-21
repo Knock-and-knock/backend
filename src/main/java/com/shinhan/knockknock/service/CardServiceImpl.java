@@ -4,6 +4,7 @@ import com.shinhan.knockknock.domain.dto.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.ReadCardResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
+import com.shinhan.knockknock.domain.entity.NotificationEntity;
 import com.shinhan.knockknock.repository.CardIssueRepository;
 import com.shinhan.knockknock.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,14 @@ public class CardServiceImpl implements CardService {
     CardRepository cardRepository;
     @Autowired
     CardIssueRepository cardIssueRepository;
+    @Autowired
+    NotificationServiceImpl notificationService;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @Async("taskExecutor")
     public void scheduleCreatePostCard(CardIssueEntity cardIssueEntity, String password) {
-        scheduler.schedule(() -> createPostCard(cardIssueEntity, password), 1, TimeUnit.MINUTES);
+        scheduler.schedule(() -> createPostCard(cardIssueEntity, password), 10, TimeUnit.SECONDS);
     }
 
     @Override
@@ -75,6 +78,15 @@ public class CardServiceImpl implements CardService {
 
         // 카드 발급
         cardRepository.save(cardEntity);
+
+        // 알림 서비스 수행
+        NotificationEntity notificationEntity = NotificationEntity.builder()
+                .notificationCategory("card")
+                .notificationTitle("카드 발급 완료")
+                .notificationContent("회원님의 카드 발급이 완료되었습니다.")
+                .userNo(cardIssueEntity.getUserNo())
+                .build();
+        notificationService.notify(notificationEntity);
 
         // 응답
         CreateCardIssueResponse createCardIssueResponse = CreateCardIssueResponse

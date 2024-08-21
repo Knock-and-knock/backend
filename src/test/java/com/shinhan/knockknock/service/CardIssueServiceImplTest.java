@@ -61,7 +61,7 @@ public class CardIssueServiceImplTest {
         /*
         When: 테스트 수행
         */
-        CreateCardIssueResponse response = cardIssueService.createPostCardIssue(request);
+        CreateCardIssueResponse response = cardIssueService.createPostCardIssue(request, 1L);
 
         /*
         Then: 결과 검증
