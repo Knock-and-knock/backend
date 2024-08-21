@@ -17,7 +17,6 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -91,15 +90,14 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ReadUserResponse readUser() {
-        // 로그인된 사용자 인증 정보로 UserEntity 객체 가져오기
-        String protegeId = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserEntity user = userRepository.findByUserId(protegeId)
+    public ReadUserResponse readUser(long userNo) {
+        UserEntity user = userRepository.findById(userNo)
                 .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
+        //System.out.println(user);
         ReadUserResponse readUserResponse = null;
         if(user.getUserType().equals(UserRoleEnum.PROTECTOR)){  // 보호자인 경우
-            if(user.getMatchProtege().getUserProtege() != null) { // 매칭 정보가 있는 경우
-                UserEntity protege = user.getMatchProtege().getUserProtege();
+            if(user.getMatchProtector() != null && user.getMatchProtector().getMatchStatus().equals("ACCEPT")) { // 매칭 정보가 있는 경우
+                UserEntity protege = user.getMatchProtector().getUserProtege();
                 readUserResponse = ReadUserResponse.builder()
                         .userNo(user.getUserNo())
                         .userId(user.getUserId())
@@ -114,7 +112,7 @@ public class UserServiceImpl implements UserService{
                         .protegeDisease(protege.getUserDisease())
                         .protegeAddress(protege.getUserAddress())
                         .build();
-            } else {
+            } else {    // 매칭 정보가 없는 경우 본인 정보만 조회
                 readUserResponse = ReadUserResponse.builder()
                         .userNo(user.getUserNo())
                         .userId(user.getUserId())

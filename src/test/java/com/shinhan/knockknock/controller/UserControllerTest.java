@@ -85,7 +85,7 @@ public class UserControllerTest {
         String requestBody1 = objectMapper.writeValueAsString(request);
 
         // when & then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/signup")
                         .content(requestBody1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
@@ -110,7 +110,7 @@ public class UserControllerTest {
         String requestBody1 = objectMapper.writeValueAsString(request);
 
         // when & then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/signup")
                         .content(requestBody1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())

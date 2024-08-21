@@ -10,7 +10,7 @@ public interface UserService {
     Boolean readUserPhone(String phone);
     SingleMessageSentResponse sendSms(String phone, String validationNum);
     Boolean createUser(CreateUserRequest request);
-    ReadUserResponse readUser();
+    ReadUserResponse readUser(long userNo);
 
     default UserEntity dtoToEntity(CreateUserRequest request){
         return UserEntity.builder()
