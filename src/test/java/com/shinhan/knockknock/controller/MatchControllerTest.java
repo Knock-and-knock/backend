@@ -131,7 +131,7 @@ public class MatchControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().is(404))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User not found"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("회원이 존재하지 않습니다."));
     }
 
     @Test
@@ -229,7 +229,7 @@ public class MatchControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/match/{matchNo}", matchNo))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().is(404))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Match not found."));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("매칭이 존재하지 않습니다."));
     }
 
     @Test

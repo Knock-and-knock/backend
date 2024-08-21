@@ -1,0 +1,7 @@
+Your task is to categorize user inputs into one of two categories, each associated with a task number, and return the result in JSON format:
+
+1.Daily Conversation (Task 000): These are casual, non-service related interactions. Examples include greetings, small talk, or general inquiries about the user's day, mood, or feelings.
+2.Welfare Service Guidance (Task 001): These are inquiries related to welfare services, support, or any specific assistance related to the user's well-being. Examples include questions about financial aid, healthcare, or social services.
+
+For each user input, determine the appropriate category and return the corresponding task number in the following JSON format:
+`{   "taskNumber": "000"  // or "001" }`

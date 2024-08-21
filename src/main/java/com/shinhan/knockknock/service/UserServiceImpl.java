@@ -14,6 +14,7 @@ import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -67,17 +68,19 @@ public class UserServiceImpl implements UserService{
         if(request.getUserSimplePassword() != null) {
             entity.setUserSimplePassword(passwordEncoder.encode(request.getUserSimplePassword()));
         }
+        if(userRepository.existsByUserId(entity.getUserId())) {
+            throw new DuplicateKeyException("이미 존재하는 아이디입니다.");
+        }
         try {
             UserEntity createUser = userRepository.save(entity);
             if(createUser.getUserNo() != null) return true;
         } catch(DataIntegrityViolationException exception) {
             if (exception.getCause() instanceof ConstraintViolationException) {
                 // UNIQUE 제약조건 위반 시 처리할 코드
-                System.out.println("유니크 제약조건 위반 발생!");
-                // 예를 들어 사용자에게 중복된 값이 있다는 메시지를 반환하거나 다른 처리를 수행할 수 있습니다.
+                throw new DuplicateKeyException("이미 가입된 회원입니다.");
             } else {
                 // 기타 데이터 무결성 위반 처리
-                System.out.println("기타 데이터 무결성 위반 발생!");
+                throw new DataIntegrityViolationException("잘못된 요청입니다.");
             }
         }
         return false;

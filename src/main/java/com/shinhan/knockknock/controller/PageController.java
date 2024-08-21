@@ -11,4 +11,9 @@ public class PageController {
     public RedirectView conversationPage() {
         return new RedirectView("/conversation.html");
     }
+
+    @GetMapping("/stt")
+    public RedirectView sttPage() {
+        return new RedirectView("/stt.html");
+    }
 }
