@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -27,6 +28,7 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -141,7 +143,7 @@ public class MatchControllerTest {
         // given
         UserEntity user = userRepository.findByUserId("protege01")
                 .orElse(null);
-        MatchEntity match = matchRepository.findByUserProtectorNoOrUserProtegeNo(user, user)
+        MatchEntity match = matchRepository.findByUserProtectorOrUserProtege(user, user)
                 .orElse(new MatchEntity());
         UpdateMatchRequest request = UpdateMatchRequest.builder()
                 .matchNo(match.getMatchNo())
@@ -266,8 +268,8 @@ public class MatchControllerTest {
                 MatchEntity.builder()
                         .matchProtectorName("보호자")
                         .matchProtegeName("피보호자")
-                        .userProtectorNo(protectorUser)
-                        .userProtegeNo(protegeUser)
+                        .userProtector(protectorUser)
+                        .userProtege(protegeUser)
                         .matchStatus(matchStatus)
                         .build());
 

@@ -27,6 +27,7 @@ public class MatchEntity {
 
     @Column(name = "match_status")
     @NotNull
+    @Builder.Default
     private String matchStatus = "WAIT";    // WAIT(대기), ACCEPT(수락), REJECT(거절)
 
     @OneToOne
