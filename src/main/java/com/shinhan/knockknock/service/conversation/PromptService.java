@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.conversation;
 
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
 import com.shinhan.knockknock.exception.ChatbotException;

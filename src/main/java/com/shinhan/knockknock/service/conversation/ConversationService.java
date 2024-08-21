@@ -1,14 +1,11 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.conversation;
 
 import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRequest;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 
 @Service

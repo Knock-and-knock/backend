@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.conversation;
 
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRequest;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
@@ -7,9 +7,6 @@ import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
 import com.shinhan.knockknock.repository.ConversationLogRepository;
 import com.shinhan.knockknock.repository.ConversationRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

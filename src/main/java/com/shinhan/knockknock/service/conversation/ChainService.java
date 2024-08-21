@@ -1,9 +1,10 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.conversation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRequest;
+import com.shinhan.knockknock.service.WelfareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class ChainService {
     @Autowired
     ConversationLogService conversationLogService;
 
-    public ChatbotResponse chain(ConversationRequest request){
+    public ChatbotResponse chain(ConversationRequest request) {
         String input = request.getInput();
 
         try {
@@ -33,18 +34,17 @@ public class ChainService {
 
             // 사용자 입력에 따른 작업 분류
             List<Map<String, String>> classificationPrompt = promptService.classificationPrompt(request.getInput());
-            String taskNo = chatbotService.classificationChain(classificationPrompt).trim();
+            String mainTaskNo = chatbotService.classificationChain(classificationPrompt).trim();
+            System.out.println("mainTaskNo: " + mainTaskNo);
 
             // Prompt 제작
             List<Map<String, String>> chatbotPrompt;
-            switch (taskNo){
+            switch (mainTaskNo) {
                 case "001" -> {
-                    List<String> promptFilePathList = Arrays.asList("prompts/basic.prompt", "prompts/welfare.prompt");
-                    chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
+                    chatbotPrompt = welfareService(input, conversationLogs);
                 }
                 default -> {
-                    List<String> promptFilePathList = Collections.singletonList("prompts/basic.prompt");
-                    chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
+                    chatbotPrompt = dailyConversation(input, conversationLogs);
                 }
             }
 
@@ -55,6 +55,15 @@ public class ChainService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    private List<Map<String, String>> dailyConversation(String input, List<ConversationLogResponse> conversationLogs){
+        List<String> promptFilePathList = Collections.singletonList("prompts/basic.prompt");
+        return promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
+    }
+
+    private List<Map<String, String>> welfareService(String input, List<ConversationLogResponse> conversationLogs) {
+        List<String> promptFilePathList = Arrays.asList("prompts/basic.prompt", "prompts/welfare.prompt");
+        return promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
     }
 }

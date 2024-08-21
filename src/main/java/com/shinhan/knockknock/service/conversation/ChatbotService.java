@@ -1,25 +1,18 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.conversation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
+import com.shinhan.knockknock.domain.dto.conversationroom.ClassificationResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRequest;
 import com.shinhan.knockknock.exception.ChatbotException;
-import kotlin.jvm.internal.TypeReference;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +36,11 @@ public class ChatbotService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(response.getContent());
 
-        return rootNode.path("taskNumber").asText();
+        ClassificationResponse.builder()
+                .mainTaskNumber(rootNode.path("mainTaskNumber").asText())
+                .subTaskNumber(rootNode.path("subTaskNumber").asText())
+                .build();
+        return rootNode.path("mainTaskNumber").asText();
     }
 
     public ChatbotResponse chatbotChain(List<Map<String, String>> chatbotPrompt) {

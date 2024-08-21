@@ -3,7 +3,7 @@ package com.shinhan.knockknock.controller;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRequest;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.MessageResponse;
-import com.shinhan.knockknock.service.ConversationLogService;
+import com.shinhan.knockknock.service.conversation.ConversationLogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

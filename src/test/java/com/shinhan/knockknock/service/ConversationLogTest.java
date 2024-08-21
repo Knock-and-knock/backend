@@ -1,14 +1,11 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.ReadWelfareResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRequest;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomUpdateRequest;
 import com.shinhan.knockknock.domain.entity.ConversationLogEntity;
-import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
 import com.shinhan.knockknock.repository.ConversationLogRepository;
-import com.shinhan.knockknock.repository.ConversationRoomRepository;
+import com.shinhan.knockknock.service.conversation.ConversationLogService;
+import com.shinhan.knockknock.service.conversation.ConversationRoomService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
