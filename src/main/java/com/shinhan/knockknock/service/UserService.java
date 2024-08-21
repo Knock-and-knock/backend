@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.service;
 
 import com.shinhan.knockknock.domain.dto.CreateUserRequest;
+import com.shinhan.knockknock.domain.dto.ReadUserResponse;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 
@@ -9,6 +10,7 @@ public interface UserService {
     Boolean readUserPhone(String phone);
     SingleMessageSentResponse sendSms(String phone, String validationNum);
     Boolean createUser(CreateUserRequest request);
+    ReadUserResponse readUser();
 
     default UserEntity dtoToEntity(CreateUserRequest request){
         return UserEntity.builder()

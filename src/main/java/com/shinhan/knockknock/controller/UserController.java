@@ -114,7 +114,7 @@ public class UserController {
         return ResponseEntity.status(status).body(response);
     }
 
-    @Operation(summary = "회원가입 [In Progress]", description = "회원가입 처리 api")
+    @Operation(summary = "회원가입", description = "회원가입 처리 api")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "가입 성공 / 실패")
     })
@@ -143,6 +143,15 @@ public class UserController {
                 .build();
         return ResponseEntity.status(status).body(response);
     }
+
+    /*@Operation(summary = "회원조회", description = "회원조회 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "가입 성공 / 실패")
+    })
+    @GetMapping()
+    public ResponseEntity<ReadUserResponse> readUser() {
+
+    }*/
 
     private String generateRandomNumber() {
         Random random = new Random();

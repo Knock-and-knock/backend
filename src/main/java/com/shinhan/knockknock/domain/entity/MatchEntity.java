@@ -32,10 +32,10 @@ public class MatchEntity {
     @OneToOne
     @JoinColumn(name = "user_protectorno")
     @NotNull
-    private UserEntity userProtectorNo;
+    private UserEntity userProtector;
 
     @OneToOne
     @JoinColumn(name = "user_protegeno")
     @NotNull
-    private UserEntity userProtegeNo;
+    private UserEntity userProtege;
 }

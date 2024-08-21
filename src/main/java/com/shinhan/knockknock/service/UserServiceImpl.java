@@ -1,7 +1,9 @@
 package com.shinhan.knockknock.service;
 
 import com.shinhan.knockknock.domain.dto.CreateUserRequest;
+import com.shinhan.knockknock.domain.dto.ReadUserResponse;
 import com.shinhan.knockknock.domain.entity.UserEntity;
+import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import com.shinhan.knockknock.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,8 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -84,6 +88,61 @@ public class UserServiceImpl implements UserService{
             }
         }
         return false;
+    }
+
+    @Override
+    public ReadUserResponse readUser() {
+        // 로그인된 사용자 인증 정보로 UserEntity 객체 가져오기
+        String protegeId = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByUserId(protegeId)
+                .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
+        ReadUserResponse readUserResponse = null;
+        if(user.getUserType().equals(UserRoleEnum.PROTECTOR)){  // 보호자인 경우
+            if(user.getMatchProtege().getUserProtege() != null) { // 매칭 정보가 있는 경우
+                UserEntity protege = user.getMatchProtege().getUserProtege();
+                readUserResponse = ReadUserResponse.builder()
+                        .userNo(user.getUserNo())
+                        .userId(user.getUserId())
+                        .userName(user.getUserName())
+                        .userType(user.getUserType())
+                        .userPhone(user.getUserPhone())
+                        .protegeName(protege.getUserName())
+                        .protegeBirth(protege.getUserBirth())
+                        .protegeGender(protege.getUserGender())
+                        .protegeHeight(protege.getUserHeight())
+                        .protegeWeight(protege.getUserWeight())
+                        .protegeDisease(protege.getUserDisease())
+                        .protegeAddress(protege.getUserAddress())
+                        .build();
+            } else {
+                readUserResponse = ReadUserResponse.builder()
+                        .userNo(user.getUserNo())
+                        .userId(user.getUserId())
+                        .userName(user.getUserName())
+                        .userPhone(user.getUserPhone())
+                        .userType(user.getUserType())
+                        .build();
+            }
+        } else if(user.getUserType().equals(UserRoleEnum.PROTEGE)){ // 피보호자인 경우
+            readUserResponse = ReadUserResponse.builder()
+                    .userNo(user.getUserNo())
+                    .userId(user.getUserId())
+                    .userName(user.getUserName())
+                    .userType(user.getUserType())
+                    .userPhone(user.getUserPhone())
+                    .protegeName(user.getUserName())
+                    .protegeBirth(user.getUserBirth())
+                    .protegeGender(user.getUserGender())
+                    .protegeHeight(user.getUserHeight())
+                    .protegeWeight(user.getUserWeight())
+                    .protegeDisease(user.getUserDisease())
+                    .protegeAddress(user.getUserAddress())
+                    .build();
+        } else {
+            throw new RuntimeException("잘못된 요청입니다.");
+        }
+
+        return readUserResponse;
     }
 
     private SingleMessageSentResponse sendMessage(String phone, String validationNum) {
