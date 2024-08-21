@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PromptService {
@@ -44,8 +45,8 @@ public class PromptService {
         return messagesList;
     }
 
-    public List<Map<String, String>> chatbotPrompt(String input, List<ConversationLogResponse> conversationLogs) {
-        String basicPrompt = loadPrompt("prompts/basic.prompt");
+    public List<Map<String, String>> chatbotPrompt(List<String> promptFilePathList, String input, List<ConversationLogResponse> conversationLogs) {
+        String basicPrompt = loadPrompts(promptFilePathList);
 
         List<Map<String, String>> messagesList = new ArrayList<>();
 
@@ -74,6 +75,16 @@ public class PromptService {
         messagesList.add(userMessage1);
 
         return messagesList;
+    }
+
+    public String loadPrompts(List<String> promptFilePathList) {
+        try {
+            return promptFilePathList.stream()
+                    .map(this::loadPrompt)
+                    .collect(Collectors.joining("\n"));
+        } catch (RuntimeException e) {
+            throw new ChatbotException("Failed to load prompts", e);
+        }
     }
 
     public String loadPrompt(String promptFilePath) {
