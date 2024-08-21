@@ -10,9 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class IdLoginUserRequest {
-    @Schema(example = "protege01")
-    private String userId;
-    @Schema(example = "1234")
-    private String userPassword;
+public class UserValidationRequest {
+    @Schema(example = "01012345678")
+    private String phone;
 }

@@ -3,19 +3,20 @@ package com.shinhan.knockknock.service;
 import com.shinhan.knockknock.auth.CustomUserDetails;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Transactional(readOnly=true)
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userNo) throws UsernameNotFoundException {

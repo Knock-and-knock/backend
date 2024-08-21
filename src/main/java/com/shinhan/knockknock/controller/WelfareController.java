@@ -1,7 +1,7 @@
 package com.shinhan.knockknock.controller;
 
-import com.shinhan.knockknock.domain.dto.CreateWelfareRequest;
-import com.shinhan.knockknock.domain.dto.ReadWelfareResponse;
+import com.shinhan.knockknock.domain.dto.welfare.CreateWelfareRequest;
+import com.shinhan.knockknock.domain.dto.welfare.ReadWelfareResponse;
 import com.shinhan.knockknock.repository.WelfareRepository;
 import com.shinhan.knockknock.service.WelfareService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

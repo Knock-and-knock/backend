@@ -118,4 +118,12 @@ public class JwtProvider {
         }
         return usernamePasswordToken;
     }
+
+    public long getUserNoFromHeader(String header) {
+        String token = "";
+        if (header.startsWith("Bearer ")) {
+            token = header.substring(7);
+        }
+        return Long.parseLong(getUserNo(token));
+    }
 }

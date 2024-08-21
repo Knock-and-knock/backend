@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.domain.dto;
+package com.shinhan.knockknock.domain.dto.cardcategory;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

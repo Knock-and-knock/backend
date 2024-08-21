@@ -26,9 +26,9 @@ public class MatchServiceImpl implements MatchService {
     public CreateMatchResponse readMatch() {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
         MatchEntity match = matchRepository.findByUserProtectorNoOrUserProtegeNo(user, user)
-                .orElseThrow(() -> new NoSuchElementException("Match not found"));
+                .orElseThrow(() -> new NoSuchElementException("매칭이 존재하지 않습니다."));
         return entityToDto(match);
     }
 
@@ -40,9 +40,9 @@ public class MatchServiceImpl implements MatchService {
                 .orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다."));
 
         // 피보호자 계정 존재 여부 확인
-        UserEntity protegeUser = userRepository.findByUserNameAndUserPhone(
+        UserEntity protegeUser = userRepository.findByCards_CardBankAndCards_CardAccountAndCards_CardIsfamilyFalse(
                         request.getProtegeName(), request.getProtegePhone())
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
 
         // 기존 매칭 기록 확인
         MatchEntity match = matchRepository.findByUserProtectorNoAndUserProtegeNo(protectorUser, protegeUser)
@@ -80,7 +80,7 @@ public class MatchServiceImpl implements MatchService {
         }
 
         MatchEntity match = matchRepository.findById(request.getMatchNo())
-                .orElseThrow(() -> new NoSuchElementException("Match not found."));
+                .orElseThrow(() -> new NoSuchElementException("매칭이 존재하지 않습니다."));
 
         switch (match.getMatchStatus()) {
             case "WAIT" -> {
@@ -105,10 +105,10 @@ public class MatchServiceImpl implements MatchService {
         // 로그인한 user entity 조회
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+                .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
 
         MatchEntity match = matchRepository.findById(matchNo)
-                .orElseThrow(() -> new NoSuchElementException("Match not found."));
+                .orElseThrow(() -> new NoSuchElementException("매칭이 존재하지 않습니다."));
 
         if (user.getUserType().toString().equals("PROTEGE")
                 && Objects.equals(user.getUserNo(), match.getUserProtegeNo().getUserNo())

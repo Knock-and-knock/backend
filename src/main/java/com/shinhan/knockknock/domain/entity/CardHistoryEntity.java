@@ -38,11 +38,36 @@ public class CardHistoryEntity {
     @ManyToOne
     @JoinColumn(name= "cardcategory_no")
     @NotNull
-    private CardCategoryEntity cardCategoryNo;
+    private CardCategoryEntity cardCategory;
+
+
+
+    public Long getCardCategoryNo(){
+        return cardCategory.getCardCategoryNo();
+    }
+
+    public String getCardCategoryName(){
+        return cardCategory.getCardCategoryName();
+    }
 
     @ManyToOne
     @JoinColumn(name= "card_id")
     @NotNull
-    private CardEntity cardId;
+    private CardEntity card;
 
+    public Long getCardId(){
+        return card.getCardId();
+    }
+
+    public String getCardBank(){
+        return card.getCardBank();
+    }
+
+    public String getCardAccount(){
+        return card.getCardAccount();
+    }
+
+    public boolean isCardFamily(){
+        return card.isCardIsfamily();
+    }
 }

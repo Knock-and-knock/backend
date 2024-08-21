@@ -9,5 +9,5 @@ import java.sql.Timestamp;
 @Builder
 public class ConversationRoomCreateResponse {
 
-    private Long conversationNo;
+    private Long conversationRoomNo;
 }
