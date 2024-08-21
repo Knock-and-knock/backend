@@ -46,13 +46,13 @@ public class PromptService {
     }
 
     public List<Map<String, String>> chatbotPrompt(List<String> promptFilePathList, String input, List<ConversationLogResponse> conversationLogs) {
-        String basicPrompt = loadPrompts(promptFilePathList);
+        String systemPrompt = loadPrompts(promptFilePathList);
 
         List<Map<String, String>> messagesList = new ArrayList<>();
 
         Map<String, String> systemMessage = new HashMap<>();
         systemMessage.put("role", "system");
-        systemMessage.put("content", basicPrompt);
+        systemMessage.put("content", systemPrompt);
         messagesList.add(systemMessage);
 
         // 대화 로그 추가

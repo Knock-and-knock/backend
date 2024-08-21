@@ -41,13 +41,10 @@ public class ChainService {
                 case "001" -> {
                     List<String> promptFilePathList = Arrays.asList("prompts/basic.prompt", "prompts/welfare.prompt");
                     chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
-                    System.out.println("1111111111111111111111");
-                    System.out.println(chatbotPrompt);
                 }
                 default -> {
                     List<String> promptFilePathList = Collections.singletonList("prompts/basic.prompt");
                     chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
-                    System.out.println(chatbotPrompt);
                 }
             }
 
