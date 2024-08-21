@@ -12,6 +12,9 @@ public interface WelfareBookService {
     // Create
     Long createWelfareBook(CreateWelfareBookRequest request, Long userNo);
 
+    // Create for Protege (added)
+    Long createWelfareBookForProtege(CreateWelfareBookRequest request, Long protectorUserNo);
+
     // Read
     List<ReadWelfareBookResponse> readAllByUserNo(Long userNo);
     ReadWelfareBookResponse readDetail(Long welfareBookNo);

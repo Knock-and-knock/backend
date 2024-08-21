@@ -60,7 +60,7 @@ public class WelfareBookController {
         }
     }
 
-    @Operation(summary = "복지 예약 하기", description = "복지 서비스를 예약하는 API입니다.")
+    @Operation(summary = "복지 예약 하기", description = "일반 사용자가 자신의 복지 서비스를 예약하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "복지 예약 생성 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청, 입력된 값이 없음"),
@@ -76,12 +76,39 @@ public class WelfareBookController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력된 값이 없습니다.");
         }
 
-        Long userNo = jwtProvider.getUserNoFromHeader(header);
+        Long userNo = jwtProvider.getUserNoFromHeader(header);  // 사용자 userNo 가져오기
         try {
             Long welfareBookNo = welfareBookService.createWelfareBook(request, userNo);
             return ResponseEntity.status(HttpStatus.CREATED).body(welfareBookNo);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("사용자 또는 복지 항목이 존재하지 않습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("복지 예약 생성 중 오류가 발생했습니다.");
+        }
+    }
+
+    @Operation(summary = "보호자가 대신 복지 예약 하기", description = "보호자가 매칭된 일반 사용자의 복지 서비스를 예약하는 API입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "복지 예약 생성 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청, 입력된 값이 없음"),
+            @ApiResponse(responseCode = "500", description = "복지 예약 생성 실패")
+    })
+    @PostMapping("/protege")
+    public ResponseEntity<?> createForProtege(
+            @RequestHeader("Authorization") String header,
+            @Valid @RequestBody CreateWelfareBookRequest request,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력된 값이 없습니다.");
+        }
+
+        Long protectorUserNo = jwtProvider.getUserNoFromHeader(header);  // 보호자 userNo 가져오기
+        try {
+            Long welfareBookNo = welfareBookService.createWelfareBookForProtege(request, protectorUserNo);
+            return ResponseEntity.status(HttpStatus.CREATED).body(welfareBookNo);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("매칭된 사용자 또는 복지 항목이 존재하지 않습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("복지 예약 생성 중 오류가 발생했습니다.");
         }
@@ -104,3 +131,4 @@ public class WelfareBookController {
         }
     }
 }
+
