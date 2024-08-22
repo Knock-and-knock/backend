@@ -8,6 +8,7 @@ import com.shinhan.knockknock.domain.dto.conversationroom.ClassificationResponse
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.InstructionResponse;
 import com.shinhan.knockknock.exception.ChatbotException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class ChatbotService {
 
@@ -31,7 +33,11 @@ public class ChatbotService {
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
 
     public ClassificationResponse classificationChain(List<Map<String, String>> classificationPrompt) throws JsonProcessingException {
-        ChatbotResponse response = getChatbotResponse(classificationPrompt);
+        Map<String, Object> responseSchema = new HashMap<>();
+        responseSchema.put("mainTaskNumber", Map.of("type", "string"));
+        responseSchema.put("subTaskNumber", Map.of("type", "string", "nullable", true));
+
+        ChatbotResponse response = getChatbotResponse(classificationPrompt, responseSchema);
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(response.getContent());
@@ -43,7 +49,9 @@ public class ChatbotService {
     }
 
     public InstructionResponse instructionChain(List<Map<String, String>> instructionPrompt) throws JsonProcessingException {
-        ChatbotResponse response = getChatbotResponse(instructionPrompt);
+        Map<String, Object> responseSchema = new HashMap<>();
+
+        ChatbotResponse response = getChatbotResponse(instructionPrompt, responseSchema);
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(response.getContent());
@@ -53,11 +61,21 @@ public class ChatbotService {
                 .build();
     }
 
-    public ChatbotResponse chatbotChain(List<Map<String, String>> chatbotPrompt) {
-        return getChatbotResponse(chatbotPrompt);
+    public ChatbotResponse chatbotChain(List<Map<String, String>> chatbotPrompt) throws JsonProcessingException {
+        Map<String, Object> responseSchema = new HashMap<>();
+        responseSchema.put("content", Map.of("type", "string"));
+
+        ChatbotResponse response = getChatbotResponse(chatbotPrompt, responseSchema);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getContent());
+
+        response.setContent(rootNode.path("content").asText());
+
+        return response;
     }
 
-    private ChatbotResponse getChatbotResponse(List<Map<String, String>> messagesList) {
+    private ChatbotResponse getChatbotResponse(List<Map<String, String>> messagesList, Map<String, Object> responseSchema) {
         // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -70,10 +88,14 @@ public class ChatbotService {
         // messagesList를 배열로 변환하여 requestBody에 추가
         requestBody.put("messages", messagesList.toArray(new Map[0]));
 
+        // Response Format 생성
+        Map<String, Object> jsonSchema = createJsonSchema(responseSchema);
+        requestBody.put("response_format", jsonSchema);
+
+        // HTTP Entity 생성
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        // JSON 변환 및 출력
-//        printChatbotRequest(requestBody);
+        printChatbotRequest(requestBody);
 
         // RestTemplate 객체 생성
         RestTemplate restTemplate = new RestTemplate();
@@ -131,6 +153,28 @@ public class ChatbotService {
         return messagesList;
     }
 
+    private Map<String, Object> createJsonSchema(Map<String, Object> properties) {
+        Map<String, Object> schema = new HashMap<>();
+        schema.put("type", "object");
+        schema.put("strict", true);
+
+        schema.put("properties", properties);
+
+        // properties 맵의 모든 키를 필수 필드로 설정
+        List<String> requiredFields = new ArrayList<>(properties.keySet());
+        schema.put("required", requiredFields);
+
+        Map<String, Object> jsonSchema = new HashMap<>();
+        jsonSchema.put("name", "TaskNumberSchema");  // 스키마 이름 추가
+        jsonSchema.put("schema", schema);  // 여기에 추가
+
+        Map<String, Object> responseFormat = new HashMap<>();
+        responseFormat.put("type", "json_schema");
+        responseFormat.put("json_schema", jsonSchema);
+
+        return responseFormat;
+    }
+
     /**
      * <pre>
      * 메소드명   : parseResponse
@@ -164,9 +208,9 @@ public class ChatbotService {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String jsonRequestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestBody);
-            System.out.println("Final JSON Request Body:\n" + jsonRequestBody);
+            log.debug("Final JSON Request Body:\n{}", jsonRequestBody);
         } catch (JsonProcessingException e) {
-            System.err.println("Failed to convert request body to JSON: " + e.getMessage());
+            log.error("Failed to convert request body to JSON: {}", e.getMessage());
         }
     }
 }

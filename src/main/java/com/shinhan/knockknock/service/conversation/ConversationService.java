@@ -30,8 +30,6 @@ public class ConversationService {
         // Chatbot 답변 생성
         ChatbotResponse response = chainService.chain(request);
 
-        System.out.println(response);
-
         // 대화 내역 저장
         ConversationLogRequest conversationLog = ConversationLogRequest.builder()
                 .conversationLogInput(request.getInput())
