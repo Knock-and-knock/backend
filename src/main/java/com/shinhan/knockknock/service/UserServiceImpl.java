@@ -4,9 +4,11 @@ import com.shinhan.knockknock.domain.dto.CreateUserRequest;
 import com.shinhan.knockknock.domain.dto.ReadUserResponse;
 import com.shinhan.knockknock.domain.dto.UpdateUserRequest;
 import com.shinhan.knockknock.domain.entity.MatchEntity;
+import com.shinhan.knockknock.domain.entity.TokenEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import com.shinhan.knockknock.repository.MatchRepository;
+import com.shinhan.knockknock.repository.TokenRepository;
 import com.shinhan.knockknock.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class UserServiceImpl implements UserService{
 
     private final PasswordEncoder passwordEncoder;
     private final MatchRepository matchRepository;
+    private final TokenRepository tokenRepository;
 
     private DefaultMessageService defualtMessageService;
 
@@ -161,6 +164,10 @@ public class UserServiceImpl implements UserService{
 
         user.setUserIsWithdraw(true);
         UserEntity deleteUser = userRepository.save(user);
+
+        TokenEntity token = tokenRepository.findByUser(deleteUser)
+                .orElseThrow(() -> new NoSuchElementException("토큰이 없습니다."));
+        tokenRepository.delete(token);
         return deleteUser.isUserIsWithdraw();
     }
 
