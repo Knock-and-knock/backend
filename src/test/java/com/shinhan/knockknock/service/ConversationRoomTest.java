@@ -4,6 +4,7 @@ import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomRespon
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomUpdateRequest;
 import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
 import com.shinhan.knockknock.repository.ConversationRoomRepository;
+import com.shinhan.knockknock.service.conversation.ConversationRoomService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ public class ConversationRoomTest {
     public void testReadAllConversationRoom() {
         // Given
         long userNo = 1L;
+        conversationRoomService.createConversationRoom(userNo);
 
         // When
         List<ConversationRoomResponse> conversationRoomList = conversationRoomService.readAllConversationRoom();
@@ -96,7 +98,7 @@ public class ConversationRoomTest {
     }
 
     @Test
-    @DisplayName("대화방 종료 시간 수정 테스트")
+    @DisplayName("대화방 삭제 테스트")
     public void testDeleteConversation() {
         // Given
         long userNo = 1L;

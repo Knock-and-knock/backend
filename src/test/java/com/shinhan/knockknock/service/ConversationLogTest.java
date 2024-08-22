@@ -4,6 +4,8 @@ import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRequest
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
 import com.shinhan.knockknock.domain.entity.ConversationLogEntity;
 import com.shinhan.knockknock.repository.ConversationLogRepository;
+import com.shinhan.knockknock.service.conversation.ConversationLogService;
+import com.shinhan.knockknock.service.conversation.ConversationRoomService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

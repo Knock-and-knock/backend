@@ -18,6 +18,13 @@ public interface ConversationLogRepository extends JpaRepository<ConversationLog
         return logs;
     }
 
+    default List<ConversationLogEntity> findLastNByConversationRoomNo(int number, long conversationRoomNo) {
+        Pageable pageable = PageRequest.of(0, number, Sort.by(Sort.Direction.DESC, "conversationLogDatetime"));
+        List<ConversationLogEntity> logs = findByConversationRoomConversationRoomNo(conversationRoomNo, pageable);
+        Collections.reverse(logs);  // 결과를 역순으로 뒤집음
+        return logs;
+    }
+
     List<ConversationLogEntity> findByConversationRoomConversationRoomNo(long conversationRoomNo, Pageable pageable);
 
 }

@@ -184,7 +184,12 @@
                 body: JSON.stringify({ input: userInput, conversationRoomNo: conversationRoomNo })
             });
 
-            const audioBlob = await response.blob();
+            const responseData = await response.json();
+            const audioData = responseData.audioData;
+            const message = responseData.message;
+
+            // Decode the Base64 string to binary data
+            const audioBlob = await fetch(`data:audio/wav;base64,${audioData}`).then(res => res.blob());
             const audioUrl = URL.createObjectURL(audioBlob);
             const ttsAudio = document.getElementById('ttsAudio');
             ttsAudio.src = audioUrl;
@@ -193,7 +198,7 @@
             const endTime = Date.now();
             const responseTime = endTime - startTime;
 
-            loadingMessage.textContent = '챗봇: 응답 완료';
+            loadingMessage.textContent = `챗봇: ${message}`;
             const responseTimeMessage = document.createElement('p');
             responseTimeMessage.textContent = `응답 시간: ${responseTime} ms`;
             responseTimeMessage.classList.add('response-time');

@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.conversation;
 
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
 import com.shinhan.knockknock.exception.ChatbotException;
@@ -11,10 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,29 +23,23 @@ public class PromptService {
         this.resourceLoader = resourceLoader;
     }
 
-    public List<Map<String, String>> classificationPrompt(String input) {
+    public List<Map<String, String>> classificationPrompt(String input, List<ConversationLogResponse> conversationLogs) {
         String classificationPrompt = loadPrompt("prompts/classification.prompt");
+        return makePrompt(classificationPrompt, input, conversationLogs);
+    }
 
-        List<Map<String, String>> messagesList = new ArrayList<>();
-
-        Map<String, String> systemMessage = new HashMap<>();
-        systemMessage.put("role", "system");
-        systemMessage.put("content", classificationPrompt);
-        messagesList.add(systemMessage);
-
-        // 사용자 입력 메시지 추가
-        Map<String, String> userMessage1 = new HashMap<>();
-        userMessage1.put("role", "user");
-        userMessage1.put("content", input);
-        messagesList.add(userMessage1);
-
-        return messagesList;
+    public List<Map<String, String>> instructionPrompt(String input, List<ConversationLogResponse> conversationLogs) {
+        String classificationPrompt = loadPrompt("prompts/instruction.prompt");
+        return makePrompt(classificationPrompt, input, conversationLogs);
     }
 
     public List<Map<String, String>> chatbotPrompt(List<String> promptFilePathList, String input, List<ConversationLogResponse> conversationLogs) {
         String systemPrompt = loadPrompts(promptFilePathList);
+        return makePrompt(systemPrompt, input, conversationLogs);
+    }
 
-        List<Map<String, String>> messagesList = new ArrayList<>();
+    private List<Map<String, String>> makePrompt(String systemPrompt, String input, List<ConversationLogResponse> conversationLogs) {
+         List<Map<String, String>> messagesList = new ArrayList<>();
 
         Map<String, String> systemMessage = new HashMap<>();
         systemMessage.put("role", "system");
