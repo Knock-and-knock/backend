@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Entity
@@ -100,7 +100,8 @@ public class UserEntity {
     @PrePersist
     protected void onCreate() {
         if (this.userJoinDate == null) {
-            this.userJoinDate = new Date();
+            java.util.Date date = new java.util.Date();
+            this.userJoinDate = new Date(date.getTime());
         }
     }
 }
