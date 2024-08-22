@@ -24,9 +24,9 @@ public class CardIssueEntity {
     @Column(name= "cardissue_no")
     private Long cardIssueNo;
 
-    @Column(name= "cardissue_residentno", length = 50)
-    @NotNull
-    private String cardIssueResidentNo;
+    //@Column(name= "cardissue_residentno", length = 50)
+    //@NotNull
+    //private String cardIssueResidentNo;
 
     @Column(name= "cardissue_ename", length = 50)
     @NotNull
@@ -47,17 +47,17 @@ public class CardIssueEntity {
     @NotNull
     private boolean cardIssueIsAgree;
 
-    @Column(name= "cardissue_income")
+    @Column(name= "cardissue_income", length = 50)
     @NotNull
-    private int cardIssueIncome;
+    private String cardIssueIncome;
 
-    @Column(name= "cardissue_credit")
+    @Column(name= "cardissue_credit", length = 50)
     @NotNull
-    private int cardIssueCredit;
+    private String cardIssueCredit;
 
     @Column(name= "cardissue_amountdate")
     @NotNull
-    private Date cardIssueAmountDate;
+    private String cardIssueAmountDate;
 
     @Column(name= "cardissue_source")
     @NotNull
@@ -65,13 +65,13 @@ public class CardIssueEntity {
 
     @Column(name= "cardissue_ishighrisk")
     @NotNull
-    private boolean cardIssueIsHighrisk;
+    private String cardIssueIsHighrisk;
 
     @Column(name= "cardissue_purpose")
     @NotNull
     private String cardIssuePurpose;
 
-    @Column(name= "cardissue_issuedate")
+    @Column(name= "cardissue_issuedate", length = 50)
     @CreationTimestamp
     private Timestamp cardIssueIssueDate;
 

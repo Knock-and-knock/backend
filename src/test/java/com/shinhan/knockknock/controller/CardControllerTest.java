@@ -85,14 +85,14 @@ public class CardControllerTest {
                 .build();
 
         // Mockito 라이브러리를 사용하여 서비스 계층 모의(흉내)
-        Mockito.when(cardIssueService.createPostCardIssue(Mockito.any(CreateCardIssueRequest.class)))
-                .thenReturn(createCardIssueResponse);
+        //Mockito.when(cardIssueService.createPostCardIssue(Mockito.any(CreateCardIssueRequest.class)))
+        //        .thenReturn(createCardIssueResponse);
 
         /*
         When: 테스트 행위를 수행
         */
         mockMvc.perform(post("/api/v1/card")
-                        .with(csrf()) // 이거 뭐임?
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON) // 직렬화된 문자열을 MockMvc를 사용하여 Post 요청의 content로 사용
                         .content(objectMapper.writeValueAsString(request))) // request 객체를 json으로 직렬화
                 /*

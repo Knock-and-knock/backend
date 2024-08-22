@@ -6,13 +6,16 @@ import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 public interface CardIssueService {
 
     // 카드 발급 요청
-    public CreateCardIssueResponse createPostCardIssue(CreateCardIssueRequest request);
+    public CreateCardIssueResponse createPostCardIssue(CreateCardIssueRequest request, Long userNo);
+
+    // 영문 이름 처리
+    public String mergeName(CreateCardIssueRequest cardIssueEntity);
 
     // DTO -> Entity
     default CardIssueEntity transformDTOToEntity(CreateCardIssueRequest request){
 
         CardIssueEntity cardIssueEntity = CardIssueEntity.builder()
-                .cardIssueResidentNo(request.getCardIssueResidentNo())
+                //.cardIssueResidentNo(request.getCardIssueResidentNo())
                 .cardIssueEname(request.getCardIssueEname())
                 .cardIssueEmail(request.getCardIssueEmail())
                 .cardIssueBank(request.getCardIssueBank())
@@ -22,9 +25,8 @@ public interface CardIssueService {
                 .cardIssueCredit(request.getCardIssueCredit())
                 .cardIssueAmountDate(request.getCardIssueAmountDate())
                 .cardIssueSource(request.getCardIssueSource())
-                .cardIssueIsHighrisk(request.isCardIssueIsHighrisk())
+                .cardIssueIsHighrisk(request.getCardIssueIsHighrisk())
                 .cardIssuePurpose(request.getCardIssuePurpose())
-                .userNo(request.getUserNo())
                 .cardIssueIsFamily(request.isCardIssueIsFamily())
                 .cardIssueAddress(request.getCardIssueAddress())
                 .build();
