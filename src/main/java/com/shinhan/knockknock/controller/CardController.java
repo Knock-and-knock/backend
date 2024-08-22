@@ -37,6 +37,7 @@ public class CardController {
     @PostMapping
     @ResponseStatus(HttpStatus.ACCEPTED) // 비동기 테스트 ACCEPTED
     public CreateCardIssueResponse createCardIssue(@RequestHeader("Authorization") String header , @RequestBody CreateCardIssueRequest request) {
+        request.setCardIssueEname(cardIssueService.mergeName(request));
         CreateCardIssueResponse createCardIssueResponse = cardIssueService.createPostCardIssue(request, jwtProvider.getUserNoFromHeader(header));
         return createCardIssueResponse;
     }

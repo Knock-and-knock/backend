@@ -19,7 +19,7 @@ public class ReadCardResponse {
     //private int cardPassword;
     private String cardBank;
     private String cardAccount;
-    private Date cardAmountDate;
+    private String cardAmountDate;
     private String cardExpiredate;
     //private Long issueNo;
     //private Long userNo;

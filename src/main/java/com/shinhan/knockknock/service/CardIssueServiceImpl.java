@@ -34,4 +34,11 @@ public class CardIssueServiceImpl implements CardIssueService {
                 .status(HttpStatus.ACCEPTED)
                 .build();
     }
+
+    @Override
+    public String mergeName(CreateCardIssueRequest request){
+        return request.getCardIssueEname() != null
+                ? request.getCardIssueEname() 
+                : request.getCardIssueFirstEname() + " " + request.getCardIssueLastEname();
+    }
 }
