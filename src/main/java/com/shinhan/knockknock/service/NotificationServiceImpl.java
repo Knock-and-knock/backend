@@ -1,19 +1,22 @@
 package com.shinhan.knockknock.service;
 
+import com.shinhan.knockknock.domain.dto.ReadNotificationResponse;
+import com.shinhan.knockknock.domain.entity.NotificationEntity;
 import com.shinhan.knockknock.repository.EmitterRepository;
+import com.shinhan.knockknock.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.sql.Date;
 
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
-    // 기본 타임아웃 설정
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
-
     private final EmitterRepository emitterRepository;
+    private final NotificationRepository notificationRepository;
 
     /**
      * 클라이언트가 구독을 위해 호출하는 메서드.
@@ -23,37 +26,55 @@ public class NotificationServiceImpl implements NotificationService {
      */
     public SseEmitter subscribe(Long userNo) {
         SseEmitter emitter = createEmitter(userNo);
-        sendToClient(userNo, "이벤트 객체 생성: [userNo=" + userNo + "]");
+
+        NotificationEntity notificationEntity = NotificationEntity
+                .builder()
+                .notificationCategory("connection category")
+                .notificationTitle("connection title")
+                .notificationContent("connection content")
+                .userNo(userNo)
+                .notificationIsCheck(true)
+                .build();
+
+        sendToClient(notificationEntity);
         return emitter;
     }
 
     /**
      * 서버의 이벤트를 클라이언트에게 보내는 메서드
      *
-     * @param userNo - 메세지를 전송할 사용자의 아이디.
-     * @param event  - 전송할 이벤트 객체.
+     * @param notificationEntity  - 전송 정보 객체.
      */
-    public void notify(Long userNo, Object event) {
-        sendToClient(userNo, event);
+    public void notify(NotificationEntity notificationEntity) {
+        sendToClient(notificationEntity);
     }
 
     /**
      * 클라이언트에게 데이터를 전송
      *
-     * @param userNo - 데이터를 받을 사용자의 아이디.
-     * @param data - 전송할 데이터.
+     * @param notificationEntity - 전송 정보 객체.
      */
-    public void sendToClient(Long userNo, Object data) {
+    public void sendToClient(NotificationEntity notificationEntity) {
+        Long userNo = notificationEntity.getUserNo();
         SseEmitter emitter = emitterRepository.get(userNo);
+
+        // 현재 시간을 java에서 찍어서 DB 저장과 실시간 알림에 모두 사용
+        // 이후에 알림 조회할 때 데이터 차이가 없게
+        notificationEntity.setNotificationDateTime(new Date(System.currentTimeMillis()));
+        notificationRepository.save(notificationEntity);
+
+        ReadNotificationResponse notificationResponse = transformEntityToDTO(notificationEntity);
         if (emitter != null) {
             try {
-                emitter.send(SseEmitter.event().id(String.valueOf(userNo)).name("userNo1").data(data));
+                String eventName = "userNotification_" + userNo;
+                emitter.send(SseEmitter.event().id(String.valueOf(userNo)).name(eventName).data(notificationResponse));
             } catch (IOException exception) {
                 emitterRepository.deleteByUserNo(userNo);
                 throw new RuntimeException("연결 오류!");
             }
         }
     }
+
 
     /**
      * 사용자 아이디를 기반으로 이벤트 Emitter를 생성

@@ -4,6 +4,7 @@ import com.shinhan.knockknock.domain.dto.welfare.CreateWelfareRequest;
 import com.shinhan.knockknock.domain.dto.welfare.ReadWelfareResponse;
 import com.shinhan.knockknock.domain.entity.WelfareEntity;
 import com.shinhan.knockknock.repository.WelfareRepository;
+import com.shinhan.knockknock.service.welfare.WelfareService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

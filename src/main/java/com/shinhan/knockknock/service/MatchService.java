@@ -15,8 +15,8 @@ public interface MatchService {
         return CreateMatchResponse.builder()
                 .matchProtectorName(match.getMatchProtectorName())
                 .matchProtegeName(match.getMatchProtegeName())
-                .protectorUserNo(match.getUserProtectorNo().getUserNo())
-                .protegeUserNo(match.getUserProtegeNo().getUserNo())
+                .protectorUserNo(match.getUserProtector().getUserNo())
+                .protegeUserNo(match.getUserProtege().getUserNo())
                 .matchStatus(match.getMatchStatus())
                 .build();
     }

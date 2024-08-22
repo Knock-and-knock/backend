@@ -23,9 +23,12 @@ public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
-    private static final String[] WHITE_LIST = {"/api/v1/auth/**", "/api/v1/users/**",
-            "/swagger-ui/**", "/v3/api-docs/**", "/error", "/conversation", "/conversation.html", "/stt", "/stt.html"
-                                                , "/api/v1/notification/**", "/Notification.html"};
+    private static final String[] WHITE_LIST = {
+            "/api/v1/auth/**", "/api/v1/users/signup", "/api/v1/users/validation/**",
+            "/swagger-ui/**", "/v3/api-docs/**", "/error",
+            "/conversation", "/conversation.html", "/stt", "/stt.html",
+            "/api/v1/notification/**", "/Notification.html"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

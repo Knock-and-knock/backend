@@ -13,4 +13,6 @@ import lombok.NoArgsConstructor;
 public class UserValidationRequest {
     @Schema(example = "01012345678")
     private String phone;
+    @Schema(example = "123456")
+    private String validationNum;
 }

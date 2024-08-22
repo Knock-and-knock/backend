@@ -77,10 +77,10 @@ public class UserEntity {
     @Column(name = "user_simplepassword")
     private String userSimplePassword;
 
-    @OneToOne(mappedBy = "userProtectorNo")
+    @OneToOne(mappedBy = "userProtector")
     private MatchEntity matchProtector;
 
-    @OneToOne(mappedBy = "userProtegeNo")
+    @OneToOne(mappedBy = "userProtege")
     private MatchEntity matchProtege;
 
     @OneToMany(mappedBy = "userNo", fetch = FetchType.LAZY)

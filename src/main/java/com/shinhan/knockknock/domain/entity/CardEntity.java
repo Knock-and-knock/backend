@@ -48,7 +48,7 @@ public class CardEntity {
 
     @Column(name= "card_amountdate")
     @NotNull
-    private Date cardAmountDate;
+    private String cardAmountDate;
 
     @Column(name= "card_expiredate")
     @NotNull

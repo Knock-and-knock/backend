@@ -1,14 +1,12 @@
 package com.shinhan.knockknock.controller;
 
-import com.shinhan.knockknock.domain.dto.CreateUserRequest;
-import com.shinhan.knockknock.domain.dto.UserValidationRequest;
-import com.shinhan.knockknock.domain.dto.UserValidationResponse;
+import com.shinhan.knockknock.auth.JwtProvider;
+import com.shinhan.knockknock.domain.dto.*;
 import com.shinhan.knockknock.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,6 +14,8 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 @Tag(name = "회원", description = "회원 API")
@@ -26,6 +26,8 @@ import java.util.Random;
 public class UserController {
 
     private final UserService userService;
+    private final JwtProvider jwtProvider;
+    private static final HashMap<String, String> validationMap = new HashMap<>();
 
     @Operation(summary = "아이디 중복확인", description = "회원가입시 아이디 중복확인을 위한 api")
     @ApiResponses(value = {
@@ -35,7 +37,7 @@ public class UserController {
     public ResponseEntity<UserValidationResponse> duplicateCheckUserId(@PathVariable String userId) {
         Boolean result = userService.readUserId(userId);
         String message = "";
-        if(result){
+        if (result) {
             message = "사용가능한 아이디입니다.";
         } else {
             message = "이미 사용중인 아이디입니다.";
@@ -53,7 +55,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "이미 가입된 전화번호")
     })
     @PostMapping("/validation/phone")
-    public ResponseEntity<UserValidationResponse> sendSms(@RequestBody UserValidationRequest request, HttpSession httpSession) {
+    public ResponseEntity<UserValidationResponse> sendSms(@RequestBody UserValidationRequest request) {
         String validationNum = generateRandomNumber();  // 6자리 인증번호 생성
         String phone = request.getPhone();
         String message = "";
@@ -67,8 +69,7 @@ public class UserController {
             SingleMessageSentResponse messageSentResponse = userService.sendSms(phone, validationNum);
             String messageStatus = messageSentResponse.getStatusCode(); // sms 전송 상태
             if (messageStatus.matches("2000|3000|4000")) {  // 제대로 발송된 경우
-                httpSession.setAttribute("validationNum", validationNum);
-                httpSession.setMaxInactiveInterval(600);    // 10분후 세션만료(인증번호 만료)
+                validationMap.put(phone, validationNum);
                 message = "인증번호 전송이 완료되었습니다.";
                 result = true;
             } else {
@@ -89,19 +90,28 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "인증 완료 / 실패"),
             @ApiResponse(responseCode = "400", description = "만료된 인증번호")
     })
-    @GetMapping("/validation/phone/{validation}")
-    public ResponseEntity<UserValidationResponse> validationSms(@PathVariable String validation, HttpSession httpSession){
+    @PostMapping("/validation/number")
+    public ResponseEntity<UserValidationResponse> validationSms(@RequestBody UserValidationRequest request) {
+        /*HttpSession httpSession = request.getSession(false);
         String validationNum = (String)httpSession.getAttribute("validationNum");
+        System.out.println(httpSession.getId());
+        System.out.println("인증번호="+validation);
+        System.out.println("세션인증번호="+validationNum);*/
+        String validation = request.getValidationNum();
+        String validationNum = validationMap.get(request.getPhone());
+        System.out.println("validation=" + validation);
+        System.out.println("validationMap2=" + validationMap);
         String message = "";
         boolean result = false;
         int status = 400;
-        if(validationNum == null) {
+        if (validationNum == null) {
             message = "인증번호가 만료되었습니다. 다시 시도해주세요.";
         } else {
-            if(validationNum.equals(validation)){
+            if (validationNum.equals(validation)) {
                 message = "인증이 완료되었습니다.";
                 result = true;
-                httpSession.removeAttribute("validationNum");
+                validationMap.remove(request.getPhone());
+                //httpSession.removeAttribute("validationNum");
             } else {
                 message = "잘못된 인증번호입니다.";
             }
@@ -114,16 +124,16 @@ public class UserController {
         return ResponseEntity.status(status).body(response);
     }
 
-    @Operation(summary = "회원가입 [In Progress]", description = "회원가입 처리 api")
+    @Operation(summary = "회원가입", description = "회원가입 처리 api")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "가입 성공 / 실패")
     })
-    @PostMapping("")
+    @PostMapping("/signup")
     public ResponseEntity<UserValidationResponse> create(@RequestBody CreateUserRequest request) {
         String message = "";
         int status = 200;
         boolean result = false;
-        try{
+        try {
             result = userService.createUser(request);
             message = "회원가입에 성공하였습니다.";
         } catch (DuplicateKeyException e) {
@@ -144,12 +154,88 @@ public class UserController {
         return ResponseEntity.status(status).body(response);
     }
 
+    @Operation(summary = "회원조회", description = "회원조회 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "회원 조회 실패")
+    })
+    @GetMapping()
+    public ResponseEntity<?> readUser(@RequestHeader("Authorization") String header) {
+        long userNo = jwtProvider.getUserNoFromHeader(header);
+        try {
+            ReadUserResponse response = userService.readUser(userNo);
+            return ResponseEntity.status(200).body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(UserValidationResponse.builder()
+                    .message(e.getMessage())
+                    .build());
+        }
+    }
+
+    @Operation(summary = "회원 정보 수정", description = "마이페이지 부가 정보 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "정보 수정 성공"),
+            @ApiResponse(responseCode = "404", description = "회원 조회 실패"),
+            @ApiResponse(responseCode = "400", description = "정보 수정 불가")
+    })
+    @PutMapping
+    public ResponseEntity<ReadUserResponse> updateUser(
+            @RequestHeader("Authorization") String header,
+            @RequestBody UpdateUserRequest request) {
+        long userNo = jwtProvider.getUserNoFromHeader(header);
+        int status = 400;
+        String message = "";
+        try {
+            ReadUserResponse response = userService.updateUser(userNo, request);
+            return ResponseEntity.status(200).body(response);
+        } catch (NoSuchElementException e) {
+            status = 404;
+            message = e.getMessage();
+        } catch (Exception e){
+            message = e.getMessage();
+        }
+
+        return ResponseEntity.status(status).body(ReadUserResponse.builder()
+                .message(message)
+                .build());
+    }
+
+    @Operation(summary = "회원 탈퇴", description = "마이페이지 회원 탈퇴")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "탈퇴 완료 / 실패"),
+            @ApiResponse(responseCode = "404", description = "회원 조회 실패"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PutMapping("/withdraw")
+    public ResponseEntity<UserValidationResponse> deleteUser(@RequestHeader("Authorization") String header) {
+        long userNo = jwtProvider.getUserNoFromHeader(header);
+        int status = 400;
+        String message = "";
+        Boolean result = false;
+        try {
+            result = userService.deleteUser(userNo);
+            status = 200;
+            message = result?"탈퇴가 완료되었습니다.": "탈퇴에 실패하였습니다.";
+        } catch (NoSuchElementException e) {
+            status = 404;
+            message = e.getMessage();
+        } catch (Exception e) {
+            message = e.getMessage();
+        }
+
+        return ResponseEntity.status(status).body(UserValidationResponse.builder()
+                .message(message)
+                .result(result)
+                .build());
+    }
+
     private String generateRandomNumber() {
         Random random = new Random();
         StringBuilder numStr = new StringBuilder();
         for (int i = 0; i < 6; i++) {
             numStr.append(random.nextInt(10));
         }
+        System.out.println(numStr);
         return numStr.toString();
     }
 }

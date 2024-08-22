@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 @Data
@@ -27,12 +28,11 @@ public class NotificationEntity {
     private String notificationTitle;
     private String notificationContent;
 
-    @CreationTimestamp
     @Column(name="notification_datetime")
     @NotNull
-    private Timestamp notificationDateTime;
+    private Date notificationDateTime;
 
-    @Column(name="notification_ischeck")
+    @Column(name="notification_ischeck", columnDefinition = "boolean default false")
     @NotNull
     private boolean notificationIsCheck;
     private Long userNo;

@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.conversation;
 
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRequest;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
@@ -16,6 +16,8 @@ public interface ConversationLogService {
     List<ConversationLogResponse> readAllConversationLog();
 
     List<ConversationLogResponse> findLast5ByConversationRoomNo(long conversationRoomNo);
+
+    List<ConversationLogResponse> findLastNByConversationRoomNo(int number, long conversationRoomNo);
 
     // Update
     void updateConversationLog(long conversationLogNo, ConversationLogRequest request);

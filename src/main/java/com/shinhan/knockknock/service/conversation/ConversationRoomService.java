@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.conversation;
 
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomUpdateRequest;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomResponse;

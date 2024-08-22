@@ -13,21 +13,20 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateCardIssueRequest {
-    private Long cardIssueNo;
-    private String cardIssueResidentNo;
+    //private String cardIssueResidentNo;
+    private String cardIssueFirstEname;
+    private String cardIssueLastEname;
     private String cardIssueEname;
     private String cardIssueEmail;
     private String cardIssueBank;
     private String cardIssueAccount;
     private boolean cardIssueIsAgree;
-    private int cardIssueIncome;
-    private int cardIssueCredit;
-    private Date cardIssueAmountDate;
+    private String cardIssueIncome;
+    private String cardIssueCredit;
+    private String cardIssueAmountDate;
     private String cardIssueSource;
-    private boolean cardIssueIsHighrisk;
+    private String cardIssueIsHighrisk;
     private String cardIssuePurpose;
-    private Timestamp cardIssueIssueDate;
-    private Long userNo;
     private String cardIssueAddress;
     private boolean cardIssueIsFamily;
     private String cardIssuePassword;

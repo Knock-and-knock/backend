@@ -9,11 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatbotResponse {
-    private String content;
-    private int promptTokens;
-    private int completionTokens;
-    private int totalTokens;
-    private String actionRequired;
-    private String serviceNumber;
+public class ClassificationResponse {
+    String mainTaskNumber;
+    String subTaskNumber;
 }
