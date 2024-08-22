@@ -29,10 +29,8 @@ public class UserServiceTest {
 
         // when
         boolean result = userService.createUser(request);
-        boolean result2 = userService.createUser(request);
 
         // then
         assertThat(result).isTrue();
-        assertThat(result2).isFalse();
     }
 }

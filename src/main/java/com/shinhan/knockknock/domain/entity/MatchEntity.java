@@ -27,15 +27,16 @@ public class MatchEntity {
 
     @Column(name = "match_status")
     @NotNull
+    @Builder.Default
     private String matchStatus = "WAIT";    // WAIT(대기), ACCEPT(수락), REJECT(거절)
 
     @OneToOne
     @JoinColumn(name = "user_protectorno")
     @NotNull
-    private UserEntity userProtectorNo;
+    private UserEntity userProtector;
 
     @OneToOne
     @JoinColumn(name = "user_protegeno")
     @NotNull
-    private UserEntity userProtegeNo;
+    private UserEntity userProtege;
 }

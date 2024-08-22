@@ -27,7 +27,7 @@ public class MatchServiceImpl implements MatchService {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
-        MatchEntity match = matchRepository.findByUserProtectorNoOrUserProtegeNo(user, user)
+        MatchEntity match = matchRepository.findByUserProtectorOrUserProtege(user, user)
                 .orElseThrow(() -> new NoSuchElementException("매칭이 존재하지 않습니다."));
         return entityToDto(match);
     }
@@ -40,17 +40,17 @@ public class MatchServiceImpl implements MatchService {
                 .orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다."));
 
         // 피보호자 계정 존재 여부 확인
-        UserEntity protegeUser = userRepository.findByCards_CardBankAndCards_CardAccountAndCards_CardIsfamilyFalse(
+        UserEntity protegeUser = userRepository.findByUserNameAndUserPhone(
                         request.getProtegeName(), request.getProtegePhone())
                 .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
 
         // 기존 매칭 기록 확인
-        MatchEntity match = matchRepository.findByUserProtectorNoAndUserProtegeNo(protectorUser, protegeUser)
+        MatchEntity match = matchRepository.findByUserProtectorAndUserProtege(protectorUser, protegeUser)
                 .orElse(MatchEntity.builder()
                         .matchProtectorName(request.getMatchProtectorName())
                         .matchProtegeName(request.getMatchProtegeName())
-                        .userProtectorNo(protectorUser)
-                        .userProtegeNo(protegeUser)
+                        .userProtector(protectorUser)
+                        .userProtege(protegeUser)
                         .matchStatus("WAIT")
                         .build());
 
@@ -111,7 +111,7 @@ public class MatchServiceImpl implements MatchService {
                 .orElseThrow(() -> new NoSuchElementException("매칭이 존재하지 않습니다."));
 
         if (user.getUserType().toString().equals("PROTEGE")
-                && Objects.equals(user.getUserNo(), match.getUserProtegeNo().getUserNo())
+                && Objects.equals(user.getUserNo(), match.getUserProtege().getUserNo())
                 && match.getMatchStatus().equals("ACCEPT")) {
             matchRepository.delete(match);
         } else {

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SimpleLoginUserRequest{
-    @Schema(example = "protector02")
+    @Schema(example = "38")
     private long userNo;
     @Schema(example = "123456")
     private String userSimplePassword;

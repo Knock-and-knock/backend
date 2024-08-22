@@ -1,7 +1,14 @@
 package com.shinhan.knockknock.service;
 
 import com.shinhan.knockknock.domain.dto.CreateUserRequest;
+import com.shinhan.knockknock.domain.dto.ReadUserResponse;
+import com.shinhan.knockknock.domain.dto.UpdateUserRequest;
+import com.shinhan.knockknock.domain.entity.MatchEntity;
+import com.shinhan.knockknock.domain.entity.TokenEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
+import com.shinhan.knockknock.domain.entity.UserRoleEnum;
+import com.shinhan.knockknock.repository.MatchRepository;
+import com.shinhan.knockknock.repository.TokenRepository;
 import com.shinhan.knockknock.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +25,8 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService{
@@ -25,6 +34,8 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+    private final MatchRepository matchRepository;
+    private final TokenRepository tokenRepository;
 
     private DefaultMessageService defualtMessageService;
 
@@ -86,6 +97,80 @@ public class UserServiceImpl implements UserService{
         return false;
     }
 
+    @Override
+    public ReadUserResponse readUser(long userNo) {
+        UserEntity user = userRepository.findById(userNo)
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
+
+        ReadUserResponse readUserResponse = null;
+        if(user.getUserType().equals(UserRoleEnum.PROTECTOR)){  // 보호자인 경우
+            if(user.getMatchProtector() != null && user.getMatchProtector().getMatchStatus().equals("ACCEPT")) { // 매칭 정보가 있는 경우
+                UserEntity protege = user.getMatchProtector().getUserProtege();
+                readUserResponse = entityToDtoProtector(user, protege);
+            } else {    // 매칭 정보가 없는 경우 본인 정보만 조회
+                readUserResponse = entityToDtoProtector(user, user);
+            }
+        } else if(user.getUserType().equals(UserRoleEnum.PROTEGE)){ // 피보호자인 경우
+            readUserResponse = entityToDtoProtector(user, user);
+        } else {
+            throw new RuntimeException("잘못된 요청입니다.");
+        }
+
+        return readUserResponse;
+    }
+
+    @Override
+    public ReadUserResponse updateUser(long userNo, UpdateUserRequest request) {
+        UserEntity user = userRepository.findById(userNo)
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
+
+        ReadUserResponse response = null;
+        if(user.getUserType().equals(UserRoleEnum.PROTECTOR)){
+            if(user.getMatchProtector() != null && user.getMatchProtector().getMatchStatus().equals("ACCEPT")) {
+                UserEntity protege = user.getMatchProtector().getUserProtege();
+                UserEntity setProtege = setUpdateInfo(protege, request);
+                userRepository.save(setProtege);
+                response = entityToDtoProtector(user, setProtege);
+            } else {
+                throw new RuntimeException("매칭 정보가 없습니다.");
+            }
+        } else if(user.getUserType().equals(UserRoleEnum.PROTEGE)){
+            UserEntity setProtege = setUpdateInfo(user, request);
+            userRepository.save(setProtege);
+            response = entityToDtoProtector(setProtege, setProtege);
+        } else {
+            throw new RuntimeException("잘못된 요청입니다.");
+        }
+        return response;
+    }
+
+    @Override
+    public Boolean deleteUser(long userNo) {
+        UserEntity user = userRepository.findById(userNo)
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
+
+        // 매칭 삭제
+        MatchEntity match;
+        if(user.getUserType().equals(UserRoleEnum.PROTECTOR)){
+            match = user.getMatchProtector();
+        } else if(user.getUserType().equals(UserRoleEnum.PROTEGE)){
+            match = user.getMatchProtege();
+        } else {
+            throw new RuntimeException("잘못된 요청입니다.");
+        }
+        if(match != null){
+            matchRepository.delete(match);
+        }
+
+        user.setUserIsWithdraw(true);
+        UserEntity deleteUser = userRepository.save(user);
+
+        TokenEntity token = tokenRepository.findByUser(deleteUser)
+                .orElseThrow(() -> new NoSuchElementException("토큰이 없습니다."));
+        tokenRepository.delete(token);
+        return deleteUser.isUserIsWithdraw();
+    }
+
     private SingleMessageSentResponse sendMessage(String phone, String validationNum) {
         Message message = new Message();
         message.setFrom(fromPhoneNumber);
@@ -94,5 +179,16 @@ public class UserServiceImpl implements UserService{
         message.setText("[똑똑] 인증번호는 [" + validationNum + "] 입니다.");
 
         return this.defualtMessageService.sendOne(new SingleMessageSendingRequest(message));
+    }
+
+    private UserEntity setUpdateInfo(UserEntity user, UpdateUserRequest request) {
+        user.setUserBirth(request.getUserBirth());
+        user.setUserGender(request.getUserGender());
+        user.setUserAddress(request.getUserAddress());
+        user.setUserHeight(request.getUserHeight());
+        user.setUserWeight(request.getUserWeight());
+        user.setUserDisease(request.getUserDisease());
+
+        return user;
     }
 }

@@ -1,5 +1,6 @@
 package com.shinhan.knockknock.controller;
 
+import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.CreateMatchRequest;
 import com.shinhan.knockknock.domain.dto.CreateMatchResponse;
 import com.shinhan.knockknock.domain.dto.DeleteMatchResponse;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class MatchController {
 
     private final MatchService matchService;
+    private final JwtProvider jwtProvider;
 
     @Operation(summary = "매칭 조회", description = "매칭 정보 조회하는 api")
     @ApiResponses(value = {
