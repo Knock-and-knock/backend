@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.welfarebook;
 
 import com.shinhan.knockknock.domain.dto.welfarebook.CreateWelfareBookRequest;
 import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
@@ -10,7 +10,10 @@ import java.util.List;
 
 public interface WelfareBookService {
     // Create
-    Long createWelfareBook(CreateWelfareBookRequest request);
+    Long createWelfareBook(CreateWelfareBookRequest request, Long userNo);
+
+    // Create for Protege (added)
+    Long createWelfareBookForProtege(CreateWelfareBookRequest request, Long protectorUserNo);
 
     // Read
     List<ReadWelfareBookResponse> readAllByUserNo(Long userNo);
@@ -19,19 +22,6 @@ public interface WelfareBookService {
     // Delete
     void deleteWelfareBook(Long welfareBookNo);
 
-    // DTO -> Entity
-    default WelfareBookEntity dtoToEntity(CreateWelfareBookRequest request, UserEntity user, WelfareEntity welfare) {
-        return WelfareBookEntity.builder()
-                .welfareBookNo(request.getWelfareBookNo())
-                .welfareBookStartDate(request.getWelfareBookStartDate())
-                .welfareBookEndDate(request.getWelfareBookEndDate())
-                .welfareBookIsCansle(request.isWelfareBookIsCansle())
-                .welfareBookIsComplete(request.isWelfareBookIsComplete())
-                .user(user)
-                .welfare(welfare)
-                .build();
-    }
-
     // Entity -> DTO
     default ReadWelfareBookResponse entityToDto(WelfareBookEntity entity) {
         return ReadWelfareBookResponse.builder()
@@ -39,9 +29,10 @@ public interface WelfareBookService {
                 .welfareBookEndDate(entity.getWelfareBookEndDate())
                 .welfareBookIsCansle(entity.isWelfareBookIsCansle())
                 .welfareBookIsComplete(entity.isWelfareBookIsComplete())
-                .userNo(entity.getUserNo())
-                .welfareName(entity.getWelfareName())
-                .welfarePirce(entity.getWelfarePrice())
+                .welfareBookUseTime(entity.getWelfareBookUseTime())
+                .userNo(entity.getUser().getUserNo())
+                .welfareName(entity.getWelfare().getWelfareName())
+                .welfarePrice(entity.getWelfare().getWelfarePrice())
                 .build();
     }
 }

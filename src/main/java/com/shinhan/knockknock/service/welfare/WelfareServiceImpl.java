@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.welfare;
 
 import com.shinhan.knockknock.domain.dto.welfare.CreateWelfareRequest;
 import com.shinhan.knockknock.domain.dto.welfare.ReadWelfareResponse;

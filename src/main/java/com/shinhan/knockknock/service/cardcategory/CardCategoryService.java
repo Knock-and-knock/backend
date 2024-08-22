@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.cardcategory;
 
 import com.shinhan.knockknock.domain.dto.cardcategory.CreateCardCategoryRequest;
 import com.shinhan.knockknock.domain.dto.cardcategory.ReadCardCategoryResponse;

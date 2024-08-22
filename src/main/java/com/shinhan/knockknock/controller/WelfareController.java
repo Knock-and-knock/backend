@@ -3,7 +3,7 @@ package com.shinhan.knockknock.controller;
 import com.shinhan.knockknock.domain.dto.welfare.CreateWelfareRequest;
 import com.shinhan.knockknock.domain.dto.welfare.ReadWelfareResponse;
 import com.shinhan.knockknock.repository.WelfareRepository;
-import com.shinhan.knockknock.service.WelfareService;
+import com.shinhan.knockknock.service.welfare.WelfareService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

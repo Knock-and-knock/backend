@@ -1,15 +1,18 @@
 package com.shinhan.knockknock.controller;
 
+import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.welfarebook.CreateWelfareBookRequest;
 import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
-import com.shinhan.knockknock.service.WelfareBookService;
+import com.shinhan.knockknock.service.welfarebook.WelfareBookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,13 +26,16 @@ public class WelfareBookController {
 
     private final WelfareBookService welfareBookService;
 
-    @Operation(summary = "복지 예약 전체 조회", description = "특정 사용자(userNo)의 복지 예약 내역을 전부 조회하는 API입니다.")
+    private final JwtProvider jwtProvider;
+
+    @Operation(summary = "복지 예약 전체 조회", description = "특정 사용자의 복지 예약 내역을 전부 조회하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "복지 예약 조회 성공"),
             @ApiResponse(responseCode = "400", description = "복지 예약 조회 실패")
     })
-    @GetMapping("/{userNo}")
-    public ResponseEntity<?> readAllByUserNo(@PathVariable("userNo") Long userNo) {
+    @GetMapping
+    public ResponseEntity<?> readAllByUserNo(@RequestHeader("Authorization") String header) {
+        Long userNo = jwtProvider.getUserNoFromHeader(header);
         try {
             List<ReadWelfareBookResponse> welfareBooks = welfareBookService.readAllByUserNo(userNo);
             return ResponseEntity.ok(welfareBooks);
@@ -53,20 +59,57 @@ public class WelfareBookController {
         }
     }
 
-    @Operation(summary = "복지 예약 하기", description = "복지 서비스를 예약하는 API입니다.")
+    @Operation(summary = "복지 예약 하기", description = "일반 사용자가 자신의 복지 서비스를 예약하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "복지 예약 생성 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청, 입력된 값이 없음"),
             @ApiResponse(responseCode = "500", description = "복지 예약 생성 실패")
     })
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody CreateWelfareBookRequest request) {
+    public ResponseEntity<?> create(
+            @RequestHeader("Authorization") String header,
+            @Valid @RequestBody CreateWelfareBookRequest request,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력된 값이 없습니다.");
+        }
+
+        Long userNo = jwtProvider.getUserNoFromHeader(header);  // 사용자 userNo 가져오기
         try {
-            Long welfareBookNo = welfareBookService.createWelfareBook(request);
+            Long welfareBookNo = welfareBookService.createWelfareBook(request, userNo);
             return ResponseEntity.status(HttpStatus.CREATED).body(welfareBookNo);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("사용자 또는 복지 항목이 존재하지 않습니다.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("복지 예약 생성 중 오류가 발생했습니다.");
+        }
+    }
+
+    @Operation(summary = "보호자가 대신 복지 예약 하기", description = "보호자가 매칭된 일반 사용자의 복지 서비스를 예약하는 API입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "복지 예약 생성 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청, 입력된 값이 없음"),
+            @ApiResponse(responseCode = "500", description = "복지 예약 생성 실패")
+    })
+    @PostMapping("/protege")
+    public ResponseEntity<?> createForProtege(
+            @RequestHeader("Authorization") String header,
+            @Valid @RequestBody CreateWelfareBookRequest request,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력된 값이 없습니다.");
+        }
+
+        Long protectorUserNo = jwtProvider.getUserNoFromHeader(header);  // 보호자 userNo 가져오기
+        try {
+            Long welfareBookNo = welfareBookService.createWelfareBookForProtege(request, protectorUserNo);
+            return ResponseEntity.status(HttpStatus.CREATED).body(welfareBookNo);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("매칭된 사용자 또는 복지 항목이 존재하지 않습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("복지 예약 생성 중 오류가 발생했습니다.");
         }
     }
 
@@ -87,3 +130,4 @@ public class WelfareBookController {
         }
     }
 }
+

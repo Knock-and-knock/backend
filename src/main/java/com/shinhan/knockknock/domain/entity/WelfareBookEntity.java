@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Builder
 @Table(name = "Welfarebook_tb")
@@ -33,6 +34,9 @@ public class WelfareBookEntity {
     @Column(name = "welfarebook_iscomplete")
     private boolean welfareBookIsComplete;
 
+    @Column(name = "welfarebook_totalprice")
+    private Long welfareBookUseTime;
+
     @ManyToOne
     @JoinColumn(name = "user_no")
     @NotNull
@@ -42,10 +46,24 @@ public class WelfareBookEntity {
         return user.getUserNo();
     }
 
+    public Date getUserBirth(){ return user.getUserBirth();}
+
+    public String getUserAddress(){ return user.getUserAddress();}
+
+    public int getUserGender(){ return user.getUserGender();}
+
+    public int getUserHeight(){ return user.getUserHeight();}
+
+    public int getUserWeight(){ return user.getUserWeight();}
+
+    public String getUserDisease(){ return user.getUserDisease();}
+
     @ManyToOne
     @JoinColumn(name = "welfare_no")
     @NotNull
     private WelfareEntity welfare;
+
+    public Long getWelfareNo(){ return welfare.getWelfareNo();}
 
     public String getWelfareName(){
         return welfare.getWelfareName();
@@ -54,4 +72,5 @@ public class WelfareBookEntity {
     public Long getWelfarePrice(){
         return welfare.getWelfarePrice();
     }
+
 }
