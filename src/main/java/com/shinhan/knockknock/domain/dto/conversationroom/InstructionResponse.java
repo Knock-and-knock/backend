@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InstructionResponse {
-    private String actionRequired;
+    private boolean actionRequired;
     private String serviceNumber;
 }

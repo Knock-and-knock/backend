@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ClassificationResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.InstructionResponse;
 import com.shinhan.knockknock.exception.ChatbotException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,52 +29,7 @@ public class ChatbotService {
 
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
 
-    public ClassificationResponse classificationChain(List<Map<String, String>> classificationPrompt) throws JsonProcessingException {
-        Map<String, Object> responseSchema = new HashMap<>();
-        responseSchema.put("mainTaskNumber", Map.of("type", "string"));
-        responseSchema.put("subTaskNumber", Map.of("type", "string", "nullable", true));
-
-        ChatbotResponse response = getChatbotResponse(classificationPrompt, responseSchema);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(response.getContent());
-
-        return ClassificationResponse.builder()
-                .mainTaskNumber(rootNode.path("mainTaskNumber").asText().trim())
-                .subTaskNumber(rootNode.path("subTaskNumber").asText().trim())
-                .build();
-    }
-
-    public InstructionResponse instructionChain(List<Map<String, String>> instructionPrompt) throws JsonProcessingException {
-        Map<String, Object> responseSchema = new HashMap<>();
-        responseSchema.put("actionRequired", Map.of("type", "boolean"));
-        responseSchema.put("serviceNumber", Map.of("type", "string"));
-
-        ChatbotResponse response = getChatbotResponse(instructionPrompt, responseSchema);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(response.getContent());
-        return InstructionResponse.builder()
-                .actionRequired(rootNode.path("actionRequired").asText().trim())
-                .serviceNumber(rootNode.path("serviceNumber").asText().trim())
-                .build();
-    }
-
-    public ChatbotResponse chatbotChain(List<Map<String, String>> chatbotPrompt) throws JsonProcessingException {
-        Map<String, Object> responseSchema = new HashMap<>();
-        responseSchema.put("content", Map.of("type", "string"));
-
-        ChatbotResponse response = getChatbotResponse(chatbotPrompt, responseSchema);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(response.getContent());
-
-        response.setContent(rootNode.path("content").asText());
-
-        return response;
-    }
-
-    private ChatbotResponse getChatbotResponse(List<Map<String, String>> messagesList, Map<String, Object> responseSchema) {
+    public ChatbotResponse getChatbotResponse(List<Map<String, String>> messagesList, Map<String, Object> responseSchema) {
         // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

@@ -1,101 +1,85 @@
 package com.shinhan.knockknock.service.conversation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.shinhan.knockknock.domain.dto.conversationroom.*;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
+import com.shinhan.knockknock.domain.dto.conversationroom.ClassificationResponse;
+import com.shinhan.knockknock.domain.dto.conversationroom.InstructionResponse;
+import com.shinhan.knockknock.domain.dto.conversationroom.ReservationResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ChainService {
 
-    @Autowired
-    ChatbotService chatbotService;
+    final ChatbotService chatbotService;
 
-    @Autowired
-    PromptService promptService;
+    public ClassificationResponse classificationChain(List<Map<String, String>> prompt) throws JsonProcessingException {
+        Map<String, Object> responseSchema = new HashMap<>();
+        responseSchema.put("mainTaskNumber", Map.of("type", "string"));
+        responseSchema.put("subTaskNumber", Map.of("type", "string", "nullable", true));
 
-    @Autowired
-    ConversationLogService conversationLogService;
+        ChatbotResponse response = chatbotService.getChatbotResponse(prompt, responseSchema);
 
-    public ChatbotResponse chain(ConversationRequest request) {
-        String input = request.getInput();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getContent());
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication != null ? authentication.getName() : "Unknown User";
-
-        try {
-            // 이전 대화내용 조회
-            List<ConversationLogResponse> conversationLogs = conversationLogService.findLastNByConversationRoomNo(5, request.getConversationRoomNo());
-
-            // 사용자 입력에 따른 작업 분류
-            List<Map<String, String>> classificationPrompt = promptService.classificationPrompt(input, conversationLogs);
-
-            ClassificationResponse classificationResult = chatbotService.classificationChain(classificationPrompt);
-            String mainTaskNo = classificationResult.getMainTaskNumber();
-            String subTaskNo = classificationResult.getSubTaskNumber();
-            log.info("🔗1️⃣ [{}] Task Classification Completed by - Main Task No: {}, Sub Task No: {}", username, mainTaskNo, subTaskNo);
-
-            // Main Task 분류
-            ChatbotResponse response;
-            switch (mainTaskNo) {
-                // 복지 서비스
-                case "001" -> {
-                    response = welfareService(subTaskNo, input, conversationLogs, username);
-                }
-                // 금융 서비스
-                case "002" -> {
-                    return null;
-                }
-                default -> {
-                    response =  dailyConversation(input, conversationLogs);
-                }
-            }
-
-            log.info("🔗2️⃣ [{}] Response generated for: {}", username, response.getContent());
-
-            return response;
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return ClassificationResponse.builder()
+                .mainTaskNumber(rootNode.path("mainTaskNumber").asText().trim())
+                .subTaskNumber(rootNode.path("subTaskNumber").asText().trim())
+                .build();
     }
 
-    private ChatbotResponse dailyConversation(String input, List<ConversationLogResponse> conversationLogs) throws JsonProcessingException {
-        List<String> promptFilePathList = Collections.singletonList("prompts/basic.prompt");
-        List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
-        return chatbotService.chatbotChain(chatbotPrompt);
+    public InstructionResponse instructionChain(List<Map<String, String>> prompt) throws JsonProcessingException {
+        Map<String, Object> responseSchema = new HashMap<>();
+        responseSchema.put("actionRequired", Map.of("type", "boolean"));
+        responseSchema.put("serviceNumber", Map.of("type", "string"));
+
+        ChatbotResponse response = chatbotService.getChatbotResponse(prompt, responseSchema);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getContent());
+        return InstructionResponse.builder()
+                .actionRequired(rootNode.path("actionRequired").asBoolean())
+                .serviceNumber(rootNode.path("serviceNumber").asText().trim())
+                .build();
     }
 
-    private ChatbotResponse welfareService(String subTaskNo, String input, List<ConversationLogResponse> conversationLogs, String username) throws JsonProcessingException {
-        // Sub Task 분류
-        InstructionResponse instructionResult = null;
-        switch (subTaskNo) {
-            case "001-02" -> {
-                List<Map<String, String>> instructionPrompt = promptService.instructionPrompt(input, conversationLogs);
-                instructionResult = chatbotService.instructionChain(instructionPrompt);
-                log.info("🔗3️⃣ [{}] Instruction Chain Completed - Service Number: {}, Action Required: {}", username, instructionResult.getServiceNumber(), instructionResult.getActionRequired());
+    public ReservationResponse reservationChain(List<Map<String, String>> prompt) throws JsonProcessingException {
+        Map<String, Object> responseSchema = new HashMap<>();
+        responseSchema.put("actionRequired", Map.of("type", "boolean"));
+        responseSchema.put("serviceTypeNumber", Map.of("type", "number"));
+        responseSchema.put("reservationDate", Map.of("type", "string"));
+        responseSchema.put("reservationTimeCode", Map.of("type", "string"));
 
-            }
-        }
+        ChatbotResponse response = chatbotService.getChatbotResponse(prompt, responseSchema);
 
-        // 답변 생성
-        List<String> promptFilePathList = Arrays.asList("prompts/basic.prompt", "prompts/welfare.prompt");
-        List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
-        ChatbotResponse response = chatbotService.chatbotChain(chatbotPrompt);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getContent());
+        return ReservationResponse.builder()
+                .actionRequired(rootNode.path("actionRequired").asBoolean())
+                .serviceTypeNumber(rootNode.path("serviceTypeNumber").asInt())
+                .reservationDate(rootNode.path("reservationDate").asText())
+                .reservationTimeCode(rootNode.path("reservationTimeCode").asText())
+                .build();
+    }
 
-        // 추가 정보 입력
-        if (instructionResult != null){
-            response.setActionRequired(instructionResult.getActionRequired());
-            response.setServiceNumber(instructionResult.getServiceNumber());
-        }
+    public ChatbotResponse chatbotChain(List<Map<String, String>> prompt) throws JsonProcessingException {
+        Map<String, Object> responseSchema = new HashMap<>();
+        responseSchema.put("content", Map.of("type", "string"));
+
+        ChatbotResponse response = chatbotService.getChatbotResponse(prompt, responseSchema);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getContent());
+
+        response.setContent(rootNode.path("content").asText());
 
         return response;
     }

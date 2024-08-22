@@ -5,15 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatbotResponse {
-    private String content;
-    private int promptTokens;
-    private int completionTokens;
-    private int totalTokens;
+public class ReservationResponse {
     private boolean actionRequired;
-    private String serviceNumber;
+    private int serviceTypeNumber;
+    private String reservationDate;
+    private String reservationTimeCode;
 }

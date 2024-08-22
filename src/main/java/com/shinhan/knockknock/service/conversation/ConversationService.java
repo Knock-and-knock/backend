@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class ConversationService {
 
     @Autowired
-    ChainService chainService;
+    TextResponseService textResponseService;
 
     @Autowired
     TextToSpeechService textToSpeechService;
@@ -28,7 +28,7 @@ public class ConversationService {
         log.info("📌 Received conversation request: input={}, conversationRoomNo={}", request.getInput(), request.getConversationRoomNo());
 
         // Chatbot 답변 생성
-        ChatbotResponse response = chainService.chain(request);
+        ChatbotResponse response = textResponseService.chain(request);
 
         // 대화 내역 저장
         ConversationLogRequest conversationLog = ConversationLogRequest.builder()

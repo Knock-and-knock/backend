@@ -26,18 +26,24 @@ public class PromptService {
     }
 
     public List<Map<String, String>> classificationPrompt(String input, List<ConversationLogResponse> conversationLogs) {
-        String classificationPrompt = loadPrompt("prompts/classification.prompt");
-        return makePrompt(classificationPrompt, input, conversationLogs);
+        String systemPrompt = loadPrompt("prompts/classification.prompt");
+        return makePrompt(systemPrompt, input, conversationLogs);
     }
 
     public List<Map<String, String>> instructionPrompt(String input, List<ConversationLogResponse> conversationLogs) {
-        String classificationPrompt = loadPrompt("prompts/instruction.prompt");
-        return makePrompt(classificationPrompt, input, conversationLogs);
+        String systemPrompt = loadPrompt("prompts/instruction.prompt");
+        return makePrompt(systemPrompt, input, conversationLogs);
+    }
+
+    public List<Map<String, String>> reservationPrompt(String input, List<ConversationLogResponse> conversationLogs) {
+        String systemPrompt = loadPrompt("prompts/reservation.prompt");
+        return makePrompt(systemPrompt, input, conversationLogs);
     }
 
     public List<Map<String, String>> chatbotPrompt(List<String> promptFilePathList, String input, List<ConversationLogResponse> conversationLogs) {
         String systemPrompt = loadPrompts(promptFilePathList);
 
+        // Prompt에 현재 날짜 추가
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String dateStr = LocalDate.now().format(formatter);
         systemPrompt += "\nToday's date: " + dateStr;
