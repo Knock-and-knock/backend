@@ -13,6 +13,7 @@ public interface UserService {
     Boolean createUser(CreateUserRequest request);
     ReadUserResponse readUser(long userNo);
     ReadUserResponse updateUser(long userNo, UpdateUserRequest request);
+    Boolean deleteUser(long userNo);
 
     default UserEntity dtoToEntity(CreateUserRequest request){
         return UserEntity.builder()

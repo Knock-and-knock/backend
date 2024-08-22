@@ -200,6 +200,35 @@ public class UserController {
                 .build());
     }
 
+    @Operation(summary = "회원 탈퇴", description = "마이페이지 회원 탈퇴")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "탈퇴 완료 / 실패"),
+            @ApiResponse(responseCode = "404", description = "회원 조회 실패"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PutMapping("/withdraw")
+    public ResponseEntity<UserValidationResponse> deleteUser(@RequestHeader("Authorization") String header) {
+        long userNo = jwtProvider.getUserNoFromHeader(header);
+        int status = 400;
+        String message = "";
+        Boolean result = false;
+        try {
+            result = userService.deleteUser(userNo);
+            status = 200;
+            message = result?"탈퇴가 완료되었습니다.": "탈퇴에 실패하였습니다.";
+        } catch (NoSuchElementException e) {
+            status = 404;
+            message = e.getMessage();
+        } catch (Exception e) {
+            message = e.getMessage();
+        }
+
+        return ResponseEntity.status(status).body(UserValidationResponse.builder()
+                .message(message)
+                .result(result)
+                .build());
+    }
+
     private String generateRandomNumber() {
         Random random = new Random();
         StringBuilder numStr = new StringBuilder();

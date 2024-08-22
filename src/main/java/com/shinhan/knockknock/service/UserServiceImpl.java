@@ -3,8 +3,10 @@ package com.shinhan.knockknock.service;
 import com.shinhan.knockknock.domain.dto.CreateUserRequest;
 import com.shinhan.knockknock.domain.dto.ReadUserResponse;
 import com.shinhan.knockknock.domain.dto.UpdateUserRequest;
+import com.shinhan.knockknock.domain.entity.MatchEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.domain.entity.UserRoleEnum;
+import com.shinhan.knockknock.repository.MatchRepository;
 import com.shinhan.knockknock.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+    private final MatchRepository matchRepository;
 
     private DefaultMessageService defualtMessageService;
 
@@ -136,6 +139,29 @@ public class UserServiceImpl implements UserService{
             throw new RuntimeException("잘못된 요청입니다.");
         }
         return response;
+    }
+
+    @Override
+    public Boolean deleteUser(long userNo) {
+        UserEntity user = userRepository.findById(userNo)
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
+
+        // 매칭 삭제
+        MatchEntity match;
+        if(user.getUserType().equals(UserRoleEnum.PROTECTOR)){
+            match = user.getMatchProtector();
+        } else if(user.getUserType().equals(UserRoleEnum.PROTEGE)){
+            match = user.getMatchProtege();
+        } else {
+            throw new RuntimeException("잘못된 요청입니다.");
+        }
+        if(match != null){
+            matchRepository.delete(match);
+        }
+
+        user.setUserIsWithdraw(true);
+        UserEntity deleteUser = userRepository.save(user);
+        return deleteUser.isUserIsWithdraw();
     }
 
     private SingleMessageSentResponse sendMessage(String phone, String validationNum) {
