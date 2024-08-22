@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/conversation-log")
 @Tag(name = "대화 내역", description = "대화 내역 관련 API 입니다.")
