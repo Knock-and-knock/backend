@@ -2,7 +2,6 @@ package com.shinhan.knockknock.service.conversation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.shinhan.knockknock.domain.dto.conversationroom.*;
-import com.shinhan.knockknock.service.WelfareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

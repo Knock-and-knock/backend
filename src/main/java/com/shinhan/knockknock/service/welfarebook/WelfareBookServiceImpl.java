@@ -47,10 +47,10 @@ public class WelfareBookServiceImpl implements WelfareBookService {
         UserEntity protector = userRepository.findById(protectorUserNo)
                 .orElseThrow(() -> new NoSuchElementException("해당 보호자가 존재하지 않습니다."));
 
-        MatchEntity match = matchRepository.findByUserProtectorNoOrUserProtegeNo(protector, protector)
+        MatchEntity match = matchRepository.findByUserProtectorOrUserProtege(protector, protector)
                 .orElseThrow(() -> new NoSuchElementException("해당 보호자에게 매칭된 사용자가 없습니다."));
 
-        UserEntity protege = match.getUserProtegeNo();  // 매칭된 일반 사용자
+        UserEntity protege = match.getUserProtege();  // 매칭된 일반 사용자
 
         WelfareEntity welfare = welfareRepository.findByWelfareNameAndWelfarePrice(request.getWelfareName(), request.getWelfarePrice())
                 .orElseThrow(() -> new NoSuchElementException("해당 복지 항목이 존재하지 않습니다."));
