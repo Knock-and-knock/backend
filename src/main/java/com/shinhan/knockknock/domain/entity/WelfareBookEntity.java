@@ -36,10 +36,22 @@ public class WelfareBookEntity {
     @ManyToOne
     @JoinColumn(name = "user_no")
     @NotNull
-    private UserEntity userNo;
+    private UserEntity user;
+
+    public Long getUserNo(){
+        return user.getUserNo();
+    }
 
     @ManyToOne
     @JoinColumn(name = "welfare_no")
     @NotNull
-    private WelfareEntity welfareNo;
+    private WelfareEntity welfare;
+
+    public String getWelfareName(){
+        return welfare.getWelfareName();
+    }
+
+    public Long getWelfarePrice(){
+        return welfare.getWelfarePrice();
+    }
 }

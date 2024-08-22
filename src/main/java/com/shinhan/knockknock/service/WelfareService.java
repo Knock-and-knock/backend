@@ -1,7 +1,7 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.CreateWelfareRequest;
-import com.shinhan.knockknock.domain.dto.ReadWelfareResponse;
+import com.shinhan.knockknock.domain.dto.welfare.CreateWelfareRequest;
+import com.shinhan.knockknock.domain.dto.welfare.ReadWelfareResponse;
 import com.shinhan.knockknock.domain.entity.WelfareEntity;
 
 import java.util.List;

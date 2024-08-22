@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.domain.dto;
+package com.shinhan.knockknock.domain.dto.welfarebook;
 
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.domain.entity.WelfareEntity;
@@ -24,7 +24,9 @@ public class ReadWelfareBookResponse {
     @Schema(example = "")
     private boolean welfareBookIsComplete;
     @Schema(example = "1")
-    private UserEntity userNo;
-    @Schema(example = "1")
-    private WelfareEntity welfareNo;
+    private Long userNo;
+    @Schema(example = "가정 돌봄")
+    private String welfareName;
+    @Schema(example = "6000")
+    private Long welfarePirce;
 }

@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.CreateCardIssueRequest;
 import com.shinhan.knockknock.domain.dto.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.ReadCardResponse;
@@ -11,21 +12,26 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Date;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@AutoConfigureMockMvc
 @WebMvcTest(CardController.class)
 public class CardControllerTest {
 
@@ -46,11 +52,13 @@ public class CardControllerTest {
     private ClovaOCRService clovaOCRService;
 
     @Test
+    @WithMockUser(username = "protege02", password = "1234")
     @DisplayName("발급 요청이 정상적으로 처리되는지 테스트(비동기 작업이기 때문에 처리될 것을 의미하는 202 Accepted로 결과 나와야 성공)")
     public void createCardIssueTest() throws Exception {
         /*
         Given: 테스트를 위한 준비
         */
+
         CreateCardIssueRequest request = CreateCardIssueRequest
                 .builder()
                 .cardIssueResidentNo("987654-1234567")
@@ -83,7 +91,8 @@ public class CardControllerTest {
         /*
         When: 테스트 행위를 수행
         */
-        mockMvc.perform(post("/api/v1/card/apply")
+        mockMvc.perform(post("/api/v1/card")
+                        .with(csrf()) // 이거 뭐임?
                         .contentType(MediaType.APPLICATION_JSON) // 직렬화된 문자열을 MockMvc를 사용하여 Post 요청의 content로 사용
                         .content(objectMapper.writeValueAsString(request))) // request 객체를 json으로 직렬화
                 /*
@@ -94,6 +103,7 @@ public class CardControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "protege02", password = "1234")
     @DisplayName("사용자 번호로 카드 정보 조회 테스트")
     public void readDetailTest() throws Exception {
         /*
@@ -125,7 +135,7 @@ public class CardControllerTest {
         /*
         When: 테스트 행위를 수행
         */
-        mockMvc.perform(get("/api/v1/card/read/{userNo}", userNo)
+        mockMvc.perform(get("/api/v1/card/{userNo}", userNo)
                         .contentType(MediaType.APPLICATION_JSON))
                 /*
                 Then: 결과 검증

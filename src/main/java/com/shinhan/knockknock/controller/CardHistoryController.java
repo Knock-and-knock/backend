@@ -1,8 +1,10 @@
 package com.shinhan.knockknock.controller;
 
-import com.shinhan.knockknock.domain.dto.CreateCardCategoryRequest;
-import com.shinhan.knockknock.domain.dto.CreateCardHistoryRequest;
-import com.shinhan.knockknock.domain.dto.ReadCardHistoryResponse;
+import com.shinhan.knockknock.domain.dto.cardcategory.CreateCardCategoryRequest;
+import com.shinhan.knockknock.domain.dto.cardhistory.CreateCardHistoryRequest;
+import com.shinhan.knockknock.domain.dto.cardhistory.ReadCardHistoryResponse;
+import com.shinhan.knockknock.domain.entity.CardEntity;
+import com.shinhan.knockknock.repository.CardRepository;
 import com.shinhan.knockknock.service.CardCategoryService;
 import com.shinhan.knockknock.service.CardHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +25,7 @@ import java.util.NoSuchElementException;
 @Tag(name = "카드 내역", description = "카드 내역 목록 API")
 public class CardHistoryController {
 
+    final CardRepository cardRepository;
     final CardHistoryService cardHistoryService;
     final CardCategoryService cardCategoryService;
 
@@ -74,6 +77,29 @@ public class CardHistoryController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카드 카테고리 수정 중 오류가 발생했습니다.");
+        }
+    }
+
+    @Operation(summary = "가족 카드 관련 사용자 조회", description = "가족 카드일 경우, 관련된 사용자의 이름을 조회하는 API입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "사용자 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "관련 사용자를 찾을 수 없습니다."),
+            @ApiResponse(responseCode = "500", description = "서버 오류로 인한 사용자 조회 실패")
+    })
+    @GetMapping("/{cardId}")
+    public ResponseEntity<?> getFamilyCardUserName(@PathVariable("cardId") Long cardId) {
+        try {
+            // cardId를 사용하여 CardEntity를 조회
+            CardEntity cardEntity = cardRepository.findById(cardId)
+                    .orElseThrow(() -> new NoSuchElementException("해당 카드가 존재하지 않습니다."));
+
+            // CardEntity를 사용하여 관련 사용자의 이름 조회
+            String userName = cardHistoryService.findUserNameForFamilyCard(cardEntity);
+            return ResponseEntity.ok(userName);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("사용자 조회 중 오류가 발생했습니다.");
         }
     }
 }

@@ -112,8 +112,8 @@ public class UserControllerTest {
                         .content(requestBody1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("회원가입에 실패하였습니다."))
+                .andExpect(MockMvcResultMatchers.status().is(409))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("이미 존재하는 아이디입니다."))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.result").value("false"));
     }
 }

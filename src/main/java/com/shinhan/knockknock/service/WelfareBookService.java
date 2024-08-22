@@ -1,45 +1,47 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.CreateWelfareBookRequest;
-import com.shinhan.knockknock.domain.dto.ReadWelfareBookResponse;
+import com.shinhan.knockknock.domain.dto.welfarebook.CreateWelfareBookRequest;
+import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
 import com.shinhan.knockknock.domain.entity.WelfareBookEntity;
+import com.shinhan.knockknock.domain.entity.UserEntity;
+import com.shinhan.knockknock.domain.entity.WelfareEntity;
 
 import java.util.List;
 
 public interface WelfareBookService {
-    //Create
+    // Create
     Long createWelfareBook(CreateWelfareBookRequest request);
 
-    //Read
-    List<ReadWelfareBookResponse> readAll();
+    // Read
+    List<ReadWelfareBookResponse> readAllByUserNo(Long userNo);
     ReadWelfareBookResponse readDetail(Long welfareBookNo);
 
-    //Delete
+    // Delete
     void deleteWelfareBook(Long welfareBookNo);
 
-    //Dto -> Entity
-    default WelfareBookEntity dtoToEntity(CreateWelfareBookRequest request){
-        WelfareBookEntity entity = WelfareBookEntity.builder()
+    // DTO -> Entity
+    default WelfareBookEntity dtoToEntity(CreateWelfareBookRequest request, UserEntity user, WelfareEntity welfare) {
+        return WelfareBookEntity.builder()
                 .welfareBookNo(request.getWelfareBookNo())
                 .welfareBookStartDate(request.getWelfareBookStartDate())
                 .welfareBookEndDate(request.getWelfareBookEndDate())
                 .welfareBookIsCansle(request.isWelfareBookIsCansle())
                 .welfareBookIsComplete(request.isWelfareBookIsComplete())
-                .userNo(request.getUserNo())
-                .welfareNo(request.getWelfareNo())
+                .user(user)
+                .welfare(welfare)
                 .build();
-        return entity;
     }
-    //Entity -> Dto
-    default ReadWelfareBookResponse entityToDto(WelfareBookEntity entity){
-        ReadWelfareBookResponse response = ReadWelfareBookResponse.builder()
+
+    // Entity -> DTO
+    default ReadWelfareBookResponse entityToDto(WelfareBookEntity entity) {
+        return ReadWelfareBookResponse.builder()
                 .welfareBookStartDate(entity.getWelfareBookStartDate())
                 .welfareBookEndDate(entity.getWelfareBookEndDate())
                 .welfareBookIsCansle(entity.isWelfareBookIsCansle())
                 .welfareBookIsComplete(entity.isWelfareBookIsComplete())
                 .userNo(entity.getUserNo())
-                .welfareNo(entity.getWelfareNo())
+                .welfareName(entity.getWelfareName())
+                .welfarePirce(entity.getWelfarePrice())
                 .build();
-        return response;
     }
 }
