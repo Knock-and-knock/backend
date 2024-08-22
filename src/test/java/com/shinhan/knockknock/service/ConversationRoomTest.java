@@ -50,6 +50,7 @@ public class ConversationRoomTest {
     public void testReadAllConversationRoom() {
         // Given
         long userNo = 1L;
+        conversationRoomService.createConversationRoom(userNo);
 
         // When
         List<ConversationRoomResponse> conversationRoomList = conversationRoomService.readAllConversationRoom();
@@ -97,7 +98,7 @@ public class ConversationRoomTest {
     }
 
     @Test
-    @DisplayName("대화방 종료 시간 수정 테스트")
+    @DisplayName("대화방 삭제 테스트")
     public void testDeleteConversation() {
         // Given
         long userNo = 1L;
