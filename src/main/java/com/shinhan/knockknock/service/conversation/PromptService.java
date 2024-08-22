@@ -11,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,11 @@ public class PromptService {
 
     public List<Map<String, String>> chatbotPrompt(List<String> promptFilePathList, String input, List<ConversationLogResponse> conversationLogs) {
         String systemPrompt = loadPrompts(promptFilePathList);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String dateStr = LocalDate.now().format(formatter);
+        systemPrompt += "\nToday's date: " + dateStr;
+
         return makePrompt(systemPrompt, input, conversationLogs);
     }
 

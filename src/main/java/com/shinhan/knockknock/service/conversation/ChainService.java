@@ -42,7 +42,7 @@ public class ChainService {
             ClassificationResponse classificationResult = chatbotService.classificationChain(classificationPrompt);
             String mainTaskNo = classificationResult.getMainTaskNumber();
             String subTaskNo = classificationResult.getSubTaskNumber();
-            log.info("🔗1️⃣ Task Classification Completed by [{}] - Main Task No: {}, Sub Task No: {}", username, mainTaskNo, subTaskNo);
+            log.info("🔗1️⃣ [{}] Task Classification Completed by - Main Task No: {}, Sub Task No: {}", username, mainTaskNo, subTaskNo);
 
             // Main Task 분류
             ChatbotResponse response;
@@ -60,7 +60,7 @@ public class ChainService {
                 }
             }
 
-            log.info("🔗2️⃣ Response generated for [{}]: {}", username, response.getContent());
+            log.info("🔗2️⃣ [{}] Response generated for: {}", username, response.getContent());
 
             return response;
         } catch (JsonProcessingException e) {
@@ -81,7 +81,8 @@ public class ChainService {
             case "001-02" -> {
                 List<Map<String, String>> instructionPrompt = promptService.instructionPrompt(input, conversationLogs);
                 instructionResult = chatbotService.instructionChain(instructionPrompt);
-                log.info("🔗3️⃣ [{}] - Service Number: {}, Action Required: {}", username, instructionResult.getServiceNumber(), instructionResult.getActionRequired());
+                log.info("🔗3️⃣ [{}] Instruction Chain Completed - Service Number: {}, Action Required: {}", username, instructionResult.getServiceNumber(), instructionResult.getActionRequired());
+
             }
         }
 

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ClassificationResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.InstructionResponse;
 import com.shinhan.knockknock.exception.ChatbotException;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +49,8 @@ public class ChatbotService {
 
     public InstructionResponse instructionChain(List<Map<String, String>> instructionPrompt) throws JsonProcessingException {
         Map<String, Object> responseSchema = new HashMap<>();
+        responseSchema.put("actionRequired", Map.of("type", "boolean"));
+        responseSchema.put("serviceNumber", Map.of("type", "string"));
 
         ChatbotResponse response = getChatbotResponse(instructionPrompt, responseSchema);
 
@@ -120,37 +121,6 @@ public class ChatbotService {
         return ChatbotResponse.builder()
                 .content("Error: " + responseEntity.getStatusCode())
                 .build();
-    }
-
-
-    private List<Map<String, String>> createMessagesList(String systemPrompt, String input, List<ConversationLogResponse> conversationLogs) {
-        List<Map<String, String>> messagesList = new ArrayList<>();
-
-        Map<String, String> systemMessage = new HashMap<>();
-        systemMessage.put("role", "system");
-        systemMessage.put("content", systemPrompt);
-        messagesList.add(systemMessage);
-
-        // 대화 로그 추가
-        for (ConversationLogResponse log : conversationLogs) {
-            Map<String, String> userMessage = new HashMap<>();
-            userMessage.put("role", "user");
-            userMessage.put("content", log.getConversationLogInput());
-            messagesList.add(userMessage);
-
-            Map<String, String> assistantMessage = new HashMap<>();
-            assistantMessage.put("role", "assistant");
-            assistantMessage.put("content", log.getConversationLogResponse());
-            messagesList.add(assistantMessage);
-        }
-
-        // 사용자 입력 메시지 추가
-        Map<String, String> userMessage1 = new HashMap<>();
-        userMessage1.put("role", "user");
-        userMessage1.put("content", input);
-        messagesList.add(userMessage1);
-
-        return messagesList;
     }
 
     private Map<String, Object> createJsonSchema(Map<String, Object> properties) {
