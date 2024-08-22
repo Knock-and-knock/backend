@@ -10,6 +10,7 @@ import com.shinhan.knockknock.repository.MatchRepository;
 import com.shinhan.knockknock.repository.WelfareBookRepository;
 import com.shinhan.knockknock.repository.UserRepository;
 import com.shinhan.knockknock.repository.WelfareRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,19 +19,14 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class WelfareBookServiceImpl implements WelfareBookService {
 
-    @Autowired
-    WelfareBookRepository welfareBookRepo;
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    WelfareRepository welfareRepository;
-
-    @Autowired
-    MatchRepository matchRepository;
+    final WelfareBookRepository welfareBookRepo;
+    final UserRepository userRepository;
+    final WelfareRepository welfareRepository;
+    final MatchRepository matchRepository;
 
     @Override
     public Long createWelfareBook(CreateWelfareBookRequest request, Long userNo) {
@@ -63,16 +59,16 @@ public class WelfareBookServiceImpl implements WelfareBookService {
         return newWelfareBook.getWelfareBookNo();
     }
 
-    // DTO -> Entity 변환, 총금액 포함
-    public WelfareBookEntity dtoToEntity(CreateWelfareBookRequest request, UserEntity user, WelfareEntity welfare) {
+    // DTO -> Entity
+    WelfareBookEntity dtoToEntity(CreateWelfareBookRequest request, UserEntity user, WelfareEntity welfare) {
         return WelfareBookEntity.builder()
                 .welfareBookStartDate(request.getWelfareBookStartDate())
                 .welfareBookEndDate(request.getWelfareBookEndDate())
                 .welfareBookIsCansle(request.isWelfareBookIsCansle())
                 .welfareBookIsComplete(request.isWelfareBookIsComplete())
+                .welfareBookUseTime(request.getWelfareBookUseTime())
                 .user(user)
                 .welfare(welfare)
-                .welfareBookTotalPrice(request.getWelfareBookTotalPrice())  // 프론트엔드에서 계산된 총금액 저장
                 .build();
     }
 

@@ -35,7 +35,7 @@ public class WelfareBookEntity {
     private boolean welfareBookIsComplete;
 
     @Column(name = "welfarebook_totalprice")
-    private Long welfareBookTotalPrice;
+    private Long welfareBookUseTime;
 
     @ManyToOne
     @JoinColumn(name = "user_no")

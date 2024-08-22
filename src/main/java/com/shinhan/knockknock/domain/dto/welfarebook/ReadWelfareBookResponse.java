@@ -29,6 +29,6 @@ public class ReadWelfareBookResponse {
     private String welfareName;
     @Schema(example = "6000")
     private Long welfarePrice;
-    @Schema(example = "24000")
-    private Long welfareBookTotalPrice;
+    @Schema(example = "3")
+    private Long welfareBookUseTime;
 }

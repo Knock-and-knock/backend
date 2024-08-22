@@ -22,18 +22,6 @@ public interface WelfareBookService {
     // Delete
     void deleteWelfareBook(Long welfareBookNo);
 
-    // DTO -> Entity
-    default WelfareBookEntity dtoToEntity(CreateWelfareBookRequest request, UserEntity user, WelfareEntity welfare) {
-        return WelfareBookEntity.builder()
-                .welfareBookStartDate(request.getWelfareBookStartDate())
-                .welfareBookEndDate(request.getWelfareBookEndDate())
-                .welfareBookIsCansle(request.isWelfareBookIsCansle())
-                .welfareBookIsComplete(request.isWelfareBookIsComplete())
-                .user(user)
-                .welfare(welfare)
-                .build();
-    }
-
     // Entity -> DTO
     default ReadWelfareBookResponse entityToDto(WelfareBookEntity entity) {
         return ReadWelfareBookResponse.builder()
@@ -41,6 +29,7 @@ public interface WelfareBookService {
                 .welfareBookEndDate(entity.getWelfareBookEndDate())
                 .welfareBookIsCansle(entity.isWelfareBookIsCansle())
                 .welfareBookIsComplete(entity.isWelfareBookIsComplete())
+                .welfareBookUseTime(entity.getWelfareBookUseTime())
                 .userNo(entity.getUser().getUserNo())
                 .welfareName(entity.getWelfare().getWelfareName())
                 .welfarePrice(entity.getWelfare().getWelfarePrice())
