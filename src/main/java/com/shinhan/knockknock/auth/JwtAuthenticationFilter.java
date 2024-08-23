@@ -1,7 +1,6 @@
 package com.shinhan.knockknock.auth;
 
 import com.shinhan.knockknock.domain.entity.UserEntity;
-import com.shinhan.knockknock.exception.MissingTokenException;
 import com.shinhan.knockknock.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -48,8 +47,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     response.setHeader("Authorization", "Bearer " + newAccessToken);
                 }
             }
-        } else {
-            throw new MissingTokenException("토큰이 없습니다.");
         }
         filterChain.doFilter(request, response);
     }
