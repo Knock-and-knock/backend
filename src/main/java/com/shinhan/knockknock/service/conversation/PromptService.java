@@ -30,29 +30,31 @@ public class PromptService {
         return makePrompt(systemPrompt, input, conversationLogs);
     }
 
-    public List<Map<String, String>> instructionPrompt(String input, List<ConversationLogResponse> conversationLogs) {
-        String systemPrompt = loadPrompt("prompts/instruction.prompt");
+    public List<Map<String, String>> redirectionPrompt(String input, List<ConversationLogResponse> conversationLogs) {
+        String systemPrompt = loadPrompt("prompts/redirection.prompt");
         return makePrompt(systemPrompt, input, conversationLogs);
     }
 
     public List<Map<String, String>> reservationPrompt(String input, List<ConversationLogResponse> conversationLogs) {
-        String systemPrompt = loadPrompt("prompts/reservation.prompt");
+        // Prompt에 현재 날짜 추가
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String dateStr = LocalDate.now().format(formatter);
+        String systemPrompt = loadPrompt("prompts/reservation.prompt") + "\nToday's date: " + dateStr;
+
         return makePrompt(systemPrompt, input, conversationLogs);
     }
 
     public List<Map<String, String>> chatbotPrompt(List<String> promptFilePathList, String input, List<ConversationLogResponse> conversationLogs) {
-        String systemPrompt = loadPrompts(promptFilePathList);
-
         // Prompt에 현재 날짜 추가
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String dateStr = LocalDate.now().format(formatter);
-        systemPrompt += "\nToday's date: " + dateStr;
+        String systemPrompt = loadPrompts(promptFilePathList) + "\nToday's date: " + dateStr;
 
         return makePrompt(systemPrompt, input, conversationLogs);
     }
 
     private List<Map<String, String>> makePrompt(String systemPrompt, String input, List<ConversationLogResponse> conversationLogs) {
-         List<Map<String, String>> messagesList = new ArrayList<>();
+        List<Map<String, String>> messagesList = new ArrayList<>();
 
         Map<String, String> systemMessage = new HashMap<>();
         systemMessage.put("role", "system");

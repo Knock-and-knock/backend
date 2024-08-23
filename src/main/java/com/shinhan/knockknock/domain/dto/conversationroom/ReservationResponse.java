@@ -15,5 +15,5 @@ public class ReservationResponse {
     private boolean actionRequired;
     private int serviceTypeNumber;
     private String reservationDate;
-    private String reservationTimeCode;
+    private int reservationTimeNumber;
 }

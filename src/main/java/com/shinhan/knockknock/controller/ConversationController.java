@@ -30,13 +30,7 @@ public class ConversationController {
     @PostMapping
     @Operation(summary = "말동무 대화 [In Progress]", description = "말동무의 답변을 생성합니다.")
     public ResponseEntity<ConversationResponse> conversation(@RequestBody ConversationRequest request) {
-        byte[] audioData = conversationService.conversation(request);
-
-        // 오디오 데이터를 Base64로 인코딩
-        String audioBase64 = Base64.getEncoder().encodeToString(audioData);
-
-        // DTO 생성
-        ConversationResponse response = new ConversationResponse("Your conversation message here", audioBase64);
+        ConversationResponse response = conversationService.conversation(request);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ClassificationResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.InstructionResponse;
+import com.shinhan.knockknock.domain.dto.conversationroom.RedirectionResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ReservationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,18 +36,22 @@ public class ChainService {
                 .build();
     }
 
-    public InstructionResponse instructionChain(List<Map<String, String>> prompt) throws JsonProcessingException {
+    public RedirectionResponse redirectionChain(List<Map<String, String>> prompt) throws JsonProcessingException {
         Map<String, Object> responseSchema = new HashMap<>();
         responseSchema.put("actionRequired", Map.of("type", "boolean"));
         responseSchema.put("serviceNumber", Map.of("type", "string"));
+        responseSchema.put("serviceName", Map.of("type", "string"));
+        responseSchema.put("serviceUrl", Map.of("type", "string"));
 
         ChatbotResponse response = chatbotService.getChatbotResponse(prompt, responseSchema);
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(response.getContent());
-        return InstructionResponse.builder()
+        return RedirectionResponse.builder()
                 .actionRequired(rootNode.path("actionRequired").asBoolean())
                 .serviceNumber(rootNode.path("serviceNumber").asText().trim())
+                .serviceName(rootNode.path("serviceName").asText().trim())
+                .serviceUrl(rootNode.path("serviceUrl").asText().trim())
                 .build();
     }
 
@@ -56,7 +60,7 @@ public class ChainService {
         responseSchema.put("actionRequired", Map.of("type", "boolean"));
         responseSchema.put("serviceTypeNumber", Map.of("type", "number"));
         responseSchema.put("reservationDate", Map.of("type", "string"));
-        responseSchema.put("reservationTimeCode", Map.of("type", "string"));
+        responseSchema.put("reservationTimeNumber", Map.of("type", "string"));
 
         ChatbotResponse response = chatbotService.getChatbotResponse(prompt, responseSchema);
 
@@ -66,7 +70,7 @@ public class ChainService {
                 .actionRequired(rootNode.path("actionRequired").asBoolean())
                 .serviceTypeNumber(rootNode.path("serviceTypeNumber").asInt())
                 .reservationDate(rootNode.path("reservationDate").asText())
-                .reservationTimeCode(rootNode.path("reservationTimeCode").asText())
+                .reservationTimeNumber(rootNode.path("reservationTimeNumber").asInt())
                 .build();
     }
 

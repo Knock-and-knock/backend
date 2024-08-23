@@ -16,4 +16,7 @@ public class ChatbotResponse {
     private int totalTokens;
     private boolean actionRequired;
     private String serviceNumber;
+
+    private RedirectionResponse instructionResult;
+    private ReservationResponse reservationResult;
 }

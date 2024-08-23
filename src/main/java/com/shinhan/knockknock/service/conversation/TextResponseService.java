@@ -26,7 +26,7 @@ public class TextResponseService {
     @Autowired
     ConversationLogService conversationLogService;
 
-    public ChatbotResponse chain(ConversationRequest request) {
+    public ChatbotResponse TextResponse(ConversationRequest request) {
         String input = request.getInput();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -76,18 +76,23 @@ public class TextResponseService {
 
     private ChatbotResponse welfareService(String subTaskNo, String input, List<ConversationLogResponse> conversationLogs, String username) throws JsonProcessingException {
         // Sub Task 분류
-        InstructionResponse instructionResult = null;
-        ReservationResponse ReservationResult = null;
+        RedirectionResponse redirectionResult = null;
+        ReservationResponse reservationResult = null;
         switch (subTaskNo) {
             case "001-02" -> {
-                List<Map<String, String>> instructionPrompt = promptService.instructionPrompt(input, conversationLogs);
-                instructionResult = chainService.instructionChain(instructionPrompt);
-                log.info("🔗3️⃣ [{}] Instruction Chain Completed - Service Number: {}, Action Required: {}", username, instructionResult.getServiceNumber(), instructionResult.isActionRequired());
+                List<Map<String, String>> redirectionPrompt = promptService.redirectionPrompt(input, conversationLogs);
+                redirectionResult = chainService.redirectionChain(redirectionPrompt);
+                log.info("🔗3️⃣ [{}] Instruction Chain Completed - Service Number: {}, Action Required: {}", username, redirectionResult.getServiceNumber(), redirectionResult.isActionRequired());
+                System.out.println("======================================");
+                System.out.println(redirectionResult);
+                System.out.println("======================================");
             }
             case "001-03" -> {
                 List<Map<String, String>> reservationPrompt = promptService.reservationPrompt(input, conversationLogs);
-                ReservationResult = chainService.reservationChain(reservationPrompt);
-                System.out.println(ReservationResult);
+                reservationResult = chainService.reservationChain(reservationPrompt);
+                System.out.println("======================================");
+                System.out.println(reservationResult);
+                System.out.println("======================================");
             }
         }
 
@@ -97,9 +102,9 @@ public class TextResponseService {
         ChatbotResponse response = chainService.chatbotChain(chatbotPrompt);
 
         // 추가 정보 입력
-        if (instructionResult != null){
-            response.setActionRequired(instructionResult.isActionRequired());
-            response.setServiceNumber(instructionResult.getServiceNumber());
+        if (redirectionResult != null){
+            response.setActionRequired(redirectionResult.isActionRequired());
+            response.setServiceNumber(redirectionResult.getServiceNumber());
         }
 
         return response;

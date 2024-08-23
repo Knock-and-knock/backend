@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ConversationResponse {
 
-    private String message;
+    private String content;
     private String audioData;
+
+    private boolean actionRequired;
 
 }
