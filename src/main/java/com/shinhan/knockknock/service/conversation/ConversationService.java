@@ -3,9 +3,12 @@ package com.shinhan.knockknock.service.conversation;
 import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRequest;
 import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRequest;
+import com.shinhan.knockknock.domain.dto.conversationroom.ConversationResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Base64;
 
 
 @Service
@@ -13,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class ConversationService {
 
     @Autowired
-    ChainService chainService;
+    TextResponseService textResponseService;
 
     @Autowired
     TextToSpeechService textToSpeechService;
@@ -24,13 +27,11 @@ public class ConversationService {
     @Autowired
     ConversationRoomService conversationRoomService;
 
-    public byte[] conversation(ConversationRequest request) {
+    public ConversationResponse conversation(ConversationRequest request) {
         log.info("📌 Received conversation request: input={}, conversationRoomNo={}", request.getInput(), request.getConversationRoomNo());
 
         // Chatbot 답변 생성
-        ChatbotResponse response = chainService.chain(request);
-
-        System.out.println(response);
+        ChatbotResponse response = textResponseService.TextResponse(request);
 
         // 대화 내역 저장
         ConversationLogRequest conversationLog = ConversationLogRequest.builder()
@@ -47,7 +48,14 @@ public class ConversationService {
 
         log.info("📌 Chatbot response: content={}, totalTokens={}", response.getContent(), response.getTotalTokens());
 
-        return audioData;
+        // 오디오 데이터를 Base64로 인코딩
+        String audioBase64 = Base64.getEncoder().encodeToString(audioData);
+
+        return ConversationResponse.builder()
+                .content(response.getContent())
+                .audioData(audioBase64)
+                .actionRequired(response.isActionRequired())
+                .build();
     }
 
 }

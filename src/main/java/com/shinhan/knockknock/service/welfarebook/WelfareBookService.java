@@ -10,10 +10,7 @@ import java.util.List;
 
 public interface WelfareBookService {
     // Create
-    Long createWelfareBook(CreateWelfareBookRequest request, Long userNo);
-
-    // Create for Protege (added)
-    Long createWelfareBookForProtege(CreateWelfareBookRequest request, Long protectorUserNo);
+    public Long createWelfareBook(CreateWelfareBookRequest request, Long userNo);
 
     // Read
     List<ReadWelfareBookResponse> readAllByUserNo(Long userNo);

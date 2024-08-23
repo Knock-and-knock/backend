@@ -185,8 +185,10 @@
             });
 
             const responseData = await response.json();
+
+            console.log(responseData)
             const audioData = responseData.audioData;
-            const message = responseData.message;
+            const message = responseData.content;
 
             // Decode the Base64 string to binary data
             const audioBlob = await fetch(`data:audio/wav;base64,${audioData}`).then(res => res.blob());

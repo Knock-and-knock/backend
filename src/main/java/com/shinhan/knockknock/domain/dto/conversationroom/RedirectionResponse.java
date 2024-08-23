@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InstructionResponse {
-    private String actionRequired;
+public class RedirectionResponse {
+    private boolean actionRequired;
     private String serviceNumber;
+    private String serviceName;
+    private String serviceUrl;
 }

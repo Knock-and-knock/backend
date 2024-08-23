@@ -1,80 +1,89 @@
 package com.shinhan.knockknock.service.conversation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.shinhan.knockknock.domain.dto.conversationroom.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
+import com.shinhan.knockknock.domain.dto.conversationroom.ClassificationResponse;
+import com.shinhan.knockknock.domain.dto.conversationroom.RedirectionResponse;
+import com.shinhan.knockknock.domain.dto.conversationroom.ReservationResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class ChainService {
 
-    @Autowired
-    ChatbotService chatbotService;
+    final ChatbotService chatbotService;
 
-    @Autowired
-    PromptService promptService;
+    public ClassificationResponse classificationChain(List<Map<String, String>> prompt) throws JsonProcessingException {
+        Map<String, Object> responseSchema = new HashMap<>();
+        responseSchema.put("mainTaskNumber", Map.of("type", "string"));
+        responseSchema.put("subTaskNumber", Map.of("type", "string", "nullable", true));
 
-    @Autowired
-    ConversationLogService conversationLogService;
+        ChatbotResponse response = chatbotService.getChatbotResponse(prompt, responseSchema);
 
-    public ChatbotResponse chain(ConversationRequest request) {
-        String input = request.getInput();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getContent());
 
-        try {
-            // 이전 대화내용 조회
-            List<ConversationLogResponse> conversationLogs = conversationLogService.findLastNByConversationRoomNo(5, request.getConversationRoomNo());
-
-            // 사용자 입력에 따른 작업 분류
-            List<Map<String, String>> classificationPrompt = promptService.classificationPrompt(input, conversationLogs);
-
-            ClassificationResponse classificationResult = chatbotService.classificationChain(classificationPrompt);
-            String mainTaskNo = classificationResult.getMainTaskNumber();
-            String subTaskNo = classificationResult.getSubTaskNumber();
-
-            System.out.println("mainTaskNo: " + mainTaskNo);
-            System.out.println("subTaskNo: " + subTaskNo);
-
-            // Prompt 제작
-            switch (mainTaskNo) {
-                case "001" -> {
-                    return welfareService(subTaskNo, input, conversationLogs);
-                }
-                default -> {
-                    return dailyConversation(input, conversationLogs);
-                }
-            }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return ClassificationResponse.builder()
+                .mainTaskNumber(rootNode.path("mainTaskNumber").asText().trim())
+                .subTaskNumber(rootNode.path("subTaskNumber").asText().trim())
+                .build();
     }
 
-    private ChatbotResponse dailyConversation(String input, List<ConversationLogResponse> conversationLogs) {
-        List<String> promptFilePathList = Collections.singletonList("prompts/basic.prompt");
-        List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
-        return chatbotService.chatbotChain(chatbotPrompt);
+    public RedirectionResponse redirectionChain(List<Map<String, String>> prompt) throws JsonProcessingException {
+        Map<String, Object> responseSchema = new HashMap<>();
+        responseSchema.put("actionRequired", Map.of("type", "boolean"));
+        responseSchema.put("serviceNumber", Map.of("type", "string"));
+        responseSchema.put("serviceName", Map.of("type", "string"));
+        responseSchema.put("serviceUrl", Map.of("type", "string"));
+
+        ChatbotResponse response = chatbotService.getChatbotResponse(prompt, responseSchema);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getContent());
+        return RedirectionResponse.builder()
+                .actionRequired(rootNode.path("actionRequired").asBoolean())
+                .serviceNumber(rootNode.path("serviceNumber").asText().trim())
+                .serviceName(rootNode.path("serviceName").asText().trim())
+                .serviceUrl(rootNode.path("serviceUrl").asText().trim())
+                .build();
     }
 
-    private ChatbotResponse welfareService(String subTaskNo, String input, List<ConversationLogResponse> conversationLogs) throws JsonProcessingException {
-        InstructionResponse instructionResult = null;
-        switch (subTaskNo) {
-            case "001-02" -> {
-                List<Map<String, String>> instructionPrompt = promptService.instructionPrompt(input, conversationLogs);
-                instructionResult = chatbotService.instructionChain(instructionPrompt);
-            }
-        }
-        List<String> promptFilePathList = Arrays.asList("prompts/basic.prompt", "prompts/welfare.prompt");
-        List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
-        ChatbotResponse response = chatbotService.chatbotChain(chatbotPrompt);
+    public ReservationResponse reservationChain(List<Map<String, String>> prompt) throws JsonProcessingException {
+        Map<String, Object> responseSchema = new HashMap<>();
+        responseSchema.put("actionRequired", Map.of("type", "boolean"));
+        responseSchema.put("serviceTypeNumber", Map.of("type", "number"));
+        responseSchema.put("reservationDate", Map.of("type", "string"));
+        responseSchema.put("reservationTimeNumber", Map.of("type", "string"));
 
-        if (instructionResult != null){
-            response.setActionRequired(instructionResult.getActionRequired());
-            response.setServiceNumber(instructionResult.getServiceNumber());
-        }
+        ChatbotResponse response = chatbotService.getChatbotResponse(prompt, responseSchema);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getContent());
+        return ReservationResponse.builder()
+                .actionRequired(rootNode.path("actionRequired").asBoolean())
+                .serviceTypeNumber(rootNode.path("serviceTypeNumber").asInt())
+                .reservationDate(rootNode.path("reservationDate").asText())
+                .reservationTimeNumber(rootNode.path("reservationTimeNumber").asInt())
+                .build();
+    }
+
+    public ChatbotResponse chatbotChain(List<Map<String, String>> prompt) throws JsonProcessingException {
+        Map<String, Object> responseSchema = new HashMap<>();
+        responseSchema.put("content", Map.of("type", "string"));
+
+        ChatbotResponse response = chatbotService.getChatbotResponse(prompt, responseSchema);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getContent());
+
+        response.setContent(rootNode.path("content").asText());
 
         return response;
     }
