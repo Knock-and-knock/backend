@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Builder
 @Table(name = "Welfarebook_tb")
