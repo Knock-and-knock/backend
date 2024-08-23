@@ -5,15 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConversationResponse {
-
-    private String content;
-    private String audioData;
-
+public class ReservationResponse {
     private boolean actionRequired;
-
+    private int serviceTypeNumber;
+    private String reservationDate;
+    private int reservationTimeNumber;
 }

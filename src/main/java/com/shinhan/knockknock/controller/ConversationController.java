@@ -10,10 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.OutputStream;
@@ -21,6 +18,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/conversation")
 @Tag(name = "말동무", description = "말동무 관련 API")
@@ -32,13 +30,7 @@ public class ConversationController {
     @PostMapping
     @Operation(summary = "말동무 대화 [In Progress]", description = "말동무의 답변을 생성합니다.")
     public ResponseEntity<ConversationResponse> conversation(@RequestBody ConversationRequest request) {
-        byte[] audioData = conversationService.conversation(request);
-
-        // 오디오 데이터를 Base64로 인코딩
-        String audioBase64 = Base64.getEncoder().encodeToString(audioData);
-
-        // DTO 생성
-        ConversationResponse response = new ConversationResponse("Your conversation message here", audioBase64);
+        ConversationResponse response = conversationService.conversation(request);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

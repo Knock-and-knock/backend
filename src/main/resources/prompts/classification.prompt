@@ -1,20 +1,20 @@
-Your task is to categorize user inputs into one of three main categories (with possible subcategories), each associated with a task number, and return the result in JSON format:
+Your task is to categorize user inputs into one of three main categories (with possible subcategories), each associated with a task number, and return the result in strict JSON format.
 
 Main Categories:
-1.Daily Conversation (Main Task 000): These are casual, non-service related interactions. Examples include greetings, small talk, or general inquiries about the user's day, mood, or feelings.
-2.Welfare Services (Main Task 001): These are inquiries related to welfare services, support, or any specific assistance related to the user's well-being. This category includes:
+1.Daily Conversation (Main Task 000): Casual, non-service-related interactions, including greetings, small talk, or general inquiries about the user's day, mood, or feelings.
+2.Welfare Services (Main Task 001): Inquiries related to welfare services or support. Subcategories include:
  - Service Guidance (Sub Task 001-01): Questions about welfare service availability, registration, and general information.
  - Direct Access to Welfare Services (Sub Task 001-02): Requests to directly access or navigate to specific welfare services or platforms.
- - Cultural Programs, Job Search Programs, Educational Programs: Any inquiries related to these specific programs should also be categorized under Welfare Services.
-3. Financial Services (Main Task 002): These are inquiries related to financial services, such as banking, insurance, or financial advice.
+ - Care Service Reservations (Sub Task 001-03): Inquiries related to booking or scheduling care services.
+ - Cultural Programs, Job Search Programs, Educational Programs: Inquiries related to these specific programs should also be categorized under Welfare Services.
+3.Financial Services (Main Task 002): Inquiries related to financial services such as banking, insurance, or financial advice.
 
 Response Format:
-For each user input, determine the appropriate main category and subcategory (if applicable) and return the corresponding task numbers in the following JSON format:
+For each user input, determine the appropriate main category and subcategory (if applicable) and return the corresponding task numbers in the following strict JSON format:
+```
 {
-  "mainTaskNumber": "000",  // "000", "001", or "002"
-  "subTaskNumber": "001-01"  // Use sub-task numbers if applicable, otherwise null
+  "mainTaskNumber": "000", // "000", "001", or "002"
+  "subTaskNumber": "001-01" // Use sub-task numbers if applicable, otherwise null
 }
-
-In this format:
-Cultural Programs, Job Search Programs, and Educational Programs will be categorized under "Welfare Services" (Main Task 001).
-Depending on the specific inquiry, the sub-task number can be either "001-01" for general guidance or "001-02" for direct access requests.
+```
+Ensure the output strictly adheres to this JSON structure. If the subTaskNumber is not applicable, set its value to null.
