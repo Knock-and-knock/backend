@@ -4,10 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ClassificationResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.InstructionResponse;
 import com.shinhan.knockknock.exception.ChatbotException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -19,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class ChatbotService {
 
@@ -30,34 +29,7 @@ public class ChatbotService {
 
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
 
-    public ClassificationResponse classificationChain(List<Map<String, String>> classificationPrompt) throws JsonProcessingException {
-        ChatbotResponse response = getChatbotResponse(classificationPrompt);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(response.getContent());
-
-        return ClassificationResponse.builder()
-                .mainTaskNumber(rootNode.path("mainTaskNumber").asText().trim())
-                .subTaskNumber(rootNode.path("subTaskNumber").asText().trim())
-                .build();
-    }
-
-    public InstructionResponse instructionChain(List<Map<String, String>> instructionPrompt) throws JsonProcessingException {
-        ChatbotResponse response = getChatbotResponse(instructionPrompt);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(response.getContent());
-        return InstructionResponse.builder()
-                .actionRequired(rootNode.path("actionRequired").asText().trim())
-                .serviceNumber(rootNode.path("serviceNumber").asText().trim())
-                .build();
-    }
-
-    public ChatbotResponse chatbotChain(List<Map<String, String>> chatbotPrompt) {
-        return getChatbotResponse(chatbotPrompt);
-    }
-
-    private ChatbotResponse getChatbotResponse(List<Map<String, String>> messagesList) {
+    public ChatbotResponse getChatbotResponse(List<Map<String, String>> messagesList, Map<String, Object> responseSchema) {
         // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -70,10 +42,14 @@ public class ChatbotService {
         // messagesList를 배열로 변환하여 requestBody에 추가
         requestBody.put("messages", messagesList.toArray(new Map[0]));
 
+        // Response Format 생성
+        Map<String, Object> jsonSchema = createJsonSchema(responseSchema);
+        requestBody.put("response_format", jsonSchema);
+
+        // HTTP Entity 생성
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        // JSON 변환 및 출력
-//        printChatbotRequest(requestBody);
+        printChatbotRequest(requestBody);
 
         // RestTemplate 객체 생성
         RestTemplate restTemplate = new RestTemplate();
@@ -100,35 +76,26 @@ public class ChatbotService {
                 .build();
     }
 
+    private Map<String, Object> createJsonSchema(Map<String, Object> properties) {
+        Map<String, Object> schema = new HashMap<>();
+        schema.put("type", "object");
+        schema.put("strict", true);
 
-    private List<Map<String, String>> createMessagesList(String systemPrompt, String input, List<ConversationLogResponse> conversationLogs) {
-        List<Map<String, String>> messagesList = new ArrayList<>();
+        schema.put("properties", properties);
 
-        Map<String, String> systemMessage = new HashMap<>();
-        systemMessage.put("role", "system");
-        systemMessage.put("content", systemPrompt);
-        messagesList.add(systemMessage);
+        // properties 맵의 모든 키를 필수 필드로 설정
+        List<String> requiredFields = new ArrayList<>(properties.keySet());
+        schema.put("required", requiredFields);
 
-        // 대화 로그 추가
-        for (ConversationLogResponse log : conversationLogs) {
-            Map<String, String> userMessage = new HashMap<>();
-            userMessage.put("role", "user");
-            userMessage.put("content", log.getConversationLogInput());
-            messagesList.add(userMessage);
+        Map<String, Object> jsonSchema = new HashMap<>();
+        jsonSchema.put("name", "TaskNumberSchema");  // 스키마 이름 추가
+        jsonSchema.put("schema", schema);  // 여기에 추가
 
-            Map<String, String> assistantMessage = new HashMap<>();
-            assistantMessage.put("role", "assistant");
-            assistantMessage.put("content", log.getConversationLogResponse());
-            messagesList.add(assistantMessage);
-        }
+        Map<String, Object> responseFormat = new HashMap<>();
+        responseFormat.put("type", "json_schema");
+        responseFormat.put("json_schema", jsonSchema);
 
-        // 사용자 입력 메시지 추가
-        Map<String, String> userMessage1 = new HashMap<>();
-        userMessage1.put("role", "user");
-        userMessage1.put("content", input);
-        messagesList.add(userMessage1);
-
-        return messagesList;
+        return responseFormat;
     }
 
     /**
@@ -164,9 +131,9 @@ public class ChatbotService {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String jsonRequestBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestBody);
-            System.out.println("Final JSON Request Body:\n" + jsonRequestBody);
+            log.debug("Final JSON Request Body:\n{}", jsonRequestBody);
         } catch (JsonProcessingException e) {
-            System.err.println("Failed to convert request body to JSON: " + e.getMessage());
+            log.error("Failed to convert request body to JSON: {}", e.getMessage());
         }
     }
 }

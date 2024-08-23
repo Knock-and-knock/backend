@@ -11,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,22 +26,35 @@ public class PromptService {
     }
 
     public List<Map<String, String>> classificationPrompt(String input, List<ConversationLogResponse> conversationLogs) {
-        String classificationPrompt = loadPrompt("prompts/classification.prompt");
-        return makePrompt(classificationPrompt, input, conversationLogs);
+        String systemPrompt = loadPrompt("prompts/classification.prompt");
+        return makePrompt(systemPrompt, input, conversationLogs);
     }
 
-    public List<Map<String, String>> instructionPrompt(String input, List<ConversationLogResponse> conversationLogs) {
-        String classificationPrompt = loadPrompt("prompts/instruction.prompt");
-        return makePrompt(classificationPrompt, input, conversationLogs);
+    public List<Map<String, String>> redirectionPrompt(String input, List<ConversationLogResponse> conversationLogs) {
+        String systemPrompt = loadPrompt("prompts/redirection.prompt");
+        return makePrompt(systemPrompt, input, conversationLogs);
+    }
+
+    public List<Map<String, String>> reservationPrompt(String input, List<ConversationLogResponse> conversationLogs) {
+        // Prompt에 현재 날짜 추가
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String dateStr = LocalDate.now().format(formatter);
+        String systemPrompt = loadPrompt("prompts/reservation.prompt") + "\nToday's date: " + dateStr;
+
+        return makePrompt(systemPrompt, input, conversationLogs);
     }
 
     public List<Map<String, String>> chatbotPrompt(List<String> promptFilePathList, String input, List<ConversationLogResponse> conversationLogs) {
-        String systemPrompt = loadPrompts(promptFilePathList);
+        // Prompt에 현재 날짜 추가
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String dateStr = LocalDate.now().format(formatter);
+        String systemPrompt = loadPrompts(promptFilePathList) + "\nToday's date: " + dateStr;
+
         return makePrompt(systemPrompt, input, conversationLogs);
     }
 
     private List<Map<String, String>> makePrompt(String systemPrompt, String input, List<ConversationLogResponse> conversationLogs) {
-         List<Map<String, String>> messagesList = new ArrayList<>();
+        List<Map<String, String>> messagesList = new ArrayList<>();
 
         Map<String, String> systemMessage = new HashMap<>();
         systemMessage.put("role", "system");
