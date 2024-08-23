@@ -33,6 +33,7 @@ public interface UserService {
                 .userName(user.getUserName())
                 .userType(user.getUserType())
                 .userPhone(user.getUserPhone())
+                .matchNo(protege.getMatchProtege().getMatchNo())
                 .protegeName(protege.getUserName())
                 .protegeBirth(protege.getUserBirth())
                 .protegeGender(protege.getUserGender())

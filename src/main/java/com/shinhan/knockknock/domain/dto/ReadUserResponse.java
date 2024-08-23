@@ -18,6 +18,7 @@ public class ReadUserResponse {
     private String userName;
     private String userPhone;
     private UserRoleEnum userType;
+    private long matchNo;
     private String protegeName;
     private Date protegeBirth;
     private int protegeGender;
