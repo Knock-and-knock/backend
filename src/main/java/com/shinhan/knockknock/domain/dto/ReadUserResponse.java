@@ -26,5 +26,6 @@ public class ReadUserResponse {
     private int protegeWeight;
     private String protegeDisease;
     private String protegeAddress;
+    private String protegeAddressDetail;
     private String message;
 }

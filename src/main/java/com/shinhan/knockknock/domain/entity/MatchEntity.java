@@ -30,12 +30,12 @@ public class MatchEntity {
     @Builder.Default
     private String matchStatus = "WAIT";    // WAIT(대기), ACCEPT(수락), REJECT(거절)
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_protectorno")
     @NotNull
     private UserEntity userProtector;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_protegeno")
     @NotNull
     private UserEntity userProtege;

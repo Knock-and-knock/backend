@@ -182,9 +182,10 @@ public class UserServiceImpl implements UserService{
     }
 
     private UserEntity setUpdateInfo(UserEntity user, UpdateUserRequest request) {
+        String address = request.getUserAddress()+"/"+request.getUserAddressDetail();
         user.setUserBirth(request.getUserBirth());
         user.setUserGender(request.getUserGender());
-        user.setUserAddress(request.getUserAddress());
+        user.setUserAddress(address);
         user.setUserHeight(request.getUserHeight());
         user.setUserWeight(request.getUserWeight());
         user.setUserDisease(request.getUserDisease());

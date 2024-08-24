@@ -27,20 +27,35 @@ public interface UserService {
     }
 
     default ReadUserResponse entityToDtoProtector(UserEntity user, UserEntity protege){
-        return ReadUserResponse.builder()
-                .userNo(user.getUserNo())
-                .userId(user.getUserId())
-                .userName(user.getUserName())
-                .userType(user.getUserType())
-                .userPhone(user.getUserPhone())
-                .matchNo(protege.getMatchProtege().getMatchNo())
-                .protegeName(protege.getUserName())
-                .protegeBirth(protege.getUserBirth())
-                .protegeGender(protege.getUserGender())
-                .protegeHeight(protege.getUserHeight())
-                .protegeWeight(protege.getUserWeight())
-                .protegeDisease(protege.getUserDisease())
-                .protegeAddress(protege.getUserAddress())
-                .build();
+        String address = protege.getUserAddress().split("/")[0];
+        String addressDetail = protege.getUserAddress().split("/")[1];
+        ReadUserResponse response;
+        if(user.getMatchProtector() == null && user.getMatchProtege() == null){
+            response = ReadUserResponse.builder()
+                    .userNo(user.getUserNo())
+                    .userId(user.getUserId())
+                    .userName(user.getUserName())
+                    .userType(user.getUserType())
+                    .userPhone(user.getUserPhone())
+                    .build();
+        } else {
+            response = ReadUserResponse.builder()
+                    .userNo(user.getUserNo())
+                    .userId(user.getUserId())
+                    .userName(user.getUserName())
+                    .userType(user.getUserType())
+                    .userPhone(user.getUserPhone())
+                    .matchNo(protege.getMatchProtege().getMatchNo())
+                    .protegeName(protege.getUserName())
+                    .protegeBirth(protege.getUserBirth())
+                    .protegeGender(protege.getUserGender())
+                    .protegeHeight(protege.getUserHeight())
+                    .protegeWeight(protege.getUserWeight())
+                    .protegeDisease(protege.getUserDisease())
+                    .protegeAddress(address)
+                    .protegeAddressDetail(addressDetail)
+                    .build();
+        }
+        return response;
     }
 }
