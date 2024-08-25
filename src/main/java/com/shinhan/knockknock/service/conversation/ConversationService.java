@@ -30,16 +30,34 @@ public class ConversationService {
     public ConversationResponse conversation(ConversationRequest request) {
         log.info("📌 Received conversation request: input={}, conversationRoomNo={}", request.getInput(), request.getConversationRoomNo());
 
+        if (request.getInput().isEmpty()) {
+            return ConversationResponse.builder()
+                    .content("err")
+                    .build();
+        }
+
         // Chatbot 답변 생성
         ChatbotResponse response = textResponseService.TextResponse(request);
 
+        ConversationLogRequest conversationLog;
+        if (response.getContent().isEmpty()) {
+            log.warn("⚠️ Chatbot response is empty: content={}, totalTokens={}", response.getContent(), response.getTotalTokens());
+            conversationLog = ConversationLogRequest.builder()
+                    .conversationLogInput(request.getInput())
+                    .conversationLogResponse("문제가 발생했습니다. 다시 한번 말해주세요.")
+                    .conversationLogToken(response.getTotalTokens())
+                    .conversationRoomNo(request.getConversationRoomNo())
+                    .build();
+        } else {
+            conversationLog = ConversationLogRequest.builder()
+                    .conversationLogInput(request.getInput())
+                    .conversationLogResponse(response.getContent())
+                    .conversationLogToken(response.getTotalTokens())
+                    .conversationRoomNo(request.getConversationRoomNo())
+                    .build();
+        }
+
         // 대화 내역 저장
-        ConversationLogRequest conversationLog = ConversationLogRequest.builder()
-                .conversationLogInput(request.getInput())
-                .conversationLogResponse(response.getContent())
-                .conversationLogToken(response.getTotalTokens())
-                .conversationRoomNo(request.getConversationRoomNo())
-                .build();
         conversationLogService.createConversationLog(conversationLog);
         conversationRoomService.updateConversationRoomEndAt(request.getConversationRoomNo());
 
