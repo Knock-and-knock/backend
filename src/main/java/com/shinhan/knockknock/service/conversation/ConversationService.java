@@ -39,6 +39,7 @@ public class ConversationService {
         // Chatbot 답변 생성
         ChatbotResponse response = textResponseService.TextResponse(request);
 
+        // Chatbot 답변 검사
         ConversationLogRequest conversationLog;
         if (response.getContent().isEmpty()) {
             log.warn("⚠️ Chatbot response is empty: content={}, totalTokens={}", response.getContent(), response.getTotalTokens());
@@ -62,7 +63,7 @@ public class ConversationService {
         conversationRoomService.updateConversationRoomEndAt(request.getConversationRoomNo());
 
         // 음성 데이터 생성
-        byte[] audioData = textToSpeechService.convertTextToSpeech(response.getContent());
+        byte[] audioData = textToSpeechService.convertTextToSpeech(conversationLog.getConversationLogResponse());
 
         log.info("📌 Chatbot response: content={}, totalTokens={}", response.getContent(), response.getTotalTokens());
 
