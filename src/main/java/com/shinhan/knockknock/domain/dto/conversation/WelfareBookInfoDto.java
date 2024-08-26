@@ -19,4 +19,6 @@ public class WelfareBookInfoDto {
     private String welfareName;
     private Long welfarePrice;
     private Long welfareBookUseTime;
+    private Integer welfareTotalPrice;
+    private Timestamp welfareBookReservationDate;
 }

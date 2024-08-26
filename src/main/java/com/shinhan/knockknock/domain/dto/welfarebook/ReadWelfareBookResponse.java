@@ -33,5 +33,7 @@ public class ReadWelfareBookResponse {
     @Schema(example = "3")
     private Integer welfareBookUseTime;
 
+    private Integer welfareTotalPrice;
+
     private Timestamp welfareBookReservationDate;
 }

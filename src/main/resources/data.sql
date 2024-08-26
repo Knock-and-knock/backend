@@ -62,3 +62,8 @@ WHERE NOT EXISTS (SELECT 1 FROM Welfarebook_tb WHERE welfarebook_no = 3);
 INSERT INTO Welfarebook_tb (welfarebook_no, welfarebook_startdate, welfarebook_enddate, welfarebook_iscansle, welfarebook_iscomplete, welfarebook_usetime, welfarebook_totalprice, user_no, welfare_no, welfarebook_reservationdate)
 SELECT 4, '2024-08-16', '2024-08-16', false, true, NULL, 70000, 2, 1, '2024-08-15 16:00:00'
 WHERE NOT EXISTS (SELECT 1 FROM Welfarebook_tb WHERE welfarebook_no = 4);
+
+-- welfarebook_no가 4인 데이터가 없을 때만 삽입
+INSERT INTO Welfarebook_tb (welfarebook_no, welfarebook_startdate, welfarebook_enddate, welfarebook_iscansle, welfarebook_iscomplete, welfarebook_usetime, welfarebook_totalprice, user_no, welfare_no, welfarebook_reservationdate)
+SELECT 5, '2024-08-28', '2024-08-28', false, false, NULL, 170000, 2, 1, '2024-08-26 16:00:00'
+WHERE NOT EXISTS (SELECT 1 FROM Welfarebook_tb WHERE welfarebook_no = 5);

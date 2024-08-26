@@ -8,13 +8,17 @@ import com.shinhan.knockknock.domain.dto.conversation.ClassificationResponse;
 import com.shinhan.knockknock.domain.dto.conversation.RedirectionResponse;
 import com.shinhan.knockknock.domain.dto.conversation.ReservationResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ChainService {
 
@@ -85,6 +89,21 @@ public class ChainService {
 
         response.setContent(rootNode.path("content").asText());
 
+        String content = extractContentUsingRegex(response.getContent());
+        log.warn("&&&& {}", content);
+
         return response;
+    }
+
+    private String extractContentUsingRegex(String rawContent) {
+        // "content":"와 그에 대응하는 문자열을 찾는 정규식
+        Pattern pattern = Pattern.compile("\"content\":\"(.*?)\"");
+        Matcher matcher = pattern.matcher(rawContent);
+
+        if (matcher.find()) {
+            return matcher.group(1); // 첫 번째 그룹은 "content":" 뒤에 나오는 실제 문자열입니다.
+        }
+        // content 부분을 제대로 찾지 못했을 경우 원본을 그대로 반환 (안전 장치)
+        return rawContent;
     }
 }
