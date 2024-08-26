@@ -87,7 +87,7 @@ public class WelfareBookServiceImpl implements WelfareBookService {
         Timestamp startDate = Timestamp.valueOf(oneMonthAgo);
         Timestamp endDate = Timestamp.valueOf(now);
 
-        List<WelfareBookEntity> welfareBooks = welfareBookRepo.findByUser_UserNoAndWelfareBookStartDateBetween(userNo, startDate, endDate);
+        List<WelfareBookEntity> welfareBooks = welfareBookRepo.findByUser_UserNoAndWelfareBookReservationDateBetween(userNo, startDate, endDate);
         return welfareBooks.stream()
                 .map(this::entityToDto)
                 .collect(Collectors.toList());

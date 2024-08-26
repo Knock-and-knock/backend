@@ -1,6 +1,6 @@
 package com.shinhan.knockknock.service.conversation;
 
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationLogResponse;
 import com.shinhan.knockknock.exception.ChatbotException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;

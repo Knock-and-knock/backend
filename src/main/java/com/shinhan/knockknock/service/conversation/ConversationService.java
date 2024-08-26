@@ -1,9 +1,9 @@
 package com.shinhan.knockknock.service.conversation;
 
-import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRequest;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRequest;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ChatbotResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationLogRequest;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationRequest;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

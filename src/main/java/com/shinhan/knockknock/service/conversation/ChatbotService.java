@@ -3,7 +3,7 @@ package com.shinhan.knockknock.service.conversation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ChatbotResponse;
 import com.shinhan.knockknock.exception.ChatbotException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,10 +1,10 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.auth.JwtProvider;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomCreateResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomUpdateRequest;
-import com.shinhan.knockknock.domain.dto.conversationroom.MessageResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomCreateResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomUpdateRequest;
+import com.shinhan.knockknock.domain.dto.conversation.MessageResponse;
 import com.shinhan.knockknock.service.conversation.ConversationRoomService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;

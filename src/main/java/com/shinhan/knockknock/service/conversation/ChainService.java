@@ -3,10 +3,10 @@ package com.shinhan.knockknock.service.conversation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ClassificationResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.RedirectionResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.ReservationResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ChatbotResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ClassificationResponse;
+import com.shinhan.knockknock.domain.dto.conversation.RedirectionResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ReservationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
