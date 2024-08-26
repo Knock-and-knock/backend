@@ -31,6 +31,7 @@ public interface WelfareBookService {
                 .userNo(entity.getUser().getUserNo())
                 .welfareName(entity.getWelfare().getWelfareName())
                 .welfarePrice(entity.getWelfare().getWelfarePrice())
+
                 .build();
     }
 }
