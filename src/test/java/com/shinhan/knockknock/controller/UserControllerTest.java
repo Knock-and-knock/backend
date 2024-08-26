@@ -3,12 +3,10 @@ package com.shinhan.knockknock.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.user.*;
-import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import com.shinhan.knockknock.repository.UserRepository;
 import com.shinhan.knockknock.service.user.AuthService;
 import com.shinhan.knockknock.service.user.UserService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +40,7 @@ public class UserControllerTest {
     @Autowired
     private AuthService authService;
 
-    @BeforeEach
+    /*@BeforeEach
     public void beforeTestSetting() {
         UserEntity testUser = UserEntity.builder()
                 .userId("test01")
@@ -53,7 +51,7 @@ public class UserControllerTest {
                 .userSimplePassword("123456")
                 .build();
         userRepository.save(testUser);
-    }
+    }*/
 
     @DisplayName("아이디 중복체크 테스트")
     @Test
@@ -106,10 +104,10 @@ public class UserControllerTest {
     public void testUserSignupFail() throws Exception {
         // given
         CreateUserRequest request = CreateUserRequest.builder()
-                .userId("test01")
+                .userId("test")
                 .userPassword("1234")
-                .userName("테스트01")
-                .userPhone("01012341234")
+                .userName("테스트")
+                .userPhone("01087654321")
                 .userType(UserRoleEnum.PROTEGE)
                 .userSimplePassword("123456")
                 .build();
