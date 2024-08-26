@@ -27,8 +27,6 @@ public interface UserService {
     }
 
     default ReadUserResponse entityToDtoProtector(UserEntity user, UserEntity protege){
-        String address = protege.getUserAddress().split("/")[0];
-        String addressDetail = protege.getUserAddress().split("/")[1];
         ReadUserResponse response;
         if(user.getMatchProtector() == null && user.getMatchProtege() == null){
             response = ReadUserResponse.builder()
@@ -39,6 +37,10 @@ public interface UserService {
                     .userPhone(user.getUserPhone())
                     .build();
         } else {
+            String address = protege.getUserAddress() != null ?
+                    protege.getUserAddress().split("/")[0] : null;
+            String addressDetail = protege.getUserAddress() != null ?
+                    protege.getUserAddress().split("/")[1] : null;
             response = ReadUserResponse.builder()
                     .userNo(user.getUserNo())
                     .userId(user.getUserId())

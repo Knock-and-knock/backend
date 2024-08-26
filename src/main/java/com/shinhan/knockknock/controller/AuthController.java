@@ -1,8 +1,10 @@
 package com.shinhan.knockknock.controller;
 
+import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.user.IdLoginUserRequest;
 import com.shinhan.knockknock.domain.dto.user.SimpleLoginUserRequest;
 import com.shinhan.knockknock.domain.dto.user.TokenResponse;
+import com.shinhan.knockknock.domain.dto.user.UserValidationResponse;
 import com.shinhan.knockknock.service.user.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtProvider jwtProvider;
 
     @Operation(summary = "아이디/패스워드 로그인", description = "아이디/패스워드 로그인을 위한 api")
     @ApiResponses(value = {
@@ -57,5 +60,25 @@ public class AuthController {
             return ResponseEntity.status(401).body(response);
         }
         return ResponseEntity.status(200).body(response);
+    }
+
+    @Operation(summary = "로그아웃", description = "로그아웃 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
+            @ApiResponse(responseCode = "500", description = "로그아웃 실패")
+    })
+    @PostMapping("/logout")
+    public ResponseEntity<UserValidationResponse> logout(@RequestHeader("Authorization") String header) {
+        try {
+            long userNo = jwtProvider.getUserNoFromHeader(header);
+            authService.logoutUser(userNo);
+            return ResponseEntity.status(200).header("Authorization", "").body(UserValidationResponse.builder()
+                    .message("로그아웃 되었습니다.")
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(UserValidationResponse.builder()
+                    .message(e.getMessage())
+                    .build());
+        }
     }
 }
