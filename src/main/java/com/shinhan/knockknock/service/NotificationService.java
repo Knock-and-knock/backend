@@ -4,11 +4,16 @@ import com.shinhan.knockknock.domain.dto.ReadNotificationResponse;
 import com.shinhan.knockknock.domain.entity.NotificationEntity;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface NotificationService {
     SseEmitter subscribe(Long userNo);
     void notify(NotificationEntity notificationEntity);
     void sendToClient(NotificationEntity notificationEntity);
     SseEmitter createEmitter(Long userNo);
+    List<ReadNotificationResponse> readNotifications(Long userNo);
+    ReadNotificationResponse readNotification(Long notificationId);
 
     // Entity -> DTO
     default ReadNotificationResponse transformEntityToDTO(NotificationEntity notificationEntity) {
