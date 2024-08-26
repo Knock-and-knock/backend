@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 @Data
@@ -16,9 +17,9 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class ReadWelfareBookResponse {
     @Schema(example = "2024-08-08 09:00")
-    private Timestamp welfareBookStartDate;
+    private Date welfareBookStartDate;
     @Schema(example = "2024-08-08 13:00")
-    private Timestamp welfareBookEndDate;
+    private Date welfareBookEndDate;
     @Schema(example = "false")
     private boolean welfareBookIsCansle;
     @Schema(example = "true")
@@ -30,5 +31,9 @@ public class ReadWelfareBookResponse {
     @Schema(example = "6000")
     private Long welfarePrice;
     @Schema(example = "3")
-    private Long welfareBookUseTime;
+    private Integer welfareBookUseTime;
+
+    private Integer welfareTotalPrice;
+
+    private Timestamp welfareBookReservationDate;
 }

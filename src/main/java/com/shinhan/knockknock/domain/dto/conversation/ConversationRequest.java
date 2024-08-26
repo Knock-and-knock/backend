@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.domain.dto.conversationroom;
+package com.shinhan.knockknock.domain.dto.conversation;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

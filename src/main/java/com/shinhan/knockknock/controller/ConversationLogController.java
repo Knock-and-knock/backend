@@ -1,8 +1,8 @@
 package com.shinhan.knockknock.controller;
 
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRequest;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
-import com.shinhan.knockknock.domain.dto.conversationroom.MessageResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationLogRequest;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationLogResponse;
+import com.shinhan.knockknock.domain.dto.conversation.MessageResponse;
 import com.shinhan.knockknock.service.conversation.ConversationLogService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;

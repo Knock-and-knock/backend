@@ -15,7 +15,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,8 +56,8 @@ public class WelfareBookServiceTest {
         Long welfareNo = welfareService.createWelfare(welfareRequest);
 
         CreateWelfareBookRequest welfareBookRequest = CreateWelfareBookRequest.builder()
-                .welfareBookStartDate(Timestamp.valueOf("2024-08-08 09:00:00"))
-                .welfareBookEndDate(Timestamp.valueOf("2024-08-08 13:00:00"))
+                .welfareBookStartDate(Date.valueOf("2024-08-08"))
+                .welfareBookEndDate(Date.valueOf("2024-08-08"))
                 .welfareBookIsCansle(false)
                 .welfareBookIsComplete(false)
                 .userNo(userNo)
@@ -71,7 +70,7 @@ public class WelfareBookServiceTest {
                 .welfareNo(welfareNo)
                 .welfareName("가정간병")
                 .welfarePrice(6000L)
-                .welfareBookUseTime(3L)
+                .welfareBookUseTime(3)
                 .build();
 
         // When

@@ -1,9 +1,7 @@
-package com.shinhan.knockknock.domain.dto.conversationroom;
+package com.shinhan.knockknock.domain.dto.conversation;
 
 import lombok.Builder;
 import lombok.Data;
-
-import java.sql.Timestamp;
 
 @Data
 @Builder

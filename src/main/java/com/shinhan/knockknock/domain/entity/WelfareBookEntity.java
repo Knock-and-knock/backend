@@ -3,6 +3,7 @@ package com.shinhan.knockknock.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -22,11 +23,11 @@ public class WelfareBookEntity {
 
     @Column(name = "welfarebook_startdate")
     @NotNull
-    private Timestamp welfareBookStartDate;
+    private Date welfareBookStartDate;
 
     @Column(name = "welfarebook_enddate")
     @NotNull
-    private Timestamp welfareBookEndDate;
+    private Date welfareBookEndDate;
 
     @Column(name = "welfarebook_iscansle")
     private boolean welfareBookIsCansle;
@@ -34,8 +35,16 @@ public class WelfareBookEntity {
     @Column(name = "welfarebook_iscomplete")
     private boolean welfareBookIsComplete;
 
+    @Column(name = "welfarebook_usetime")
+    private Integer welfareBookUseTime;
+
     @Column(name = "welfarebook_totalprice")
-    private Long welfareBookUseTime;
+    private Integer welfareTotalPrice;
+
+    @Column(name = "welfarebook_reservationdate")
+    @CreationTimestamp
+    @NotNull
+    private Timestamp welfareBookReservationDate;
 
     @ManyToOne
     @JoinColumn(name = "user_no")
