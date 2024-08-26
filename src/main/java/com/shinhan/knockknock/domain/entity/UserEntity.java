@@ -1,6 +1,6 @@
 package com.shinhan.knockknock.domain.entity;
 
-import com.shinhan.knockknock.domain.dto.LoginUserResponse;
+import com.shinhan.knockknock.domain.dto.user.LoginUserResponse;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

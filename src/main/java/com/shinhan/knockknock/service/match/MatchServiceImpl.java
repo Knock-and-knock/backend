@@ -1,8 +1,8 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.match;
 
-import com.shinhan.knockknock.domain.dto.CreateMatchRequest;
-import com.shinhan.knockknock.domain.dto.CreateMatchResponse;
-import com.shinhan.knockknock.domain.dto.UpdateMatchRequest;
+import com.shinhan.knockknock.domain.dto.match.CreateMatchRequest;
+import com.shinhan.knockknock.domain.dto.match.CreateMatchResponse;
+import com.shinhan.knockknock.domain.dto.match.UpdateMatchRequest;
 import com.shinhan.knockknock.domain.entity.MatchEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.repository.MatchRepository;

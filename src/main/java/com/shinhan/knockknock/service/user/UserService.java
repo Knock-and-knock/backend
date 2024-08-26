@@ -1,8 +1,8 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.user;
 
-import com.shinhan.knockknock.domain.dto.CreateUserRequest;
-import com.shinhan.knockknock.domain.dto.ReadUserResponse;
-import com.shinhan.knockknock.domain.dto.UpdateUserRequest;
+import com.shinhan.knockknock.domain.dto.user.CreateUserRequest;
+import com.shinhan.knockknock.domain.dto.user.ReadUserResponse;
+import com.shinhan.knockknock.domain.dto.user.UpdateUserRequest;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 

@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.CreateUserRequest;
+import com.shinhan.knockknock.domain.dto.user.CreateUserRequest;
+import com.shinhan.knockknock.service.user.UserService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
