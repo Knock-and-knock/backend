@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.domain.dto;
+package com.shinhan.knockknock.domain.dto.user;
 
 import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import lombok.AllArgsConstructor;
@@ -18,6 +18,7 @@ public class ReadUserResponse {
     private String userName;
     private String userPhone;
     private UserRoleEnum userType;
+    private long matchNo;
     private String protegeName;
     private Date protegeBirth;
     private int protegeGender;
@@ -25,5 +26,6 @@ public class ReadUserResponse {
     private int protegeWeight;
     private String protegeDisease;
     private String protegeAddress;
+    private String protegeAddressDetail;
     private String message;
 }

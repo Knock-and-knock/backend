@@ -1,9 +1,9 @@
 package com.shinhan.knockknock.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shinhan.knockknock.domain.dto.IdLoginUserRequest;
-import com.shinhan.knockknock.domain.dto.TokenResponse;
-import com.shinhan.knockknock.service.AuthService;
+import com.shinhan.knockknock.domain.dto.user.IdLoginUserRequest;
+import com.shinhan.knockknock.domain.dto.user.TokenResponse;
+import com.shinhan.knockknock.service.user.AuthService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

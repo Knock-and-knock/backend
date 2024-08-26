@@ -1,8 +1,8 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.user;
 
-import com.shinhan.knockknock.domain.dto.CreateUserRequest;
-import com.shinhan.knockknock.domain.dto.ReadUserResponse;
-import com.shinhan.knockknock.domain.dto.UpdateUserRequest;
+import com.shinhan.knockknock.domain.dto.user.CreateUserRequest;
+import com.shinhan.knockknock.domain.dto.user.ReadUserResponse;
+import com.shinhan.knockknock.domain.dto.user.UpdateUserRequest;
 import com.shinhan.knockknock.domain.entity.MatchEntity;
 import com.shinhan.knockknock.domain.entity.TokenEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
@@ -29,7 +29,7 @@ import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
@@ -182,9 +182,10 @@ public class UserServiceImpl implements UserService{
     }
 
     private UserEntity setUpdateInfo(UserEntity user, UpdateUserRequest request) {
+        String address = request.getUserAddress()+"/"+request.getUserAddressDetail();
         user.setUserBirth(request.getUserBirth());
         user.setUserGender(request.getUserGender());
-        user.setUserAddress(request.getUserAddress());
+        user.setUserAddress(address);
         user.setUserHeight(request.getUserHeight());
         user.setUserWeight(request.getUserWeight());
         user.setUserDisease(request.getUserDisease());

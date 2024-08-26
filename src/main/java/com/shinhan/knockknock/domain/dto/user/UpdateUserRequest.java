@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.domain.dto;
+package com.shinhan.knockknock.domain.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -25,4 +25,6 @@ public class UpdateUserRequest {
     private String userDisease;
     @Schema(example = "경기도 성남시 분당구 정자일로 95")
     private String userAddress;
+    @Schema(example = "101동 204호")
+    private String userAddressDetail;
 }

@@ -1,9 +1,9 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.user;
 
 import com.shinhan.knockknock.auth.JwtProvider;
-import com.shinhan.knockknock.domain.dto.IdLoginUserRequest;
-import com.shinhan.knockknock.domain.dto.SimpleLoginUserRequest;
-import com.shinhan.knockknock.domain.dto.TokenResponse;
+import com.shinhan.knockknock.domain.dto.user.IdLoginUserRequest;
+import com.shinhan.knockknock.domain.dto.user.SimpleLoginUserRequest;
+import com.shinhan.knockknock.domain.dto.user.TokenResponse;
 import com.shinhan.knockknock.domain.entity.TokenEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.repository.TokenRepository;

@@ -1,9 +1,9 @@
 package com.shinhan.knockknock.controller;
 
-import com.shinhan.knockknock.domain.dto.IdLoginUserRequest;
-import com.shinhan.knockknock.domain.dto.SimpleLoginUserRequest;
-import com.shinhan.knockknock.domain.dto.TokenResponse;
-import com.shinhan.knockknock.service.AuthService;
+import com.shinhan.knockknock.domain.dto.user.IdLoginUserRequest;
+import com.shinhan.knockknock.domain.dto.user.SimpleLoginUserRequest;
+import com.shinhan.knockknock.domain.dto.user.TokenResponse;
+import com.shinhan.knockknock.service.user.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

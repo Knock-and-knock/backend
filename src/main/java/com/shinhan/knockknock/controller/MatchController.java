@@ -1,11 +1,11 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.auth.JwtProvider;
-import com.shinhan.knockknock.domain.dto.CreateMatchRequest;
-import com.shinhan.knockknock.domain.dto.CreateMatchResponse;
-import com.shinhan.knockknock.domain.dto.DeleteMatchResponse;
-import com.shinhan.knockknock.domain.dto.UpdateMatchRequest;
-import com.shinhan.knockknock.service.MatchService;
+import com.shinhan.knockknock.domain.dto.match.CreateMatchRequest;
+import com.shinhan.knockknock.domain.dto.match.CreateMatchResponse;
+import com.shinhan.knockknock.domain.dto.match.DeleteMatchResponse;
+import com.shinhan.knockknock.domain.dto.match.UpdateMatchRequest;
+import com.shinhan.knockknock.service.match.MatchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

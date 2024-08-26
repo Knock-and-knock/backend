@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.auth;
 
 import com.shinhan.knockknock.domain.entity.UserEntity;
+import com.shinhan.knockknock.exception.MissingTokenException;
 import com.shinhan.knockknock.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,7 +25,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String accessToken = authorizationHeader.substring(7);
-
             if(jwtProvider.validateToken(accessToken)) {
                 String userNo = jwtProvider.getUserNo(accessToken);
                 Authentication authentication = jwtProvider.getAuthentication(userNo);
@@ -36,7 +36,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if(jwtProvider.validateToken(refreshToken)) {
                     // access token 재발급
                     UserEntity user = userRepository.findById(Long.parseLong(userNo))
-                            .orElseThrow(() -> new RuntimeException("User Not Found"));
+                            .orElse(null);
+                    if(user == null) {
+                        throw new RuntimeException("회원 정보가 없습니다.");
+                    }
                     String newAccessToken = jwtProvider.createAccessToken(user.entityToDto());
 
                     Authentication authentication = jwtProvider.getAuthentication(userNo);
@@ -45,6 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     response.setHeader("Authorization", "Bearer " + newAccessToken);
                 }
             }
+        } else {
+            throw new MissingTokenException("토큰이 없습니다.");
         }
         filterChain.doFilter(request, response);
     }
