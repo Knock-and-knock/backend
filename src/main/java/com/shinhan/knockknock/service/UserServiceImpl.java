@@ -60,6 +60,13 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public Long readByUserId(String userId) {
+        UserEntity findUser = userRepository.findByUserId(userId).orElse(null);
+        assert findUser != null;
+        return findUser.getUserNo();
+    }
+
+    @Override
     public Boolean readUserPhone(String phone) {
         UserEntity findUser = userRepository.findByUserPhone(phone);
         return findUser == null;

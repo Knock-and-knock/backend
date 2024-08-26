@@ -27,7 +27,7 @@ public class ConversationService {
     @Autowired
     ConversationRoomService conversationRoomService;
 
-    public ConversationResponse conversation(ConversationRequest request) {
+    public ConversationResponse conversation(ConversationRequest request, long userNo) {
         log.info("📌 Received conversation request: input={}, conversationRoomNo={}", request.getInput(), request.getConversationRoomNo());
 
         if (request.getInput().isEmpty()) {
@@ -37,7 +37,7 @@ public class ConversationService {
         }
 
         // Chatbot 답변 생성
-        ChatbotResponse response = textResponseService.TextResponse(request);
+        ChatbotResponse response = textResponseService.TextResponse(request, userNo);
 
         // Chatbot 답변 검사
         ConversationLogRequest conversationLog;
