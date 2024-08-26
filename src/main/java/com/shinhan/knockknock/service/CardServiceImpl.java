@@ -68,7 +68,7 @@ public class CardServiceImpl implements CardService {
                 .cardPassword(password)
                 .cardBank(cardIssueEntity.getCardIssueBank())
                 .cardAccount(cardIssueEntity.getCardIssueAccount())
-                .cardAmountDate(cardIssueEntity.getCardIssueAmountDate())
+                .cardAmountDate(String.valueOf(cardIssueEntity.getCardIssueAmountDate()))
                 .cardExpiredate(expireDate)
                 .cardIssueNo(cardIssueEntity.getCardIssueNo())
                 .userNo(cardIssueEntity.getUserNo())

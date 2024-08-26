@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.domain.dto;
+package com.shinhan.knockknock.domain.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class IdLoginUserRequest {
-    @Schema(example = "protege01")
-    private String userId;
-    @Schema(example = "1234")
-    private String userPassword;
+public class UserValidationRequest {
+    @Schema(example = "01012345678")
+    private String phone;
+    @Schema(example = "123456")
+    private String validationNum;
 }

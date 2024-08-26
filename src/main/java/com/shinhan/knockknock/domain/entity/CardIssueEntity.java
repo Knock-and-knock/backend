@@ -24,10 +24,6 @@ public class CardIssueEntity {
     @Column(name= "cardissue_no")
     private Long cardIssueNo;
 
-    //@Column(name= "cardissue_residentno", length = 50)
-    //@NotNull
-    //private String cardIssueResidentNo;
-
     @Column(name= "cardissue_ename", length = 50)
     @NotNull
     private String cardIssueEname;
@@ -57,15 +53,16 @@ public class CardIssueEntity {
 
     @Column(name= "cardissue_amountdate")
     @NotNull
-    private String cardIssueAmountDate;
+    private Date cardIssueAmountDate;
 
     @Column(name= "cardissue_source")
     @NotNull
     private String cardIssueSource;
 
+    @Enumerated(EnumType.STRING)
     @Column(name= "cardissue_ishighrisk")
     @NotNull
-    private String cardIssueIsHighrisk;
+    private RiskEnum cardIssueIsHighrisk;
 
     @Column(name= "cardissue_purpose")
     @NotNull

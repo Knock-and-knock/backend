@@ -3,6 +3,8 @@ package com.shinhan.knockknock.config;
 import com.shinhan.knockknock.auth.JwtAuthenticationFilter;
 import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.repository.UserRepository;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.AntPathMatcher;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity  // Spring Security context 설정임을 명시
@@ -48,7 +53,13 @@ public class SecurityConfig {
         http.formLogin(AbstractHttpConfigurer::disable);    // spring 제공 form login 비활성화
         http.httpBasic(AbstractHttpConfigurer::disable);    // HTTP 기본 인증 비활성화
 
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userRepository), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userRepository) {
+            @Override
+            protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+                return Arrays.stream(WHITE_LIST).anyMatch(path ->
+                        new AntPathMatcher().match(path, request.getServletPath()));
+            }
+        }, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

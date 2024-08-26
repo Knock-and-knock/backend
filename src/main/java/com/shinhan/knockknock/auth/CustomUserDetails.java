@@ -1,6 +1,6 @@
 package com.shinhan.knockknock.auth;
 
-import com.shinhan.knockknock.domain.dto.LoginUserResponse;
+import com.shinhan.knockknock.domain.dto.user.LoginUserResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

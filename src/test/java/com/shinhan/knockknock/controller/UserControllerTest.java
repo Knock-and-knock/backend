@@ -2,12 +2,12 @@ package com.shinhan.knockknock.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shinhan.knockknock.auth.JwtProvider;
-import com.shinhan.knockknock.domain.dto.*;
+import com.shinhan.knockknock.domain.dto.user.*;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import com.shinhan.knockknock.repository.UserRepository;
-import com.shinhan.knockknock.service.AuthService;
-import com.shinhan.knockknock.service.UserService;
+import com.shinhan.knockknock.service.user.AuthService;
+import com.shinhan.knockknock.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
