@@ -1,16 +1,13 @@
 package com.shinhan.knockknock.service.conversation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.shinhan.knockknock.domain.dto.ReadUserResponse;
 import com.shinhan.knockknock.domain.dto.conversationroom.*;
+import com.shinhan.knockknock.domain.dto.user.ReadUserResponse;
 import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
-import com.shinhan.knockknock.service.UserService;
+import com.shinhan.knockknock.service.user.UserService;
 import com.shinhan.knockknock.service.welfarebook.WelfareBookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

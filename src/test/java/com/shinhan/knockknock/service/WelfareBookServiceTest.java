@@ -1,9 +1,10 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.CreateUserRequest;
+import com.shinhan.knockknock.domain.dto.user.CreateUserRequest;
 import com.shinhan.knockknock.domain.dto.welfare.CreateWelfareRequest;
 import com.shinhan.knockknock.domain.dto.welfarebook.CreateWelfareBookRequest;
 import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
+import com.shinhan.knockknock.service.user.UserService;
 import com.shinhan.knockknock.service.welfare.WelfareService;
 import com.shinhan.knockknock.service.welfarebook.WelfareBookService;
 import org.junit.jupiter.api.DisplayName;
