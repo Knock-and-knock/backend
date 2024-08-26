@@ -2,18 +2,18 @@ package com.shinhan.knockknock.service.welfarebook;
 
 import com.shinhan.knockknock.domain.dto.welfarebook.CreateWelfareBookRequest;
 import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
-import com.shinhan.knockknock.domain.entity.MatchEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.domain.entity.WelfareBookEntity;
 import com.shinhan.knockknock.domain.entity.WelfareEntity;
 import com.shinhan.knockknock.repository.MatchRepository;
-import com.shinhan.knockknock.repository.WelfareBookRepository;
 import com.shinhan.knockknock.repository.UserRepository;
+import com.shinhan.knockknock.repository.WelfareBookRepository;
 import com.shinhan.knockknock.repository.WelfareRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -77,6 +77,20 @@ public class WelfareBookServiceImpl implements WelfareBookService {
         WelfareBookEntity entity = welfareBookRepo.findById(welfareBookNo)
                 .orElseThrow(() -> new NoSuchElementException("해당 복지 예약 내역이 존재하지 않습니다."));
         return entityToDto(entity);
+    }
+
+    @Override
+    public List<ReadWelfareBookResponse> readAllByLastMonth(Long userNo) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime oneMonthAgo = now.minusMonths(1);
+
+        Timestamp startDate = Timestamp.valueOf(oneMonthAgo);
+        Timestamp endDate = Timestamp.valueOf(now);
+
+        List<WelfareBookEntity> welfareBooks = welfareBookRepo.findByUser_UserNoAndWelfareBookStartDateBetween(userNo, startDate, endDate);
+        return welfareBooks.stream()
+                .map(this::entityToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
