@@ -48,7 +48,8 @@ public interface UserService {
                     .userName(user.getUserName())
                     .userType(user.getUserType())
                     .userPhone(user.getUserPhone())
-                    .matchNo(protege.getMatchProtege().getMatchNo())
+                    .matchNo(protege.getMatchProtege()!=null ?
+                            protege.getMatchProtege().getMatchNo(): 0)
                     .protegeName(protege.getUserName())
                     .protegeBirth(protege.getUserBirth())
                     .protegeGender(protege.getUserGender())
