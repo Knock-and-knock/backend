@@ -15,6 +15,7 @@ public interface WelfareBookService {
     // Read
     List<ReadWelfareBookResponse> readAllByUserNo(Long userNo);
     ReadWelfareBookResponse readDetail(Long welfareBookNo);
+    List<ReadWelfareBookResponse> readAllByLastMonth(Long userNo);
 
     // Delete
     void deleteWelfareBook(Long welfareBookNo);
@@ -30,6 +31,7 @@ public interface WelfareBookService {
                 .userNo(entity.getUser().getUserNo())
                 .welfareName(entity.getWelfare().getWelfareName())
                 .welfarePrice(entity.getWelfare().getWelfarePrice())
+                .welfareTotalPrice(entity.getWelfareTotalPrice())
                 .build();
     }
 }

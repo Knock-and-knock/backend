@@ -3,7 +3,7 @@ package com.shinhan.knockknock.service.conversation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shinhan.knockknock.domain.dto.conversationroom.ChatbotResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ChatbotResponse;
 import com.shinhan.knockknock.exception.ChatbotException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,11 +65,15 @@ public class ChatbotService {
         // 응답 상태 코드 확인 및 처리
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             try {
+
+                log.info("📍 Chatbot Response:\n{}", responseEntity.getBody());
+
                 return parseResponse(responseEntity.getBody());
             } catch (Exception e) {
                 throw new ChatbotException("Failed to parse chatbot response", e);
             }
         }
+
 
         return ChatbotResponse.builder()
                 .content("Error: " + responseEntity.getStatusCode())
@@ -117,6 +121,8 @@ public class ChatbotService {
         int promptTokens = rootNode.path("usage").path("prompt_tokens").asInt();
         int completionTokens = rootNode.path("usage").path("completion_tokens").asInt();
         int totalTokens = rootNode.path("usage").path("total_tokens").asInt();
+
+        content = content.replace("\n", "").replace("\t", "").trim();
 
         // DTO로 변환
         return ChatbotResponse.builder()

@@ -1,7 +1,7 @@
 package com.shinhan.knockknock.service.conversation;
 
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomUpdateRequest;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationRoomResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomUpdateRequest;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomResponse;
 import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
 
 import java.util.List;

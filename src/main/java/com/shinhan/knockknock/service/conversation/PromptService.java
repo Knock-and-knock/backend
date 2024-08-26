@@ -1,6 +1,6 @@
 package com.shinhan.knockknock.service.conversation;
 
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationLogResponse;
 import com.shinhan.knockknock.exception.ChatbotException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -49,6 +49,20 @@ public class PromptService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String dateStr = LocalDate.now().format(formatter);
         String systemPrompt = loadPrompts(promptFilePathList) + "\nToday's date: " + dateStr;
+
+        return makePrompt(systemPrompt, input, conversationLogs);
+    }
+
+    public List<Map<String, String>> chatbotPrompt(
+            List<String> promptFilePathList,
+            String input,
+            List<ConversationLogResponse> conversationLogs,
+            String additionalInfo
+    ) {
+        // Prompt에 현재 날짜 추가
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String dateStr = LocalDate.now().format(formatter);
+        String systemPrompt = loadPrompts(promptFilePathList) + "\n" + additionalInfo + "\nToday's date: " + dateStr;
 
         return makePrompt(systemPrompt, input, conversationLogs);
     }

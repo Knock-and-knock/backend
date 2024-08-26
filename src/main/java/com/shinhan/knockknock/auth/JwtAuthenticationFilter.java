@@ -24,8 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String accessToken = authorizationHeader.substring(7);
-
-            if(jwtProvider.validateToken(accessToken)) {
+            if (jwtProvider.validateToken(accessToken)) {
                 String userNo = jwtProvider.getUserNo(accessToken);
                 Authentication authentication = jwtProvider.getAuthentication(userNo);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -33,10 +32,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String userNo = jwtProvider.getUserNo(accessToken);
                 String refreshToken = jwtProvider.getRefreshToken(userNo);
 
-                if(jwtProvider.validateToken(refreshToken)) {
+                if (jwtProvider.validateToken(refreshToken)) {
                     // access token 재발급
                     UserEntity user = userRepository.findById(Long.parseLong(userNo))
-                            .orElseThrow(() -> new RuntimeException("User Not Found"));
+                            .orElse(null);
+                    if (user == null) {
+                        throw new RuntimeException("회원 정보가 없습니다.");
+                    }
                     String newAccessToken = jwtProvider.createAccessToken(user.entityToDto());
 
                     Authentication authentication = jwtProvider.getAuthentication(userNo);

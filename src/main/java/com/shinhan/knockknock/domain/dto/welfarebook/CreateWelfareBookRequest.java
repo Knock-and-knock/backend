@@ -1,7 +1,5 @@
 package com.shinhan.knockknock.domain.dto.welfarebook;
 
-import com.shinhan.knockknock.domain.entity.UserEntity;
-import com.shinhan.knockknock.domain.entity.WelfareEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,9 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.nio.channels.Pipe;
 import java.sql.Date;
-import java.sql.Timestamp;
 
 
 @Data
@@ -23,11 +19,11 @@ public class CreateWelfareBookRequest {
 
     @Schema(example = "2024-08-08 09:00")
     @NotNull
-    private Timestamp welfareBookStartDate;
+    private Date welfareBookStartDate;
 
     @Schema(example = "2024-08-08 13:00")
     @NotNull
-    private Timestamp welfareBookEndDate;
+    private Date welfareBookEndDate;
 
     @Schema(example = "false")
     private boolean welfareBookIsCansle;
@@ -77,5 +73,5 @@ public class CreateWelfareBookRequest {
 
     @Schema(example = "3")
     @NotNull
-    private Long welfareBookUseTime;
+    private Integer welfareBookUseTime;
 }

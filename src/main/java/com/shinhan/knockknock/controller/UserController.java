@@ -1,8 +1,8 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.auth.JwtProvider;
-import com.shinhan.knockknock.domain.dto.*;
-import com.shinhan.knockknock.service.UserService;
+import com.shinhan.knockknock.domain.dto.user.*;
+import com.shinhan.knockknock.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

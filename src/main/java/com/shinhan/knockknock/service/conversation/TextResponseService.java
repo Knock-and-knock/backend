@@ -1,36 +1,38 @@
 package com.shinhan.knockknock.service.conversation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.shinhan.knockknock.domain.dto.conversationroom.*;
+import com.shinhan.knockknock.domain.dto.conversation.*;
+import com.shinhan.knockknock.domain.dto.user.ReadUserResponse;
+import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
+import com.shinhan.knockknock.service.welfarebook.WelfareBookService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class TextResponseService {
 
-    @Autowired
-    ChainService chainService;
+    private final ChainService chainService;
 
-    @Autowired
-    PromptService promptService;
+    private final PromptService promptService;
 
-    @Autowired
-    ConversationLogService conversationLogService;
+    private final ConversationLogService conversationLogService;
 
-    public ChatbotResponse TextResponse(ConversationRequest request) {
+    private final WelfareBookService welfareBookService;
+
+    private static final ModelMapper modelMapper = new ModelMapper();
+
+    public ChatbotResponse TextResponse(ConversationRequest request, ReadUserResponse user) {
         String input = request.getInput();
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication != null ? authentication.getName() : "Unknown User";
 
         try {
             // 이전 대화내용 조회
@@ -42,25 +44,25 @@ public class TextResponseService {
             ClassificationResponse classificationResult = chainService.classificationChain(classificationPrompt);
             String mainTaskNo = classificationResult.getMainTaskNumber();
             String subTaskNo = classificationResult.getSubTaskNumber();
-            log.info("🔗1️⃣ [{}] Task Classification Completed by - Main Task No: {}, Sub Task No: {}", username, mainTaskNo, subTaskNo);
+            log.info("🔗1️⃣ [{}] Task Classification Completed by - Main Task No: {}, Sub Task No: {}", user.getUserId(), mainTaskNo, subTaskNo);
 
             // Main Task 분류
             ChatbotResponse response;
             switch (mainTaskNo) {
                 // 복지 서비스
                 case "001" -> {
-                    response = welfareService(subTaskNo, input, conversationLogs, username);
+                    response = welfareService(subTaskNo, input, conversationLogs, user);
                 }
                 // 금융 서비스
                 case "002" -> {
                     return null;
                 }
                 default -> {
-                    response =  dailyConversation(input, conversationLogs);
+                    response = dailyConversation(input, conversationLogs);
                 }
             }
 
-            log.info("🔗2️⃣ [{}] Response generated for: {}", username, response.getContent());
+            log.info("🔗2️⃣ [{}] Response generated for: {}", user.getUserId(), response.getContent());
 
             return response;
         } catch (JsonProcessingException e) {
@@ -74,7 +76,11 @@ public class TextResponseService {
         return chainService.chatbotChain(chatbotPrompt);
     }
 
-    private ChatbotResponse welfareService(String subTaskNo, String input, List<ConversationLogResponse> conversationLogs, String username) throws JsonProcessingException {
+    private ChatbotResponse welfareService(String subTaskNo, String input, List<ConversationLogResponse> conversationLogs, ReadUserResponse user) throws JsonProcessingException {
+        // Chatbot Prompt 제작
+        List<String> promptFilePathList = Arrays.asList("prompts/basic.prompt", "prompts/welfare.prompt");
+        List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
+
         // Sub Task 분류
         RedirectionResponse redirectionResult = null;
         ReservationResponse reservationResult = null;
@@ -82,7 +88,7 @@ public class TextResponseService {
             case "001-02" -> {
                 List<Map<String, String>> redirectionPrompt = promptService.redirectionPrompt(input, conversationLogs);
                 redirectionResult = chainService.redirectionChain(redirectionPrompt);
-                log.info("🔗3️⃣ [{}] Instruction Chain Completed - Service Number: {}, Action Required: {}", username, redirectionResult.getServiceNumber(), redirectionResult.isActionRequired());
+                log.info("🔗3️⃣ [{}] Instruction Chain Completed - Service Number: {}, Action Required: {}", user.getUserId(), redirectionResult.getServiceNumber(), redirectionResult.isActionRequired());
                 System.out.println("======================================");
                 System.out.println(redirectionResult);
                 System.out.println("======================================");
@@ -94,15 +100,32 @@ public class TextResponseService {
                 System.out.println(reservationResult);
                 System.out.println("======================================");
             }
-        }
+            case "001-04" -> {
+                List<ReadWelfareBookResponse> welfareBookList = welfareBookService.readAllByLastMonth(user.getUserNo());
+                List<WelfareBookInfoDto> bookList = welfareBookList.stream()
+                        .map(source -> modelMapper.map(source, WelfareBookInfoDto.class))
+                        .toList();
 
+                // chatbotPrompt에 추가 정보로 bookList 문자열을 넣음
+                String bookListString = "\nAdditional Info:\n" + bookList.stream()
+                        .map(WelfareBookInfoDto::toString)  // 각 DTO 객체를 문자열로 변환
+                        .collect(Collectors.joining("\n"));
+
+                System.out.println("************************************");
+                System.out.println(bookListString);
+                System.out.println("************************************");
+
+                chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs, bookListString);
+            }
+        }
+        System.out.println("====================================================");
+        System.out.println(chatbotPrompt);
+        System.out.println("====================================================");
         // 답변 생성
-        List<String> promptFilePathList = Arrays.asList("prompts/basic.prompt", "prompts/welfare.prompt");
-        List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
         ChatbotResponse response = chainService.chatbotChain(chatbotPrompt);
 
         // 추가 정보 입력
-        if (redirectionResult != null){
+        if (redirectionResult != null) {
             response.setActionRequired(redirectionResult.isActionRequired());
             response.setServiceNumber(redirectionResult.getServiceNumber());
         }
