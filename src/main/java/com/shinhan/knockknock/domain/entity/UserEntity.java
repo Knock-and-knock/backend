@@ -1,6 +1,6 @@
 package com.shinhan.knockknock.domain.entity;
 
-import com.shinhan.knockknock.domain.dto.LoginUserResponse;
+import com.shinhan.knockknock.domain.dto.user.LoginUserResponse;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -77,10 +77,10 @@ public class UserEntity {
     @Column(name = "user_simplepassword")
     private String userSimplePassword;
 
-    @OneToOne(mappedBy = "userProtector")
+    @OneToOne(mappedBy = "userProtector", fetch = FetchType.LAZY)
     private MatchEntity matchProtector;
 
-    @OneToOne(mappedBy = "userProtege")
+    @OneToOne(mappedBy = "userProtege", fetch = FetchType.LAZY)
     private MatchEntity matchProtege;
 
     @OneToMany(mappedBy = "userNo", fetch = FetchType.LAZY)

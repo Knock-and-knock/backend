@@ -1,7 +1,6 @@
-package com.shinhan.knockknock.domain.dto;
+package com.shinhan.knockknock.domain.dto.user;
 
 import com.shinhan.knockknock.domain.entity.UserRoleEnum;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,12 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TokenResponse {
-    @Schema(example = "1")
-    private long userNo;
-    @Schema(example = "PROTECTOR")
+public class LoginUserResponse {
+    private Long userNo;
+    private String userId;
+    private String userPassword;
+    private String userName;
     private UserRoleEnum userType;
-    @Schema(example = "accessToken")
-    private String accessToken;
+    private String userSimplePassword;
     private String message;
 }

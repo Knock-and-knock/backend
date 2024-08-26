@@ -1,6 +1,6 @@
 package com.shinhan.knockknock.auth;
 
-import com.shinhan.knockknock.domain.dto.LoginUserResponse;
+import com.shinhan.knockknock.domain.dto.user.LoginUserResponse;
 import com.shinhan.knockknock.domain.entity.TokenEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.repository.TokenRepository;

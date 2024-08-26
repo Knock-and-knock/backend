@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.domain.dto;
+package com.shinhan.knockknock.domain.dto.match;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -10,10 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SimpleLoginUserRequest{
-    @Schema(example = "38")
-    private long userNo;
-    @Schema(example = "123456")
-    private String userSimplePassword;
-
+public class UpdateMatchRequest {
+    @Schema(example = "6")
+    private long matchNo;
+    @Schema(example = "ACCEPT")
+    private String answer;
 }

@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.domain.dto;
+package com.shinhan.knockknock.domain.dto.user;
 
 import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import io.swagger.v3.oas.annotations.media.Schema;

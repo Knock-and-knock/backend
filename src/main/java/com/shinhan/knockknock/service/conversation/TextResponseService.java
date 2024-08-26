@@ -2,10 +2,12 @@ package com.shinhan.knockknock.service.conversation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.shinhan.knockknock.domain.dto.conversationroom.*;
+import com.shinhan.knockknock.domain.dto.user.ReadUserResponse;
+import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
+import com.shinhan.knockknock.service.user.UserService;
+import com.shinhan.knockknock.service.welfarebook.WelfareBookService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -15,22 +17,24 @@ import java.util.Map;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class TextResponseService {
 
-    @Autowired
-    ChainService chainService;
+    private final ChainService chainService;
 
-    @Autowired
-    PromptService promptService;
+    private final PromptService promptService;
 
-    @Autowired
-    ConversationLogService conversationLogService;
+    private final ConversationLogService conversationLogService;
 
-    public ChatbotResponse TextResponse(ConversationRequest request) {
+    private final WelfareBookService welfareBookService;
+
+    private final UserService userService;
+
+    public ChatbotResponse TextResponse(ConversationRequest request, long userNo) {
         String input = request.getInput();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication != null ? authentication.getName() : "Unknown User";
+        // User Id 가져오기
+        ReadUserResponse user = userService.readUser(userNo);
 
         try {
             // 이전 대화내용 조회
@@ -42,14 +46,14 @@ public class TextResponseService {
             ClassificationResponse classificationResult = chainService.classificationChain(classificationPrompt);
             String mainTaskNo = classificationResult.getMainTaskNumber();
             String subTaskNo = classificationResult.getSubTaskNumber();
-            log.info("🔗1️⃣ [{}] Task Classification Completed by - Main Task No: {}, Sub Task No: {}", username, mainTaskNo, subTaskNo);
+            log.info("🔗1️⃣  [{}] Task Classification Completed by - Main Task No: {}, Sub Task No: {}", user.getUserId(), mainTaskNo, subTaskNo);
 
             // Main Task 분류
             ChatbotResponse response;
             switch (mainTaskNo) {
                 // 복지 서비스
                 case "001" -> {
-                    response = welfareService(subTaskNo, input, conversationLogs, username);
+                    response = welfareService(subTaskNo, input, conversationLogs, user);
                 }
                 // 금융 서비스
                 case "002" -> {
@@ -60,7 +64,7 @@ public class TextResponseService {
                 }
             }
 
-            log.info("🔗2️⃣ [{}] Response generated for: {}", username, response.getContent());
+            log.info("🔗2️⃣  [{}] Response generated for: {}", user.getUserId(), response.getContent());
 
             return response;
         } catch (JsonProcessingException e) {
@@ -74,7 +78,7 @@ public class TextResponseService {
         return chainService.chatbotChain(chatbotPrompt);
     }
 
-    private ChatbotResponse welfareService(String subTaskNo, String input, List<ConversationLogResponse> conversationLogs, String username) throws JsonProcessingException {
+    private ChatbotResponse welfareService(String subTaskNo, String input, List<ConversationLogResponse> conversationLogs, ReadUserResponse user) throws JsonProcessingException {
         // Sub Task 분류
         RedirectionResponse redirectionResult = null;
         ReservationResponse reservationResult = null;
@@ -82,7 +86,7 @@ public class TextResponseService {
             case "001-02" -> {
                 List<Map<String, String>> redirectionPrompt = promptService.redirectionPrompt(input, conversationLogs);
                 redirectionResult = chainService.redirectionChain(redirectionPrompt);
-                log.info("🔗3️⃣ [{}] Instruction Chain Completed - Service Number: {}, Action Required: {}", username, redirectionResult.getServiceNumber(), redirectionResult.isActionRequired());
+                log.info("🔗3️⃣  [{}] Instruction Chain Completed - Service Number: {}, Action Required: {}", user.getUserId(), redirectionResult.getServiceNumber(), redirectionResult.isActionRequired());
                 System.out.println("======================================");
                 System.out.println(redirectionResult);
                 System.out.println("======================================");
@@ -92,6 +96,12 @@ public class TextResponseService {
                 reservationResult = chainService.reservationChain(reservationPrompt);
                 System.out.println("======================================");
                 System.out.println(reservationResult);
+                System.out.println("======================================");
+            }
+            case "001-04" -> {
+                System.out.println("======================================");
+                List<ReadWelfareBookResponse> welfareBookList = welfareBookService.readAllByLastMonth(user.getUserNo());
+                System.out.println(welfareBookList);
                 System.out.println("======================================");
             }
         }

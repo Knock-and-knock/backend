@@ -1,9 +1,9 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.user;
 
 import com.shinhan.knockknock.auth.JwtProvider;
-import com.shinhan.knockknock.domain.dto.IdLoginUserRequest;
-import com.shinhan.knockknock.domain.dto.SimpleLoginUserRequest;
-import com.shinhan.knockknock.domain.dto.TokenResponse;
+import com.shinhan.knockknock.domain.dto.user.IdLoginUserRequest;
+import com.shinhan.knockknock.domain.dto.user.SimpleLoginUserRequest;
+import com.shinhan.knockknock.domain.dto.user.TokenResponse;
 import com.shinhan.knockknock.domain.entity.TokenEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.repository.TokenRepository;
@@ -13,6 +13,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +51,16 @@ public class AuthService {
         }
 
         return issueToken(user);
+    }
+
+    public void logoutUser(long userNo) {
+        TokenEntity tokenEntity = tokenRepository.findByUser_UserNo(userNo)
+                .orElseThrow(() -> new NoSuchElementException("Refresh Token이 존재하지 않습니다."));
+        try {
+            tokenRepository.delete(tokenEntity);
+        } catch (Exception e) {
+            throw new RuntimeException("로그아웃에 실패하였습니다.");
+        }
     }
 
     private TokenResponse issueToken(UserEntity user) {

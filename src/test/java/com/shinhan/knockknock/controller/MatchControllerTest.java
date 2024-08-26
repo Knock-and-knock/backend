@@ -1,15 +1,15 @@
 package com.shinhan.knockknock.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shinhan.knockknock.domain.dto.CreateMatchRequest;
-import com.shinhan.knockknock.domain.dto.CreateMatchResponse;
-import com.shinhan.knockknock.domain.dto.UpdateMatchRequest;
+import com.shinhan.knockknock.domain.dto.match.CreateMatchRequest;
+import com.shinhan.knockknock.domain.dto.match.CreateMatchResponse;
+import com.shinhan.knockknock.domain.dto.match.UpdateMatchRequest;
 import com.shinhan.knockknock.domain.entity.MatchEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import com.shinhan.knockknock.repository.MatchRepository;
 import com.shinhan.knockknock.repository.UserRepository;
-import com.shinhan.knockknock.service.MatchService;
+import com.shinhan.knockknock.service.match.MatchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
