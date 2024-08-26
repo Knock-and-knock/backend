@@ -1,5 +1,6 @@
 package com.shinhan.knockknock.domain.dto;
 
+import com.shinhan.knockknock.domain.entity.RiskEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +26,7 @@ public class CreateCardIssueRequest {
     private String cardIssueCredit;
     private String cardIssueAmountDate;
     private String cardIssueSource;
-    private String cardIssueIsHighrisk;
+    private RiskEnum cardIssueIsHighrisk;
     private String cardIssuePurpose;
     private String cardIssueAddress;
     private boolean cardIssueIsFamily;
