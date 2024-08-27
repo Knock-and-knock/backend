@@ -10,6 +10,7 @@ import com.shinhan.knockknock.repository.UserRepository;
 import com.shinhan.knockknock.repository.WelfareBookRepository;
 import com.shinhan.knockknock.repository.WelfareRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -58,16 +59,20 @@ public class WelfareBookServiceImpl implements WelfareBookService {
                 .welfareBookEndDate(request.getWelfareBookEndDate())
                 .welfareBookIsCansle(request.isWelfareBookIsCansle())
                 .welfareBookIsComplete(request.isWelfareBookIsComplete())
+                .welfareBookUseTime(request.getWelfareBookUseTime())
+                .welfareTotalPrice(request.getWelfareBookTotalPrice())
+                .welfareBookReservationDate(request.getWelfareBookReservationDate())
                 .user(user)
                 .welfare(welfare)
-                .welfareBookUseTime(request.getWelfareBookUseTime())  // welfareBookUseTime 저장
                 .build();
     }
 
     @Override
     public List<ReadWelfareBookResponse> readAllByUserNo(Long userNo) {
         // userNo 별로 복지 예약 내역 조회
-        List<WelfareBookEntity> entityList = welfareBookRepo.findByUser_UserNo(userNo);
+        Sort sort = Sort.by(Sort.Direction.DESC, "welfareBookReservationDate");
+
+        List<WelfareBookEntity> entityList = welfareBookRepo.findByUser_UserNo(userNo, sort);
 
         return entityList.stream().map(this::entityToDto).collect(Collectors.toList());
     }
@@ -87,7 +92,7 @@ public class WelfareBookServiceImpl implements WelfareBookService {
         Timestamp startDate = Timestamp.valueOf(oneMonthAgo);
         Timestamp endDate = Timestamp.valueOf(now);
 
-        List<WelfareBookEntity> welfareBooks = welfareBookRepo.findByUser_UserNoAndWelfareBookStartDateBetween(userNo, startDate, endDate);
+        List<WelfareBookEntity> welfareBooks = welfareBookRepo.findByUser_UserNoAndWelfareBookReservationDateBetween(userNo, startDate, endDate);
         return welfareBooks.stream()
                 .map(this::entityToDto)
                 .collect(Collectors.toList());

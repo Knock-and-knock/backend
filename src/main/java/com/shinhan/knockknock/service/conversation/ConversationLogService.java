@@ -1,7 +1,7 @@
 package com.shinhan.knockknock.service.conversation;
 
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogRequest;
-import com.shinhan.knockknock.domain.dto.conversationroom.ConversationLogResponse;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationLogRequest;
+import com.shinhan.knockknock.domain.dto.conversation.ConversationLogResponse;
 import com.shinhan.knockknock.domain.entity.ConversationLogEntity;
 import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
 

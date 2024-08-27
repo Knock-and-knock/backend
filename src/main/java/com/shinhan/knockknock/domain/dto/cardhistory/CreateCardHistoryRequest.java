@@ -31,7 +31,9 @@ public class CreateCardHistoryRequest {
     private String cardBank;
     @Schema(example = "1234-1234-1234")
     private String cardAccount;
-    @Schema(example = "True")
+    @Schema(example = "true")
     private boolean isCardFamily;
+    @Schema(example = "false")
+    private boolean cardHistoryIsCansle;
 
 }
