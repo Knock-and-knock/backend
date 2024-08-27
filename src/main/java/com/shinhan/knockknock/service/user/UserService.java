@@ -4,6 +4,7 @@ import com.shinhan.knockknock.domain.dto.user.CreateUserRequest;
 import com.shinhan.knockknock.domain.dto.user.ReadUserResponse;
 import com.shinhan.knockknock.domain.dto.user.UpdateUserRequest;
 import com.shinhan.knockknock.domain.entity.UserEntity;
+import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 
 public interface UserService {
@@ -29,7 +30,8 @@ public interface UserService {
 
     default ReadUserResponse entityToDtoProtector(UserEntity user, UserEntity protege){
         ReadUserResponse response;
-        if(user.getMatchProtector() == null && user.getMatchProtege() == null){
+        if(user.getUserType().equals(UserRoleEnum.PROTECTOR) &&
+                user.getMatchProtector() == null && user.getMatchProtege() == null){
             response = ReadUserResponse.builder()
                     .userNo(user.getUserNo())
                     .userId(user.getUserId())
