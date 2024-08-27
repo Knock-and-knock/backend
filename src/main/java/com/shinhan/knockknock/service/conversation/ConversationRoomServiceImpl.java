@@ -1,7 +1,9 @@
 package com.shinhan.knockknock.service.conversation;
 
+import com.shinhan.knockknock.domain.dto.conversation.ConversationLogResponse;
 import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomUpdateRequest;
 import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomResponse;
+import com.shinhan.knockknock.domain.entity.ConversationLogEntity;
 import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
 import com.shinhan.knockknock.repository.ConversationRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class ConversationRoomServiceImpl implements ConversationRoomService {
     @Autowired
     ConversationRoomRepository conversationRoomRepository;
 
+    @Autowired
+    ConversationLogService conversationLogService;
+
     @Override
     public Long createConversationRoom(Long userNo) {
         ConversationRoomEntity newConversationRoom = conversationRoomRepository.save(dtoToEntity(userNo));
@@ -29,6 +34,15 @@ public class ConversationRoomServiceImpl implements ConversationRoomService {
         return conversationRoomRepository.findAll().stream()
                 .map(this::entityToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ConversationLogResponse> readLatestConversationRoom(long userNo, long conversationRoomNo) {
+        ConversationRoomEntity conversationRoom = conversationRoomRepository.findLatestByUserNoExcludingConversationRoomNo(userNo, conversationRoomNo);
+        List<ConversationLogResponse> ee = conversationRoom.getConversationLogs().stream()
+                .map(logEntity -> conversationLogService.entityToDto(logEntity))
+                .collect(Collectors.toList());
+        return ee;
     }
 
     @Override

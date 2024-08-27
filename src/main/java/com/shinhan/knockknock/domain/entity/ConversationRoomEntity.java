@@ -35,6 +35,6 @@ public class ConversationRoomEntity {
     @NotNull
     private long UserNo;
 
-    @OneToMany(mappedBy = "conversationRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "conversationRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ConversationLogEntity> conversationLogs;
 }

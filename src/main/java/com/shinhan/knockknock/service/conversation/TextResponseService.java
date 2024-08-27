@@ -25,61 +25,70 @@ public class TextResponseService {
 
     private final PromptService promptService;
 
+    private final ConversationRoomService conversationRoomService;
+
     private final ConversationLogService conversationLogService;
 
     private final WelfareBookService welfareBookService;
 
     private static final ModelMapper modelMapper = new ModelMapper();
 
-    public ChatbotResponse TextResponse(ConversationRequest request, ReadUserResponse user) {
+    public ChatbotResponse TextResponse(ConversationRequest request, ReadUserResponse user) throws JsonProcessingException {
         String input = request.getInput();
 
-        try {
-            // 이전 대화내용 조회
-            List<ConversationLogResponse> conversationLogs = conversationLogService.findLastNByConversationRoomNo(5, request.getConversationRoomNo());
+        // 이전 대화내용 조회
+        List<ConversationLogResponse> conversationLogs = conversationLogService.findLastNByConversationRoomNo(5, request.getConversationRoomNo());
 
-            // 사용자 입력에 따른 작업 분류
-            List<Map<String, String>> classificationPrompt = promptService.classificationPrompt(input, conversationLogs);
-
-            ClassificationResponse classificationResult = chainService.classificationChain(classificationPrompt);
-            String mainTaskNo = classificationResult.getMainTaskNumber();
-            String subTaskNo = classificationResult.getSubTaskNumber();
-            log.info("🔗1️⃣ [{}] Task Classification Completed by - Main Task No: \u001B[34m{}\u001B[0m, Sub Task No: \u001B[34m{}\u001B[0m", user.getUserId(), mainTaskNo, subTaskNo);
-
-
-            // Main Task 분류
-            ChatbotResponse response;
-            switch (mainTaskNo) {
-                // 복지 서비스
-                case "001" -> {
-                    response = welfareService(subTaskNo, input, conversationLogs, user);
-                }
-                // 금융 서비스
-                case "002" -> {
-                    return null;
-                }
-                default -> {
-                    response = dailyConversation(input, conversationLogs);
-                }
-            }
-
-            // 전체 token 계산
-            calculateToken(response, classificationResult);
-
-            log.info("🔗2️⃣ [{}] Response generated for: {}", user.getUserId(), response.getContent());
-            return response;
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        if (conversationLogs.isEmpty() && request.getInput().equals("Greeting")) {
+            generateGreeting(user.getUserNo(), request.getConversationRoomNo());
         }
+
+        // 사용자 입력에 따른 작업 분류
+        List<Map<String, String>> classificationPrompt = promptService.classificationPrompt(input, conversationLogs);
+
+        ClassificationResponse classificationResult = chainService.classificationChain(classificationPrompt);
+        String mainTaskNo = classificationResult.getMainTaskNumber();
+        String subTaskNo = classificationResult.getSubTaskNumber();
+        log.info("🔗1️⃣ [{}] Task Classification Completed by - Main Task No: \u001B[34m{}\u001B[0m, Sub Task No: \u001B[34m{}\u001B[0m", user.getUserId(), mainTaskNo, subTaskNo);
+
+
+        // Main Task 분류
+        ChatbotResponse response;
+        switch (mainTaskNo) {
+            // 복지 서비스
+            case "001" -> {
+                response = generateWelfareService(subTaskNo, input, conversationLogs, user);
+            }
+            // 금융 서비스
+            case "002" -> {
+                return null;
+            }
+            default -> {
+                response = generateDailyConversation(input, conversationLogs);
+            }
+        }
+
+        // 전체 token 계산
+        calculateToken(response, classificationResult);
+
+        log.info("🔗2️⃣ [{}] Response generated for: {}", user.getUserId(), response.getContent());
+        return response;
+
     }
 
-    private ChatbotResponse dailyConversation(String input, List<ConversationLogResponse> conversationLogs) throws JsonProcessingException {
+    private void generateGreeting(long userNo, long conversationRoomNo) {
+        List<ConversationLogResponse> conversationLogList = conversationRoomService.readLatestConversationRoom(userNo, conversationRoomNo);
+
+        System.out.println(conversationLogList);
+    }
+
+    private ChatbotResponse generateDailyConversation(String input, List<ConversationLogResponse> conversationLogs) throws JsonProcessingException {
         List<String> promptFilePathList = Collections.singletonList("prompts/basic.prompt");
         List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
         return chainService.chatbotChain(chatbotPrompt);
     }
 
-    private ChatbotResponse welfareService(String subTaskNo, String input, List<ConversationLogResponse> conversationLogs, ReadUserResponse user) throws JsonProcessingException {
+    private ChatbotResponse generateWelfareService(String subTaskNo, String input, List<ConversationLogResponse> conversationLogs, ReadUserResponse user) throws JsonProcessingException {
         RedirectionResponse redirectionResult = null;
         ReservationResponse reservationResult = null;
 
