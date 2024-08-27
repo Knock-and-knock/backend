@@ -1,6 +1,6 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.notification;
 
-import com.shinhan.knockknock.domain.dto.ReadNotificationResponse;
+import com.shinhan.knockknock.domain.dto.notification.ReadNotificationResponse;
 import com.shinhan.knockknock.domain.entity.NotificationEntity;
 import com.shinhan.knockknock.repository.EmitterRepository;
 import com.shinhan.knockknock.repository.NotificationRepository;
@@ -10,6 +10,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -92,5 +94,30 @@ public class NotificationServiceImpl implements NotificationService {
         emitter.onTimeout(() -> emitterRepository.deleteByUserNo(userNo));
 
         return emitter;
+    }
+
+    /**
+     * 사용자 아이디를 기반으로 알림 전체 조회
+     *
+     * @param userNo - 사용자 아이디.
+     * @return List<ReadNotificationResponse> - 해당 사용자 모든 알림 조회
+     */
+    public List<ReadNotificationResponse> readNotifications(Long userNo){
+        return notificationRepository.findByUserNo(userNo)
+                .stream()
+                .map(this::transformEntityToDTO)
+                .toList();
+    }
+
+    /**
+     * 사용자 아이디를 기반으로 알림 전체 조회
+     *
+     * @param notificationNo - 사용자 아이디.
+     * @return ReadNotificationResponse - 알림 내용 전송
+     */
+    public ReadNotificationResponse readNotification(Long notificationNo){
+        return notificationRepository.findById(notificationNo)
+                .map(this::transformEntityToDTO) // Optional이 비어 있지 않다면 transformEntityToDTO 호출
+                .orElseThrow(() -> new NoSuchElementException("not found for id: " + notificationNo)); // Optional이 비어있을 때 예외 처리
     }
 }

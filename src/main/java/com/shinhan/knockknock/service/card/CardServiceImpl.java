@@ -1,12 +1,13 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.card;
 
-import com.shinhan.knockknock.domain.dto.CreateCardIssueResponse;
-import com.shinhan.knockknock.domain.dto.ReadCardResponse;
+import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
+import com.shinhan.knockknock.domain.dto.card.ReadCardResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 import com.shinhan.knockknock.domain.entity.NotificationEntity;
 import com.shinhan.knockknock.repository.CardIssueRepository;
 import com.shinhan.knockknock.repository.CardRepository;
+import com.shinhan.knockknock.service.notification.NotificationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;

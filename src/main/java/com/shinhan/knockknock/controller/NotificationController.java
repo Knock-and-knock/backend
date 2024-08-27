@@ -1,8 +1,9 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.auth.JwtProvider;
+import com.shinhan.knockknock.domain.dto.notification.ReadNotificationResponse;
 import com.shinhan.knockknock.domain.entity.NotificationEntity;
-import com.shinhan.knockknock.service.NotificationServiceImpl;
+import com.shinhan.knockknock.service.notification.NotificationServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin
@@ -49,5 +51,19 @@ public class NotificationController {
 
         notificationService.notify(notificationEntity);
         return "notification success";
+    }
+
+    // 해당 사용자 알림 전체 조회
+    @Operation(summary = "사용자 알림 전체 조회", description= "사용자 알림 전체 조회")
+    @PostMapping("/read")
+    public List<ReadNotificationResponse> readNotifications(@RequestHeader("Authorization") String header){
+        return notificationService.readNotifications(jwtProvider.getUserNoFromHeader(header));
+    }
+
+    // 알림 상세 조회
+    @Operation(summary = "사용자 알림 상세 조회", description="사용자 알림 상세 조회")
+    @GetMapping("/read/{notificationNo}")
+    public ReadNotificationResponse readNotification(@PathVariable("notificationNo") Long notificationNo){
+        return notificationService.readNotification(notificationNo);
     }
 }

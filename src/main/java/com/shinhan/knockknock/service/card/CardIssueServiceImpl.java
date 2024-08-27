@@ -1,7 +1,7 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.card;
 
-import com.shinhan.knockknock.domain.dto.CreateCardIssueRequest;
-import com.shinhan.knockknock.domain.dto.CreateCardIssueResponse;
+import com.shinhan.knockknock.domain.dto.card.CreateCardIssueRequest;
+import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 import com.shinhan.knockknock.repository.CardIssueRepository;
 import org.springframework.beans.factory.annotation.Autowired;

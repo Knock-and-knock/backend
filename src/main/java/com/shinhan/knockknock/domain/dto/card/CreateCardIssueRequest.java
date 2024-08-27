@@ -1,13 +1,10 @@
-package com.shinhan.knockknock.domain.dto;
+package com.shinhan.knockknock.domain.dto.card;
 
 import com.shinhan.knockknock.domain.entity.RiskEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.sql.Date;
-import java.sql.Timestamp;
 
 @Data
 @Builder

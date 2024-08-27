@@ -3,6 +3,7 @@ package com.shinhan.knockknock.service;
 import com.shinhan.knockknock.domain.entity.NotificationEntity;
 import com.shinhan.knockknock.repository.EmitterRepository;
 import com.shinhan.knockknock.repository.NotificationRepository;
+import com.shinhan.knockknock.service.notification.NotificationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class NotificationTest {
+class NotificationServiceImplTest {
 
     @Mock
     private EmitterRepository emitterRepository; // EmitterRepository를 모킹하여 사용
