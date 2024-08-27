@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.user.IdLoginUserRequest;
 import com.shinhan.knockknock.domain.dto.user.TokenResponse;
 import com.shinhan.knockknock.service.user.AuthService;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -35,6 +37,8 @@ public class AuthControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    private JwtProvider jwtProvider;
 
     @Test
     @DisplayName("아이디/패스워드 로그인 성공 테스트")
@@ -99,5 +103,50 @@ public class AuthControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().is(401))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(exception.getMessage()));
+    }
+
+    @Test
+    @WithMockUser(username = "protege02", password = "1234")
+    @DisplayName("로그아웃 성공 테스트")
+    public void testLogoutSuccess() throws Exception {
+        // given
+        String accessToken = login("protege02");
+        long userNo = Long.parseLong(jwtProvider.getUserNo(accessToken));
+        String authorizationHeader = "Bearer "+accessToken;
+
+        // when & then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/logout")
+                        .header("Authorization", authorizationHeader))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("로그아웃 되었습니다."));
+    }
+
+    @Test
+    @WithMockUser(username = "protege02", password = "1234")
+    @DisplayName("로그아웃 실패 테스트")
+    public void testLogoutFail() throws Exception {
+        // given
+        String accessToken = login("protege02");
+        long userNo = Long.parseLong(jwtProvider.getUserNo(accessToken));
+        String authorizationHeader = "Bearer "+accessToken;
+
+        authService.logoutUser(userNo);
+
+        // when & then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/logout")
+                        .header("Authorization", authorizationHeader))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isInternalServerError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Refresh Token이 존재하지 않습니다."));
+    }
+
+    private String login(String userId) {
+        IdLoginUserRequest request = IdLoginUserRequest.builder()
+                .userId(userId)
+                .userPassword("1234")
+                .build();
+        TokenResponse response = authService.loginUser(request);
+        return response.getAccessToken();
     }
 }
