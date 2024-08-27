@@ -34,13 +34,14 @@ public class TextResponseService {
     private static final ModelMapper modelMapper = new ModelMapper();
 
     public ChatbotResponse TextResponse(ConversationRequest request, ReadUserResponse user) throws JsonProcessingException {
+        ChatbotResponse response;
         String input = request.getInput();
 
         // 이전 대화내용 조회
         List<ConversationLogResponse> conversationLogs = conversationLogService.findLastNByConversationRoomNo(5, request.getConversationRoomNo());
 
         if (conversationLogs.isEmpty() && request.getInput().equals("Greeting")) {
-            generateGreeting(user.getUserNo(), request.getConversationRoomNo());
+            generateGreeting(request, user.getUserNo());
         }
 
         // 사용자 입력에 따른 작업 분류
@@ -51,9 +52,7 @@ public class TextResponseService {
         String subTaskNo = classificationResult.getSubTaskNumber();
         log.info("🔗1️⃣ [{}] Task Classification Completed by - Main Task No: \u001B[34m{}\u001B[0m, Sub Task No: \u001B[34m{}\u001B[0m", user.getUserId(), mainTaskNo, subTaskNo);
 
-
         // Main Task 분류
-        ChatbotResponse response;
         switch (mainTaskNo) {
             // 복지 서비스
             case "001" -> {
@@ -76,10 +75,21 @@ public class TextResponseService {
 
     }
 
-    private void generateGreeting(long userNo, long conversationRoomNo) {
-        List<ConversationLogResponse> conversationLogList = conversationRoomService.readLatestConversationRoom(userNo, conversationRoomNo);
+    private void generateGreeting(ConversationRequest request, long userNo) {
+        List<ConversationLogResponse> conversationLogList = conversationRoomService.readLatestConversationRoom(userNo, request.getConversationRoomNo());
+        String conversationLogListString = "\nAdditional Info:\n" + conversationLogList.stream()
+                .map(ConversationLogResponse::toLogString)
+                .collect(Collectors.joining("\n"));
+        System.out.println(conversationLogListString);
 
-        System.out.println(conversationLogList);
+        List<String> promptFilePathList = Arrays.asList("prompts/basic.prompt", "prompts/greeting.prompt");
+        List<ConversationLogResponse> conversationLogs = Collections.emptyList();
+        List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, "", conversationLogs, conversationLogListString);
+        System.out.println("===================================");
+        System.out.println("===================================");
+        System.out.println(chatbotPrompt);
+        System.out.println("===================================");
+        System.out.println("===================================");
     }
 
     private ChatbotResponse generateDailyConversation(String input, List<ConversationLogResponse> conversationLogs) throws JsonProcessingException {

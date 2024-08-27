@@ -39,10 +39,16 @@ public class ConversationRoomServiceImpl implements ConversationRoomService {
     @Override
     public List<ConversationLogResponse> readLatestConversationRoom(long userNo, long conversationRoomNo) {
         ConversationRoomEntity conversationRoom = conversationRoomRepository.findLatestByUserNoExcludingConversationRoomNo(userNo, conversationRoomNo);
-        List<ConversationLogResponse> ee = conversationRoom.getConversationLogs().stream()
+
+        List<ConversationLogEntity> conversationLogs = conversationRoom.getConversationLogs();
+
+        // 마지막 5개 가져오기
+        int size = conversationLogs.size();
+        List<ConversationLogEntity> lastThreeLogs = conversationLogs.subList(Math.max(size - 5, 0), size);
+
+        return lastThreeLogs.stream()
                 .map(logEntity -> conversationLogService.entityToDto(logEntity))
                 .collect(Collectors.toList());
-        return ee;
     }
 
     @Override

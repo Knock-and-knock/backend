@@ -20,4 +20,7 @@ public class ConversationLogResponse {
     private Timestamp conversationLogDatetime;
     private long conversationRoomNo;
 
+    public String toLogString() {
+        return "user: " + conversationLogInput + ", assistant: " + conversationLogResponse;
+    }
 }
