@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/card")
 @RequiredArgsConstructor
-@Tag(name = "카드", description = "카드 발급, 조회 API")
+@Tag(name = "5. 카드", description = "카드 발급, 조회 API")
 public class CardController {
 
     private final CardIssueService cardIssueService;

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/conversation")
-@Tag(name = "말동무", description = "말동무 관련 API")
+@Tag(name = "3. 말동무", description = "말동무 관련 API")
 public class ConversationController {
 
     private final ConversationService conversationService;

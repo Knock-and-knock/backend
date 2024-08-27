@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "인증", description = "인증 API")
+@Tag(name = "0. 인증", description = "인증 API")
 @CrossOrigin
 @RequiredArgsConstructor
 @RestController
