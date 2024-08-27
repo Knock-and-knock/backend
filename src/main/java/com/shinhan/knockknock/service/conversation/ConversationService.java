@@ -44,7 +44,7 @@ public class ConversationService {
         // Chatbot 답변 생성
         ChatbotResponse response;
         try {
-            response = executeWithTimeout(() -> textResponseService.TextResponse(request, user), 4, TimeUnit.SECONDS);
+            response = executeWithTimeout(() -> textResponseService.TextResponse(request, user), 7, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             log.warn("⚠️ TextResponse timed out for input={}, conversationRoomNo={}", request.getInput(), request.getConversationRoomNo());
             response = ChatbotResponse.builder()
@@ -59,7 +59,8 @@ public class ConversationService {
 
         // Chatbot 답변 검사
         ConversationLogRequest conversationLog;
-        if (response.getContent().isEmpty()) {
+        String content = response.getContent();
+        if (content == null || content.isEmpty()) {
             log.warn("⚠️ Chatbot response is empty: content={}, totalTokens={}", response.getContent(), response.getTotalTokens());
             conversationLog = ConversationLogRequest.builder()
                     .conversationLogInput(request.getInput())
@@ -92,6 +93,8 @@ public class ConversationService {
                 .content(response.getContent())
                 .audioData(audioBase64)
                 .actionRequired(response.isActionRequired())
+                .redirectionResult(response.getRedirectionResult())
+                .reservationResult(response.getReservationResult())
                 .build();
     }
 

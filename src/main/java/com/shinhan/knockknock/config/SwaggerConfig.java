@@ -6,17 +6,15 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI openApi(){
+    public OpenAPI openApi() {
         Info info = new Info()
                 .version("v0.0.1")
-                .title("Knock Knock Swagger")
-                .description("Knock Knock");
+                .title("Knock Knock API 명세")
+                .description("Knock Knock의 API 명세입니다.");
 
         // Define the Security Scheme for JWT token
         SecurityScheme apiKey = new SecurityScheme()
