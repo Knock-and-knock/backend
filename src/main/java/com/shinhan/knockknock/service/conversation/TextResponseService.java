@@ -89,16 +89,10 @@ public class TextResponseService {
                 List<Map<String, String>> redirectionPrompt = promptService.redirectionPrompt(input, conversationLogs);
                 redirectionResult = chainService.redirectionChain(redirectionPrompt);
                 log.info("🔗3️⃣ [{}] Instruction Chain Completed - Service Number: {}, Action Required: {}", user.getUserId(), redirectionResult.getServiceNumber(), redirectionResult.isActionRequired());
-                System.out.println("======================================");
-                System.out.println(redirectionResult);
-                System.out.println("======================================");
             }
             case "001-03" -> {
                 List<Map<String, String>> reservationPrompt = promptService.reservationPrompt(input, conversationLogs);
                 reservationResult = chainService.reservationChain(reservationPrompt);
-                System.out.println("======================================");
-                System.out.println(reservationResult);
-                System.out.println("======================================");
             }
             case "001-04" -> {
                 List<ReadWelfareBookResponse> welfareBookList = welfareBookService.readAllByLastMonth(user.getUserNo());
@@ -110,10 +104,6 @@ public class TextResponseService {
                 String bookListString = "\nAdditional Info:\n" + bookList.stream()
                         .map(WelfareBookInfoDto::toString)  // 각 DTO 객체를 문자열로 변환
                         .collect(Collectors.joining("\n"));
-
-                System.out.println("************************************");
-                System.out.println(bookListString);
-                System.out.println("************************************");
 
                 chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs, bookListString);
             }
@@ -127,7 +117,11 @@ public class TextResponseService {
         // 추가 정보 입력
         if (redirectionResult != null) {
             response.setActionRequired(redirectionResult.isActionRequired());
-            response.setServiceNumber(redirectionResult.getServiceNumber());
+            response.setRedirectionResult(redirectionResult);
+        }
+        if (reservationResult != null) {
+            response.setActionRequired(reservationResult.isActionRequired());
+            response.setReservationResult(reservationResult);
         }
 
         return response;

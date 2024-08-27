@@ -13,7 +13,9 @@ public class ConversationResponse {
 
     private String content;
     private String audioData;
-
     private boolean actionRequired;
+
+    private RedirectionResponse redirectionResult;
+    private ReservationResponse reservationResult;
 
 }

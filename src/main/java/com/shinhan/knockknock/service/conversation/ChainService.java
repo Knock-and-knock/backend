@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -24,6 +25,15 @@ public class ChainService {
 
     final ChatbotService chatbotService;
 
+    /**
+     * <pre>
+     * 메소드명   : classificationChain
+     * 설명       : 주어진 프롬프트에 따라 메인 작업 번호와 서브 작업 번호를 분류하는 체인 호출.
+     * </pre>
+     * @param prompt 챗봇에 전송할 메시지 리스트
+     * @return ClassificationResponse 메인 작업 번호 및 서브 작업 번호를 포함하는 응답 객체
+     * @throws JsonProcessingException JSON 처리 중 오류 발생 시
+     */
     public ClassificationResponse classificationChain(List<Map<String, String>> prompt) throws JsonProcessingException {
         Map<String, Object> responseSchema = new HashMap<>();
         responseSchema.put("mainTaskNumber", Map.of("type", "string"));
@@ -40,6 +50,15 @@ public class ChainService {
                 .build();
     }
 
+    /**
+     * <pre>
+     * 메소드명   : redirectionChain
+     * 설명       : 주어진 프롬프트에 따라 서비스 리다이렉션 정보를 반환하는 체인 호출.
+     * </pre>
+     * @param prompt 챗봇에 전송할 메시지 리스트
+     * @return RedirectionResponse 서비스 리다이렉션 정보를 포함하는 응답 객체
+     * @throws JsonProcessingException JSON 처리 중 오류 발생 시
+     */
     public RedirectionResponse redirectionChain(List<Map<String, String>> prompt) throws JsonProcessingException {
         Map<String, Object> responseSchema = new HashMap<>();
         responseSchema.put("actionRequired", Map.of("type", "boolean"));
@@ -59,6 +78,15 @@ public class ChainService {
                 .build();
     }
 
+    /**
+     * <pre>
+     * 메소드명   : reservationChain
+     * 설명       : 주어진 프롬프트에 따라 예약 정보를 처리하는 체인 호출.
+     * </pre>
+     * @param prompt 챗봇에 전송할 메시지 리스트
+     * @return ReservationResponse 예약 정보를 포함하는 응답 객체
+     * @throws JsonProcessingException JSON 처리 중 오류 발생 시
+     */
     public ReservationResponse reservationChain(List<Map<String, String>> prompt) throws JsonProcessingException {
         Map<String, Object> responseSchema = new HashMap<>();
         responseSchema.put("actionRequired", Map.of("type", "boolean"));
@@ -78,32 +106,15 @@ public class ChainService {
                 .build();
     }
 
-    public ChatbotResponse chatbotChain(List<Map<String, String>> prompt) throws JsonProcessingException {
-        Map<String, Object> responseSchema = new HashMap<>();
-        responseSchema.put("content", Map.of("type", "string"));
-
-        ChatbotResponse response = chatbotService.getChatbotResponse(prompt, responseSchema);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(response.getContent());
-
-        response.setContent(rootNode.path("content").asText());
-
-        String content = extractContentUsingRegex(response.getContent());
-        log.warn("&&&& {}", content);
-
-        return response;
-    }
-
-    private String extractContentUsingRegex(String rawContent) {
-        // "content":"와 그에 대응하는 문자열을 찾는 정규식
-        Pattern pattern = Pattern.compile("\"content\":\"(.*?)\"");
-        Matcher matcher = pattern.matcher(rawContent);
-
-        if (matcher.find()) {
-            return matcher.group(1); // 첫 번째 그룹은 "content":" 뒤에 나오는 실제 문자열입니다.
-        }
-        // content 부분을 제대로 찾지 못했을 경우 원본을 그대로 반환 (안전 장치)
-        return rawContent;
+    /**
+     * <pre>
+     * 메소드명   : chatbotChain
+     * 설명       : 응답 스키마 없이 일반적인 챗봇 응답을 처리하는 체인 호출.
+     * </pre>
+     * @param prompt 챗봇에 전송할 메시지 리스트
+     * @return ChatbotResponse 챗봇 응답 객체
+     */
+    public ChatbotResponse chatbotChain(List<Map<String, String>> prompt) {
+        return chatbotService.getChatbotResponse(prompt);
     }
 }
