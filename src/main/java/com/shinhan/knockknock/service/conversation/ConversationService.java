@@ -30,8 +30,6 @@ public class ConversationService {
     private final UserService userService;
 
     public ConversationResponse conversation(ConversationRequest request, long userNo) {
-        log.info("📌 Received conversation request: input={}, conversationRoomNo={}", request.getInput(), request.getConversationRoomNo());
-
         if (request.getInput().isEmpty()) {
             return ConversationResponse.builder()
                     .content("err")
@@ -84,8 +82,6 @@ public class ConversationService {
         // 음성 데이터 생성
         byte[] audioData = textToSpeechService.convertTextToSpeech(conversationLog.getConversationLogResponse());
 
-        log.info("📌 Chatbot response: content={}, totalTokens={}", response.getContent(), response.getTotalTokens());
-
         // 오디오 데이터를 Base64로 인코딩
         String audioBase64 = Base64.getEncoder().encodeToString(audioData);
 
@@ -93,6 +89,7 @@ public class ConversationService {
                 .content(response.getContent())
                 .audioData(audioBase64)
                 .actionRequired(response.isActionRequired())
+                .totalTokens(response.getTotalTokens())
                 .redirectionResult(response.getRedirectionResult())
                 .reservationResult(response.getReservationResult())
                 .build();

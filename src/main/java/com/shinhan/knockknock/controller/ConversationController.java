@@ -7,6 +7,7 @@ import com.shinhan.knockknock.service.conversation.ConversationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/conversation")
@@ -26,9 +28,16 @@ public class ConversationController {
     @PostMapping
     @Operation(summary = "말동무 대화 [In Progress]", description = "말동무의 답변을 생성합니다.")
     public ResponseEntity<ConversationResponse> conversation(@RequestHeader("Authorization") String header, @RequestBody ConversationRequest request) {
-        Long userNo = jwtProvider.getUserNoFromHeader(header);
+        long userNo = jwtProvider.getUserNoFromHeader(header);
 
+        log.info("📌 Received conversation request: input=\u001B[34m{}\u001B[0m, conversationRoomNo=\u001B[34m{}\u001B[0m", request.getInput(), request.getConversationRoomNo());
+
+        long startTime = System.currentTimeMillis();
         ConversationResponse response = conversationService.conversation(request, userNo);
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+
+        log.info("📌 Chatbot response: totalTokens=\u001B[34m{}\u001B[0m, duration=\u001B[34m{}ms\u001B[0m", response.getTotalTokens(), duration);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

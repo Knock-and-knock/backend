@@ -14,4 +14,8 @@ public class RedirectionResponse {
     private String serviceNumber;
     private String serviceName;
     private String serviceUrl;
+
+    private int promptTokens;
+    private int completionTokens;
+    private int totalTokens;
 }

@@ -10,6 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClassificationResponse {
-    String mainTaskNumber;
-    String subTaskNumber;
+    private String mainTaskNumber;
+    private String subTaskNumber;
+
+    private int promptTokens;
+    private int completionTokens;
+    private int totalTokens;
 }
