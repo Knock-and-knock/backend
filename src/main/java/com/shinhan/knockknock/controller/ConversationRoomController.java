@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/conversation-room")
-@Tag(name = "대화방", description = "대화 방 관련 API")
+@Tag(name = "3. 말동무", description = "말동무 관련 API")
 public class ConversationRoomController {
 
     private final ConversationRoomService conversationRoomService;

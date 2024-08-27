@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-@Tag(name = "회원", description = "회원 API")
+@Tag(name = "1. 회원", description = "회원 API")
 @CrossOrigin
 @RestController
 @RequestMapping("/api/v1/users")

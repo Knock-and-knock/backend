@@ -17,7 +17,7 @@ import java.util.Map;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/v1/notification")
-@Tag(name = "알림", description = "알림 API")
+@Tag(name = "7. 알림", description = "알림 API")
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationServiceImpl notificationService;
