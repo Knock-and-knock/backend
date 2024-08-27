@@ -39,13 +39,10 @@ public class CardHistoryServiceImpl implements CardHistoryService {
     }
 
     @Override
-    public List<ReadCardHistoryResponse> readAll() {
+    public List<ReadCardHistoryResponse> readAll(Long cardId) {
         try {
-            // 모든 카드 내역 조회
-            List<CardHistoryEntity> entityList = cardHistoryRepo.findAll();
-            if (entityList.isEmpty()) {
-                throw new NoSuchElementException("카드 내역이 존재하지 않습니다.");
-            }
+            // 특정 카드 ID에 해당하는 모든 카드 내역 조회
+            List<CardHistoryEntity> entityList = cardHistoryRepo.findByCard_CardId(cardId);
 
             // 각 카드 내역을 DTO로 변환
             return entityList.stream().map(entity -> {
@@ -53,8 +50,6 @@ public class CardHistoryServiceImpl implements CardHistoryService {
                 return entityToDto(entity, card);
             }).collect(Collectors.toList());
 
-        } catch (NoSuchElementException e) {
-            throw e;  // 컨트롤러에서 처리
         } catch (Exception e) {
             throw new RuntimeException("카드 내역 조회에 실패했습니다.", e);
         }

@@ -29,21 +29,19 @@ public class CardHistoryController {
     final CardHistoryService cardHistoryService;
     final CardCategoryService cardCategoryService;
 
-    @Operation(summary = "카드 내역 전체 조회", description = "카드 사용 내역을 전부 조회하는 API입니다.")
+    @Operation(summary = "카드 내역 조회", description = "특정 카드의 사용 내역을 조회하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "카드 내역 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "카드 내역이 존재하지 않습니다."),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping
-    public ResponseEntity<?> readAll() {
+    public ResponseEntity<List<ReadCardHistoryResponse>> readAll(@RequestParam("cardId") Long cardId) {
         try {
-            List<ReadCardHistoryResponse> cardHistories = cardHistoryService.readAll();
+            List<ReadCardHistoryResponse> cardHistories = cardHistoryService.readAll(cardId);
             return ResponseEntity.ok(cardHistories);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카드 내역 조회 중 서버 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
         }
     }
 

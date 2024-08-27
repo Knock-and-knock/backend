@@ -12,7 +12,7 @@ public interface CardHistoryService {
     Long createCardHistory(CreateCardHistoryRequest request);
 
     // 모든 카드 내역 조회 메서드
-    List<ReadCardHistoryResponse> readAll();
+    List<ReadCardHistoryResponse> readAll(Long cardId);
 
     // 가족 카드의 관련 사용자의 이름을 찾는 메서드
     String findUserNameForFamilyCard(CardEntity card);

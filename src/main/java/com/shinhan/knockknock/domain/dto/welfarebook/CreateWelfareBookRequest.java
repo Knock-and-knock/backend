@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 
 @Data
@@ -30,6 +31,18 @@ public class CreateWelfareBookRequest {
 
     @Schema(example = "false")
     private boolean welfareBookIsComplete;
+
+    @Schema(example = "3")
+    @NotNull
+    private Integer welfareBookUseTime;
+
+    @Schema(example = "60000")
+    @NotNull
+    private Integer welfareBookTotalPrice;
+
+    @Schema(example = "2024-08-26 17:38")
+    @NotNull
+    private Timestamp welfareBookReservationDate;
 
     @Schema(example = "1")
     @NotNull
@@ -59,19 +72,7 @@ public class CreateWelfareBookRequest {
     @NotBlank
     private String userDisease;
 
-    @Schema(example = "75")
+    @Schema(example = "1")
     @NotNull
     private Long welfareNo;
-
-    @Schema(example = "가정간병")
-    @NotBlank
-    private String welfareName;
-
-    @Schema(example = "6000")
-    @NotNull
-    private Long welfarePrice;
-
-    @Schema(example = "3")
-    @NotNull
-    private Integer welfareBookUseTime;
 }

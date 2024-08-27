@@ -30,6 +30,9 @@ public class CardHistoryEntity {
     @NotNull
     private String cardHistoryShopname;
 
+    @Column(name = "cardhistory_iscansle")
+    private boolean cardHistoryIsCansle;
+
     @Column(name="cardhistory_approve")
     @CreationTimestamp
     @NotNull
@@ -39,8 +42,6 @@ public class CardHistoryEntity {
     @JoinColumn(name= "cardcategory_no")
     @NotNull
     private CardCategoryEntity cardCategory;
-
-
 
     public Long getCardCategoryNo(){
         return cardCategory.getCardCategoryNo();
