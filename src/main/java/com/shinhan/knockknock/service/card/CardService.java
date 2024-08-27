@@ -1,7 +1,7 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.card;
 
-import com.shinhan.knockknock.domain.dto.CreateCardIssueResponse;
-import com.shinhan.knockknock.domain.dto.ReadCardResponse;
+import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
+import com.shinhan.knockknock.domain.dto.card.ReadCardResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 

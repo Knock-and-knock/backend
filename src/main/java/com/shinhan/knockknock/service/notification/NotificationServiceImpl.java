@@ -1,6 +1,6 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.notification;
 
-import com.shinhan.knockknock.domain.dto.ReadNotificationResponse;
+import com.shinhan.knockknock.domain.dto.notification.ReadNotificationResponse;
 import com.shinhan.knockknock.domain.entity.NotificationEntity;
 import com.shinhan.knockknock.repository.EmitterRepository;
 import com.shinhan.knockknock.repository.NotificationRepository;

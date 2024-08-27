@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.domain.dto;
+package com.shinhan.knockknock.domain.dto.card;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

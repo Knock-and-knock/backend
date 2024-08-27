@@ -1,10 +1,9 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.auth.JwtProvider;
-import com.shinhan.knockknock.domain.dto.ReadNotificationResponse;
+import com.shinhan.knockknock.domain.dto.notification.ReadNotificationResponse;
 import com.shinhan.knockknock.domain.entity.NotificationEntity;
-import com.shinhan.knockknock.repository.NotificationRepository;
-import com.shinhan.knockknock.service.NotificationServiceImpl;
+import com.shinhan.knockknock.service.notification.NotificationServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

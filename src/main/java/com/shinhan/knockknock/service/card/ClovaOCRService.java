@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.service;
+package com.shinhan.knockknock.service.card;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

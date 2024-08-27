@@ -1,12 +1,12 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.auth.JwtProvider;
-import com.shinhan.knockknock.domain.dto.CreateCardIssueRequest;
-import com.shinhan.knockknock.domain.dto.CreateCardIssueResponse;
-import com.shinhan.knockknock.domain.dto.ReadCardResponse;
-import com.shinhan.knockknock.service.CardIssueService;
-import com.shinhan.knockknock.service.CardService;
-import com.shinhan.knockknock.service.ClovaOCRService;
+import com.shinhan.knockknock.domain.dto.card.CreateCardIssueRequest;
+import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
+import com.shinhan.knockknock.domain.dto.card.ReadCardResponse;
+import com.shinhan.knockknock.service.card.CardIssueService;
+import com.shinhan.knockknock.service.card.CardService;
+import com.shinhan.knockknock.service.card.ClovaOCRService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
