@@ -14,7 +14,9 @@ public interface MatchService {
     default CreateMatchResponse entityToDto(MatchEntity match) {
         return CreateMatchResponse.builder()
                 .matchProtectorName(match.getMatchProtectorName())
+                .protectorUserName(match.getUserProtector().getUserName())
                 .matchProtegeName(match.getMatchProtegeName())
+                .protegeUserName(match.getUserProtege().getUserName())
                 .protectorUserNo(match.getUserProtector().getUserNo())
                 .protegeUserNo(match.getUserProtege().getUserNo())
                 .matchStatus(match.getMatchStatus())

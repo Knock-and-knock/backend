@@ -31,4 +31,7 @@ public class ReadCardHistoryResponse {
     @Schema(example = "1234-1234-1234")
     private String cardAccount;
     @Schema(example = "True")
-    private boolean isCardFamily;}
+    private boolean isCardFamily;
+    @Schema(example = "false")
+    private boolean cardHistoryIsCansle;
+}

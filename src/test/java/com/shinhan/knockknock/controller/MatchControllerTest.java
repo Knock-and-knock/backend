@@ -67,7 +67,7 @@ public class MatchControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "protege02", password = "1234")
+    @WithMockUser(username = "test", password = "1234")
     @DisplayName("매칭 조회 실패 테스트")
     public void testReadMatchFail() throws Exception {
         // given

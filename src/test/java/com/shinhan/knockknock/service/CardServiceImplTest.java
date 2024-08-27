@@ -1,11 +1,12 @@
 package com.shinhan.knockknock.service;
 
-import com.shinhan.knockknock.domain.dto.CreateCardIssueResponse;
-import com.shinhan.knockknock.domain.dto.ReadCardResponse;
+import com.shinhan.knockknock.domain.dto.card.ReadCardResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 import com.shinhan.knockknock.repository.CardIssueRepository;
 import com.shinhan.knockknock.repository.CardRepository;
+import com.shinhan.knockknock.service.card.CardServiceImpl;
+import com.shinhan.knockknock.service.notification.NotificationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
