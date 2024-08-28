@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.service.user;
 
 import com.shinhan.knockknock.auth.JwtProvider;
+import com.shinhan.knockknock.domain.dto.user.BioLoginUserRequest;
 import com.shinhan.knockknock.domain.dto.user.IdLoginUserRequest;
 import com.shinhan.knockknock.domain.dto.user.SimpleLoginUserRequest;
 import com.shinhan.knockknock.domain.dto.user.TokenResponse;
@@ -53,6 +54,17 @@ public class AuthService {
         return issueToken(user);
     }
 
+    public TokenResponse bioLoginUser(BioLoginUserRequest request) {
+        String bioPassword = request.getUserBioPassword();
+
+        UserEntity user = userRepository.findById(request.getUserNo())
+                .orElseThrow(() -> new UsernameNotFoundException("회원이 존재하지 않습니다."));
+        if (!passwordEncoder.matches(bioPassword, user.getUserBioPassword())) {
+            throw new BadCredentialsException("생체 데이터가 일치하지 않습니다.");
+        }
+        return issueToken(user);
+    }
+
     public void logoutUser(long userNo) {
         TokenEntity tokenEntity = tokenRepository.findByUser_UserNo(userNo)
                 .orElseThrow(() -> new NoSuchElementException("Refresh Token이 존재하지 않습니다."));
@@ -79,6 +91,7 @@ public class AuthService {
         return TokenResponse.builder()
                 .userNo(user.getUserNo())
                 .userType(user.getUserType())
+                .userBioPassword(user.getUserBioPassword())
                 .accessToken(accessToken)
                 .build();
     }

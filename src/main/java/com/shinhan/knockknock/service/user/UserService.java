@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.service.user;
 
 import com.shinhan.knockknock.domain.dto.user.CreateUserRequest;
+import com.shinhan.knockknock.domain.dto.user.CreateUserResponse;
 import com.shinhan.knockknock.domain.dto.user.ReadUserResponse;
 import com.shinhan.knockknock.domain.dto.user.UpdateUserRequest;
 import com.shinhan.knockknock.domain.entity.UserEntity;
@@ -12,7 +13,7 @@ public interface UserService {
     Long readByUserId(String userId);
     Boolean readUserPhone(String phone);
     SingleMessageSentResponse sendSms(String phone, String validationNum);
-    Boolean createUser(CreateUserRequest request);
+    CreateUserResponse createUser(CreateUserRequest request);
     ReadUserResponse readUser(long userNo);
     ReadUserResponse updateUser(long userNo, UpdateUserRequest request);
     Boolean deleteUser(long userNo);

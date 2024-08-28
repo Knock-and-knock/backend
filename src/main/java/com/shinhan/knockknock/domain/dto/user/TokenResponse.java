@@ -18,5 +18,6 @@ public class TokenResponse {
     private UserRoleEnum userType;
     @Schema(example = "accessToken")
     private String accessToken;
+    private String userBioPassword;
     private String message;
 }
