@@ -47,9 +47,9 @@ jobs:
             podman login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} docker.io
 
             # Update .env file with the latest image tag
-            echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > /root/project/knock-knock/conf/.env
-            echo "IMAGE_NAME=${{ env.IMAGE_NAME }}" >> /root/project/knock-knock/conf/.env
-            echo "IMAGE_TAG=${{ github.sha }}" >> /root/project/knock-knock/conf/.env
+            echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > /root/project/knock-knock/.env
+            echo "IMAGE_NAME=${{ env.IMAGE_NAME }}" >> /root/project/knock-knock/.env
+            echo "IMAGE_TAG=${{ github.sha }}" >> /root/project/knock-knock/.env
             
             # Update podman-compose.yml with the latest image tag
             # sed -i 's|image: docker.io/.*/${{ env.IMAGE_NAME }}:.*|image: docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}|' /root/project/knock-knock/podman-compose.yml
