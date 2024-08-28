@@ -13,6 +13,7 @@ public interface NotificationService {
     SseEmitter createEmitter(Long userNo);
     List<ReadNotificationResponse> readNotifications(Long userNo);
     ReadNotificationResponse readNotification(Long notificationId);
+    public Long readNotificationCount(Long userNo);
 
     // Entity -> DTO
     default ReadNotificationResponse transformEntityToDTO(NotificationEntity notificationEntity) {

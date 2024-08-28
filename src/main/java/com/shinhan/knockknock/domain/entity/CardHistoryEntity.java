@@ -31,7 +31,7 @@ public class CardHistoryEntity {
     private String cardHistoryShopname;
 
     @Column(name = "cardhistory_iscansle")
-    private boolean cardHistoryIsCansle;
+    private Boolean cardHistoryIsCansle; // null 때문에 Boolean으로만 수정하겠습니다 .
 
     @Column(name="cardhistory_approve")
     @CreationTimestamp
