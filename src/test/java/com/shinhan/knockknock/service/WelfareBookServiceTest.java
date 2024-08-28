@@ -68,8 +68,6 @@ public class WelfareBookServiceTest {
                 .userWeight(54)
                 .userDisease("고혈압")
                 .welfareNo(welfareNo)
-                .welfareName("가정간병")
-                .welfarePrice(6000L)
                 .welfareBookUseTime(3)
                 .build();
 

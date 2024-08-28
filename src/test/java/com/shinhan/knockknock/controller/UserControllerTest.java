@@ -85,6 +85,7 @@ public class UserControllerTest {
                 .userName("테스트02")
                 .userPhone("01056785678")
                 .userType(UserRoleEnum.PROTEGE)
+                .isBioLogin(true)
                 .build();
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody1 = objectMapper.writeValueAsString(request);

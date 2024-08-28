@@ -42,7 +42,7 @@ public class ConversationRoomTest {
         ConversationRoomEntity savedEntity = conversationRoomRepository.findById(conversationRoomNo).orElse(null);
 
         assertThat(savedEntity).isNotNull();
-        assertThat(savedEntity.getUserNo()).isEqualTo(userNo);
+        assertThat(savedEntity.getUser().getUserNo()).isEqualTo(userNo);
     }
 
     @Test

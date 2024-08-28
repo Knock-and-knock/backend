@@ -1,10 +1,7 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.auth.JwtProvider;
-import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomCreateResponse;
-import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomResponse;
-import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomUpdateRequest;
-import com.shinhan.knockknock.domain.dto.conversation.MessageResponse;
+import com.shinhan.knockknock.domain.dto.conversation.*;
 import com.shinhan.knockknock.service.conversation.ConversationRoomService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,13 +10,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/conversation-room")
-@Tag(name = "대화방", description = "대화 방 관련 API")
+@Tag(name = "3. 말동무", description = "말동무 관련 API")
 public class ConversationRoomController {
 
     private final ConversationRoomService conversationRoomService;
@@ -39,6 +37,16 @@ public class ConversationRoomController {
     @Hidden
     public List<ConversationRoomResponse> readAll() {
         return conversationRoomService.readAllConversationRoom();
+    }
+
+    @GetMapping("/last-conversation-time")
+    @Operation(summary = "마지막 대화 시간 조회", description = "마지막으로 대화한 시간을 조회합니다.")
+    public ConversationTimeResponse readLastConversationTime(@RequestHeader("Authorization") String header) {
+        long userNo = jwtProvider.getUserNoFromHeader(header);
+        Timestamp lastConversationTime = conversationRoomService.readLastConversationTime(userNo);
+        return ConversationTimeResponse.builder()
+                .conversationEndAt(lastConversationTime)
+                .build();
     }
 
     @PutMapping("/{conversationRoomNo}")

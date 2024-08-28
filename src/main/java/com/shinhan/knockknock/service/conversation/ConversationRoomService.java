@@ -1,9 +1,12 @@
 package com.shinhan.knockknock.service.conversation;
 
+import com.shinhan.knockknock.domain.dto.conversation.ConversationLogResponse;
 import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomUpdateRequest;
 import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomResponse;
 import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
+import com.shinhan.knockknock.domain.entity.UserEntity;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface ConversationRoomService {
@@ -14,6 +17,12 @@ public interface ConversationRoomService {
     // Read
     List<ConversationRoomResponse> readAllConversationRoom();
 
+    void readConversationRoomByConversationRoomNo(long conversationRoomNo);
+
+    Timestamp readLastConversationTime(long userNo);
+
+    List<ConversationLogResponse> readLatestConversationRoom(long userNo, long conversationRoomNo);
+
     // Update
     void updateConversationRoom(long conversationRoomNo, ConversationRoomUpdateRequest request);
 
@@ -23,9 +32,9 @@ public interface ConversationRoomService {
     void deleteConversation(long conversationRoomNo);
 
     // Dto -> Entity
-    default ConversationRoomEntity dtoToEntity(long userId) {
+    default ConversationRoomEntity dtoToEntity(UserEntity user) {
         return ConversationRoomEntity.builder()
-                .UserNo(userId)
+                .user(user)
                 .build();
     }
 
@@ -35,7 +44,7 @@ public interface ConversationRoomService {
                 .conversationNo(entity.getConversationRoomNo())
                 .conversationStartAt(entity.getConversationRoomStartAt())
                 .conversationEndAt(entity.getConversationRoomEndAt())
-                .userNo(entity.getUserNo())
+                .userNo(entity.getUser().getUserNo())
                 .build();
     }
 }

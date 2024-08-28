@@ -103,7 +103,7 @@
 
     async function login() {
         const loginData = {
-            userId: "protector01",
+            userId: "protege01",
             userPassword: "1234"
         };
 
@@ -145,6 +145,8 @@
             conversationRoomNo = data.conversationRoomNo;
             console.log('대화방 번호:', conversationRoomNo);
 
+            sendMessage("Greeting");
+
         } catch (error) {
             console.error('Conversation Room Fetch Error:', error);
         }
@@ -156,8 +158,10 @@
         }
     }
 
-    async function sendMessage() {
-        const userInput = document.getElementById('userInput').value;
+    async function sendMessage(userInput) {
+        if (userInput == null) {
+            userInput = document.getElementById('userInput').value;
+        }
         if (userInput.trim() === "") {
             return;
         }

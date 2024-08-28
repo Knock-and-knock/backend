@@ -5,15 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClassificationResponse {
-    private String mainTaskNumber;
-    private String subTaskNumber;
-
-    private int promptTokens;
-    private int completionTokens;
-    private int totalTokens;
+public class ConversationTimeResponse {
+    private Timestamp conversationEndAt;
 }

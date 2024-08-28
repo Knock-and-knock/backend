@@ -63,7 +63,7 @@ public class WelfareServiceTest {
         List<ReadWelfareResponse> welfareList = welfareService.readAll();
 
         // Then
-        assertThat(welfareList).hasSize(1);
+        assertThat(welfareList).hasSize(4);
         ReadWelfareResponse response = welfareList.get(0);
         assertThat(response.getWelfareName()).isEqualTo("퇴직 연금");
         assertThat(response.getWelfarePirce()).isEqualTo(5000L);

@@ -17,7 +17,7 @@ import java.util.Map;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/v1/notification")
-@Tag(name = "알림", description = "알림 API")
+@Tag(name = "7. 알림", description = "알림 API")
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationServiceImpl notificationService;
@@ -53,9 +53,9 @@ public class NotificationController {
         return "notification success";
     }
 
-    // 해당 사용자 알림 전체 조회
+    // 해당 사용자 알림 리스트 전체 조회
     @Operation(summary = "사용자 알림 전체 조회", description= "사용자 알림 전체 조회")
-    @PostMapping("/read")
+    @GetMapping("/read")
     public List<ReadNotificationResponse> readNotifications(@RequestHeader("Authorization") String header){
         return notificationService.readNotifications(jwtProvider.getUserNoFromHeader(header));
     }
@@ -66,4 +66,12 @@ public class NotificationController {
     public ReadNotificationResponse readNotification(@PathVariable("notificationNo") Long notificationNo){
         return notificationService.readNotification(notificationNo);
     }
+
+    // 안 읽은 알림 개수 조회
+    @Operation(summary = "읽지 않은 알림 개수 조회", description="읽지 않은 알림 개수 조회")
+    @GetMapping("/read/count")
+    public Long readNotificationCount(@RequestHeader("Authorization") String header){
+        return notificationService.readNotificationCount(jwtProvider.getUserNoFromHeader(header));
+    }
+
 }

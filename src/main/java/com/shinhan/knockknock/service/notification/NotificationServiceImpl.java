@@ -110,9 +110,9 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     /**
-     * 사용자 아이디를 기반으로 알림 전체 조회
+     * 사용자 아이디를 기반으로 알림 상세 조회
      *
-     * @param notificationNo - 사용자 아이디.
+     * @param notificationNo - 알림 아이디
      * @return ReadNotificationResponse - 알림 내용 전송
      */
     public ReadNotificationResponse readNotification(Long notificationNo){
@@ -120,4 +120,14 @@ public class NotificationServiceImpl implements NotificationService {
                 .map(this::transformEntityToDTO) // Optional이 비어 있지 않다면 transformEntityToDTO 호출
                 .orElseThrow(() -> new NoSuchElementException("not found for id: " + notificationNo)); // Optional이 비어있을 때 예외 처리
     }
+
+    /**
+     * 사용자가 읽지 않은 알림 개수 조회
+     *
+     * @param userNo - 사용자 아이디.
+     * @return ReadNotificationResponse - 알림 내용 전송
+     */
+    public Long readNotificationCount(Long userNo){
+        return notificationRepository.countByUserNoAndNotificationIsCheck(userNo, false);
+    };
 }

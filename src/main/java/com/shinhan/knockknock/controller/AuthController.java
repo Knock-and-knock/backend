@@ -1,10 +1,7 @@
 package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.auth.JwtProvider;
-import com.shinhan.knockknock.domain.dto.user.IdLoginUserRequest;
-import com.shinhan.knockknock.domain.dto.user.SimpleLoginUserRequest;
-import com.shinhan.knockknock.domain.dto.user.TokenResponse;
-import com.shinhan.knockknock.domain.dto.user.UserValidationResponse;
+import com.shinhan.knockknock.domain.dto.user.*;
 import com.shinhan.knockknock.service.user.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "인증", description = "인증 API")
+@Tag(name = "0. 인증", description = "인증 API")
 @CrossOrigin
 @RequiredArgsConstructor
 @RestController
@@ -53,6 +50,25 @@ public class AuthController {
         TokenResponse response = null;
         try {
             response = authService.simpleLoginUser(request);
+        } catch (Exception e) {
+            response = TokenResponse.builder()
+                    .message(e.getMessage())
+                    .build();
+            return ResponseEntity.status(401).body(response);
+        }
+        return ResponseEntity.status(200).body(response);
+    }
+
+    @Operation(summary = "생체 로그인", description = "생체 로그인을 위한 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인 실패")
+    })
+    @PostMapping("/login/bio")
+    public ResponseEntity<TokenResponse> bioLogin(@RequestBody BioLoginUserRequest request) {
+        TokenResponse response = null;
+        try {
+            response = authService.bioLoginUser(request);
         } catch (Exception e) {
             response = TokenResponse.builder()
                     .message(e.getMessage())

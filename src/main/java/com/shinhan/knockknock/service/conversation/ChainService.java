@@ -47,6 +47,9 @@ public class ChainService {
         return ClassificationResponse.builder()
                 .mainTaskNumber(rootNode.path("mainTaskNumber").asText().trim())
                 .subTaskNumber(rootNode.path("subTaskNumber").asText().trim())
+                .promptTokens(response.getPromptTokens())
+                .completionTokens(response.getCompletionTokens())
+                .totalTokens(response.getTotalTokens())
                 .build();
     }
 
@@ -75,6 +78,9 @@ public class ChainService {
                 .serviceNumber(rootNode.path("serviceNumber").asText().trim())
                 .serviceName(rootNode.path("serviceName").asText().trim())
                 .serviceUrl(rootNode.path("serviceUrl").asText().trim())
+                .promptTokens(response.getPromptTokens())
+                .completionTokens(response.getCompletionTokens())
+                .totalTokens(response.getTotalTokens())
                 .build();
     }
 
@@ -103,6 +109,9 @@ public class ChainService {
                 .serviceTypeNumber(rootNode.path("serviceTypeNumber").asInt())
                 .reservationDate(rootNode.path("reservationDate").asText())
                 .reservationTimeNumber(rootNode.path("reservationTimeNumber").asInt())
+                .promptTokens(response.getPromptTokens())
+                .completionTokens(response.getCompletionTokens())
+                .totalTokens(response.getTotalTokens())
                 .build();
     }
 
