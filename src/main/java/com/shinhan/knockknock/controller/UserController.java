@@ -129,12 +129,12 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "가입 성공 / 실패")
     })
     @PostMapping("/signup")
-    public ResponseEntity<UserValidationResponse> create(@RequestBody CreateUserRequest request) {
+    public ResponseEntity<CreateUserResponse> create(@RequestBody CreateUserRequest request) {
         String message = "";
         int status = 200;
-        boolean result = false;
+        CreateUserResponse response = new CreateUserResponse();
         try {
-            result = userService.createUser(request);
+            response = userService.createUser(request);
             message = "회원가입에 성공하였습니다.";
         } catch (DuplicateKeyException e) {
             message = e.getMessage();
@@ -147,10 +147,7 @@ public class UserController {
             status = 500;
         }
 
-        UserValidationResponse response = UserValidationResponse.builder()
-                .message(message)
-                .result(result)
-                .build();
+        response.setMessage(message);
         return ResponseEntity.status(status).body(response);
     }
 

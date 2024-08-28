@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.service.user;
 
 import com.shinhan.knockknock.domain.dto.user.CreateUserRequest;
+import com.shinhan.knockknock.domain.dto.user.CreateUserResponse;
 import com.shinhan.knockknock.domain.dto.user.ReadUserResponse;
 import com.shinhan.knockknock.domain.dto.user.UpdateUserRequest;
 import com.shinhan.knockknock.domain.entity.MatchEntity;
@@ -26,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -80,18 +82,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean createUser(CreateUserRequest request) {
+    public CreateUserResponse createUser(CreateUserRequest request) {
+        String randomPassword = null;
+        boolean result = false;
         UserEntity entity = dtoToEntity(request);
         entity.setUserPassword(passwordEncoder.encode(request.getUserPassword()));
         if(request.getUserSimplePassword() != null) {
             entity.setUserSimplePassword(passwordEncoder.encode(request.getUserSimplePassword()));
+        }
+        if(request.getIsBioLogin()) {
+            // 랜덤 비밀번호 생성
+            randomPassword = generateRandomPassword(request.getUserPhone().substring(7));
+            entity.setUserBioPassword(passwordEncoder.encode(randomPassword));
         }
         if(userRepository.existsByUserId(entity.getUserId())) {
             throw new DuplicateKeyException("이미 존재하는 아이디입니다.");
         }
         try {
             UserEntity createUser = userRepository.save(entity);
-            if(createUser.getUserNo() != null) return true;
+            if(createUser.getUserNo() != null)
+                result = true;
         } catch(DataIntegrityViolationException exception) {
             if (exception.getCause() instanceof ConstraintViolationException) {
                 // UNIQUE 제약조건 위반 시 처리할 코드
@@ -101,7 +111,14 @@ public class UserServiceImpl implements UserService {
                 throw new DataIntegrityViolationException("잘못된 요청입니다.");
             }
         }
-        return false;
+        return CreateUserResponse.builder()
+                .userBioPassword(randomPassword)
+                .result(result)
+                .build();
+    }
+
+    private String generateRandomPassword(String userPhone) {
+        return UUID.randomUUID().toString().replace("-", "") + userPhone;
     }
 
     @Override
