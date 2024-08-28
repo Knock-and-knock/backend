@@ -44,6 +44,7 @@ public class WelfareBookServiceTest {
                 .userName("테스트01")
                 .userPhone("01012121212")
                 .userSimplePassword("123456")
+                .isBioLogin(false)
                 .build();
         userService.createUser(request);
         Long userNo = userService.readByUserId(userId);

@@ -3,7 +3,9 @@ package com.shinhan.knockknock.service;
 import com.shinhan.knockknock.domain.dto.conversation.ConversationLogRequest;
 import com.shinhan.knockknock.domain.dto.conversation.ConversationLogResponse;
 import com.shinhan.knockknock.domain.entity.ConversationLogEntity;
+import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.repository.ConversationLogRepository;
+import com.shinhan.knockknock.repository.UserRepository;
 import com.shinhan.knockknock.service.conversation.ConversationLogService;
 import com.shinhan.knockknock.service.conversation.ConversationRoomService;
 import org.junit.jupiter.api.DisplayName;
@@ -31,11 +33,15 @@ public class ConversationLogTest {
     @Autowired
     ConversationRoomService conversationRoomService;
 
+    @Autowired
+    UserRepository userRepository;
+
     @Test
     @DisplayName("대화 내역 생성 테스트")
     public void testCreateConversationRoom() {
         // Given
-        long userNo = 1L;
+        UserEntity user = userRepository.findAll().get(0);
+        long userNo = user.getUserNo();
         Long conversationRoomNo = conversationRoomService.createConversationRoom(userNo);
 
         ConversationLogRequest request = ConversationLogRequest.builder()
@@ -61,7 +67,8 @@ public class ConversationLogTest {
     @DisplayName("대화 내역 전체 조회 테스트")
     public void testReadAllConversationLog() {
         // Given
-        long userNo = 1L;
+        UserEntity user = userRepository.findAll().get(0);
+        long userNo = user.getUserNo();
         Long conversationRoomNo = conversationRoomService.createConversationRoom(userNo);
 
         ConversationLogRequest request = ConversationLogRequest.builder()
@@ -88,7 +95,8 @@ public class ConversationLogTest {
     @DisplayName("대화 내역 최근 5개 조회 테스트")
     public void testFindLast5ByConversationRoomNo() {
         // Given
-        long userNo = 1L;
+        UserEntity user = userRepository.findAll().get(0);
+        long userNo = user.getUserNo();
         Long conversationRoomNo = conversationRoomService.createConversationRoom(userNo);
 
         for (int i = 0; i < 6; i++) {
@@ -117,7 +125,8 @@ public class ConversationLogTest {
     @DisplayName("대화 내역 수정 테스트")
     public void testUpdateConversationLog() {
         // Given
-        long userNo = 1L;
+        UserEntity user = userRepository.findAll().get(0);
+        long userNo = user.getUserNo();
         Long conversationRoomNo = conversationRoomService.createConversationRoom(userNo);
 
         ConversationLogRequest request = ConversationLogRequest.builder()
@@ -149,7 +158,8 @@ public class ConversationLogTest {
     @DisplayName("대화 내역 삭제 테스트")
     public void testDeleteConversationLog() {
         // Given
-        long userNo = 1L;
+        UserEntity user = userRepository.findAll().get(0);
+        long userNo = user.getUserNo();
         Long conversationRoomNo = conversationRoomService.createConversationRoom(userNo);
 
         ConversationLogRequest request = ConversationLogRequest.builder()
