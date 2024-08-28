@@ -5,27 +5,34 @@ import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomUpdateRequ
 import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomResponse;
 import com.shinhan.knockknock.domain.entity.ConversationLogEntity;
 import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
+import com.shinhan.knockknock.domain.entity.UserEntity;
+import com.shinhan.knockknock.exception.ConversationRoomNotFoundException;
 import com.shinhan.knockknock.repository.ConversationRoomRepository;
+import com.shinhan.knockknock.repository.UserRepository;
+import com.shinhan.knockknock.service.user.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ConversationRoomServiceImpl implements ConversationRoomService {
 
-    @Autowired
-    ConversationRoomRepository conversationRoomRepository;
+    private final ConversationRoomRepository conversationRoomRepository;
 
-    @Autowired
-    ConversationLogService conversationLogService;
+    private final ConversationLogService conversationLogService;
+    private final UserRepository userRepository;
 
     @Override
     public Long createConversationRoom(Long userNo) {
-        ConversationRoomEntity newConversationRoom = conversationRoomRepository.save(dtoToEntity(userNo));
+        UserEntity user = userRepository.findById(userNo).orElse(null);
+        ConversationRoomEntity newConversationRoom = conversationRoomRepository.save(dtoToEntity(user));
         return newConversationRoom.getConversationRoomNo();
     }
 
@@ -37,18 +44,30 @@ public class ConversationRoomServiceImpl implements ConversationRoomService {
     }
 
     @Override
+    public ConversationRoomResponse readConversationRoomByConversationRoomNo(long conversationRoomNo) {
+        ConversationRoomEntity room = conversationRoomRepository.findById(conversationRoomNo).orElse(null);
+        if (room == null) {
+            throw new ConversationRoomNotFoundException("ID가 " + conversationRoomNo + "인 대화방을 찾을 수 없습니다.");
+        }
+        return entityToDto(room);
+    }
+
+    @Override
     public List<ConversationLogResponse> readLatestConversationRoom(long userNo, long conversationRoomNo) {
         ConversationRoomEntity conversationRoom = conversationRoomRepository.findLatestByUserNoExcludingConversationRoomNo(userNo, conversationRoomNo);
+        if (conversationRoom != null) {
+            List<ConversationLogEntity> conversationLogs = conversationRoom.getConversationLogs();
 
-        List<ConversationLogEntity> conversationLogs = conversationRoom.getConversationLogs();
+            // 마지막 5개 가져오기
+            int size = conversationLogs.size();
+            List<ConversationLogEntity> lastThreeLogs = conversationLogs.subList(Math.max(size - 5, 0), size);
 
-        // 마지막 5개 가져오기
-        int size = conversationLogs.size();
-        List<ConversationLogEntity> lastThreeLogs = conversationLogs.subList(Math.max(size - 5, 0), size);
-
-        return lastThreeLogs.stream()
-                .map(logEntity -> conversationLogService.entityToDto(logEntity))
-                .collect(Collectors.toList());
+            return lastThreeLogs.stream()
+                    .map(conversationLogService::entityToDto)
+                    .collect(Collectors.toList());
+        } else {
+            return null;
+        }
     }
 
     @Override

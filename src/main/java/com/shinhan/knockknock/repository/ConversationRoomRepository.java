@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface ConversationRoomRepository extends JpaRepository<ConversationRoomEntity, Long> {
 
-    @Query("SELECT c FROM ConversationRoomEntity c WHERE c.UserNo = :userNo AND c.conversationRoomNo <> :conversationRoomNo ORDER BY c.conversationRoomStartAt DESC")
+    @Query("SELECT c FROM ConversationRoomEntity c WHERE c.user.userNo = :userNo AND c.conversationRoomNo <> :conversationRoomNo ORDER BY c.conversationRoomStartAt DESC")
     List<ConversationRoomEntity> findTopByUserNoExcludingConversationRoomNo(@Param("userNo") long userNo, @Param("conversationRoomNo") long conversationRoomNo, Pageable pageable);
 
     default ConversationRoomEntity findLatestByUserNoExcludingConversationRoomNo(long userNo, long conversationRoomNo) {
@@ -20,4 +20,5 @@ public interface ConversationRoomRepository extends JpaRepository<ConversationRo
         List<ConversationRoomEntity> results = findTopByUserNoExcludingConversationRoomNo(userNo, conversationRoomNo, pageable);
         return results.isEmpty() ? null : results.get(0);
     }
+
 }

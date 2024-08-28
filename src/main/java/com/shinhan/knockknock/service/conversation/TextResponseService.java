@@ -42,7 +42,7 @@ public class TextResponseService {
 
         if (conversationLogs.isEmpty() && request.getInput().equals("Greeting")) {
             response = generateGreeting(request, user.getUserNo());
-            log.info("🔗2️⃣ [{}] Greeting generated for: {}", user.getUserId(), response.getContent());
+            log.info("🖐️ [{}] Greeting generated for: {}", user.getUserId(), response.getContent());
             return response;
         }
 
@@ -79,20 +79,13 @@ public class TextResponseService {
 
     private ChatbotResponse generateGreeting(ConversationRequest request, long userNo) {
         List<ConversationLogResponse> conversationLogList = conversationRoomService.readLatestConversationRoom(userNo, request.getConversationRoomNo());
-        String conversationLogListString = "\nPrevious Conversation:\n" + conversationLogList.stream()
+        String conversationLogListString = conversationLogList != null ? "\nPrevious Conversation:\n" + conversationLogList.stream()
                 .map(ConversationLogResponse::toLogString)
-                .collect(Collectors.joining("\n"));
-        System.out.println(conversationLogListString);
+                .collect(Collectors.joining("\n")) : "";
 
         List<String> promptFilePathList = Arrays.asList("prompts/basic.prompt", "prompts/greeting.prompt");
         List<ConversationLogResponse> conversationLogs = Collections.emptyList();
         List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, "", conversationLogs, conversationLogListString);
-        System.out.println("===================================");
-        System.out.println("===================================");
-        System.out.println(chatbotPrompt);
-        System.out.println("===================================");
-        System.out.println("===================================");
-
         return chainService.chatbotChain(chatbotPrompt);
     }
 

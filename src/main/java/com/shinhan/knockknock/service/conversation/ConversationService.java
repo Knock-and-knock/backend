@@ -1,9 +1,6 @@
 package com.shinhan.knockknock.service.conversation;
 
-import com.shinhan.knockknock.domain.dto.conversation.ChatbotResponse;
-import com.shinhan.knockknock.domain.dto.conversation.ConversationLogRequest;
-import com.shinhan.knockknock.domain.dto.conversation.ConversationRequest;
-import com.shinhan.knockknock.domain.dto.conversation.ConversationResponse;
+import com.shinhan.knockknock.domain.dto.conversation.*;
 import com.shinhan.knockknock.domain.dto.user.ReadUserResponse;
 import com.shinhan.knockknock.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +27,8 @@ public class ConversationService {
     private final UserService userService;
 
     public ConversationResponse conversation(ConversationRequest request, long userNo) {
-        if (request.getInput().isEmpty()) {
-            return ConversationResponse.builder()
-                    .content("err")
-                    .build();
-        }
+        // 방 존재 여부 검사
+        conversationRoomService.readConversationRoomByConversationRoomNo(request.getConversationRoomNo());
 
         // User Id 가져오기
         ReadUserResponse user = userService.readUser(userNo);
