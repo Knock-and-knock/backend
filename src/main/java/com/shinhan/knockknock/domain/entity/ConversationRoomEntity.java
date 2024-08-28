@@ -37,4 +37,14 @@ public class ConversationRoomEntity {
 
     @OneToMany(mappedBy = "conversationRoom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ConversationLogEntity> conversationLogs;
+
+    @Override
+    public String toString() {
+        return "ConversationRoomEntity{" +
+                "conversationRoomNo=" + conversationRoomNo +
+                ", conversationRoomStartAt=" + conversationRoomStartAt +
+                ", conversationRoomEndAt=" + conversationRoomEndAt +
+                ", userNo=" + (user != null ? user.getUserNo() : "null") +
+                '}';
+    }
 }

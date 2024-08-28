@@ -9,15 +9,12 @@ import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.exception.ConversationRoomNotFoundException;
 import com.shinhan.knockknock.repository.ConversationRoomRepository;
 import com.shinhan.knockknock.repository.UserRepository;
-import com.shinhan.knockknock.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,12 +41,18 @@ public class ConversationRoomServiceImpl implements ConversationRoomService {
     }
 
     @Override
-    public ConversationRoomResponse readConversationRoomByConversationRoomNo(long conversationRoomNo) {
+    public void readConversationRoomByConversationRoomNo(long conversationRoomNo) {
         ConversationRoomEntity room = conversationRoomRepository.findById(conversationRoomNo).orElse(null);
         if (room == null) {
             throw new ConversationRoomNotFoundException("ID가 " + conversationRoomNo + "인 대화방을 찾을 수 없습니다.");
         }
-        return entityToDto(room);
+        entityToDto(room);
+    }
+
+    @Override
+    public Timestamp readLastConversationTime(long userNo) {
+        ConversationRoomEntity room = conversationRoomRepository.findLatestByUserNo(userNo);
+        return room != null ? room.getConversationRoomEndAt() : null;
     }
 
     @Override

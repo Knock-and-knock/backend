@@ -21,4 +21,13 @@ public interface ConversationRoomRepository extends JpaRepository<ConversationRo
         return results.isEmpty() ? null : results.get(0);
     }
 
+    @Query("SELECT c FROM ConversationRoomEntity c WHERE c.user.userNo = :userNo ORDER BY c.conversationRoomEndAt DESC")
+    List<ConversationRoomEntity> findTopByUserUserNoOrderByConversationRoomEndAtDesc(@Param("userNo") long userNo, Pageable pageable);
+
+    default ConversationRoomEntity findLatestByUserNo(long userNo) {
+        Pageable pageable = PageRequest.of(0, 1);  // 첫 번째 페이지에서 하나의 결과만
+        List<ConversationRoomEntity> results = findTopByUserUserNoOrderByConversationRoomEndAtDesc(userNo, pageable);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
 }
