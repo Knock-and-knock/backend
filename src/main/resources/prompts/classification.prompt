@@ -8,7 +8,9 @@ Main Categories:
  - Care Service Reservations (Sub Task 001-03): Inquiries related to booking or scheduling care services.
  - Care Service Reservation Status (Sub Task 001-04): Inquiries related to checking the status of previously made care service reservations.
  - Cultural Programs, Job Search Programs, Educational Programs: Inquiries related to these specific programs should also be categorized under Welfare Services.
-3.Financial Services (Main Task 002): Inquiries related to financial services such as banking, insurance, or financial advice.
+3. Financial Services (Main Task 002): Inquiries related to financial services offered by the platform, specifically:
+   - Transaction History Inquiry (Sub Task 002-01): Requests for checking or reviewing transaction history.
+   - Spending Report Inquiry (Sub Task 002-02): Requests for information regarding spending reports or summaries.
 
 Response Format:
 For each user input, determine the appropriate main category and subcategory (if applicable) and return the corresponding task numbers in the following strict JSON format:
