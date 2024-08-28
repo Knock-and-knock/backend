@@ -1,3 +1,8 @@
+
+/*
+  Category
+ */
+
 -- card
 DELETE FROM cardhistory_tb;
 DELETE FROM cardcategory_tb;

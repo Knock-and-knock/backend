@@ -14,4 +14,8 @@ public class ReservationResponse {
     private int serviceTypeNumber;
     private String reservationDate;
     private int reservationTimeNumber;
+
+    private int promptTokens;
+    private int completionTokens;
+    private int totalTokens;
 }

@@ -65,4 +65,5 @@ public class ConversationLogServiceImpl implements ConversationLogService {
     public void deleteConversationLog(long conversationLogNo) {
         conversationLogRepository.findById(conversationLogNo).ifPresent(conversationLogRepository::delete);
     }
+
 }

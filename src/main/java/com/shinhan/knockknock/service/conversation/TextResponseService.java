@@ -25,82 +25,110 @@ public class TextResponseService {
 
     private final PromptService promptService;
 
+    private final ConversationRoomService conversationRoomService;
+
     private final ConversationLogService conversationLogService;
 
     private final WelfareBookService welfareBookService;
 
     private static final ModelMapper modelMapper = new ModelMapper();
 
-    public ChatbotResponse TextResponse(ConversationRequest request, ReadUserResponse user) {
+    public ChatbotResponse TextResponse(ConversationRequest request, ReadUserResponse user) throws JsonProcessingException {
+        ChatbotResponse response;
         String input = request.getInput();
 
-        try {
-            // 이전 대화내용 조회
-            List<ConversationLogResponse> conversationLogs = conversationLogService.findLastNByConversationRoomNo(5, request.getConversationRoomNo());
+        // 이전 대화내용 조회
+        List<ConversationLogResponse> conversationLogs = conversationLogService.findLastNByConversationRoomNo(5, request.getConversationRoomNo());
 
-            // 사용자 입력에 따른 작업 분류
-            List<Map<String, String>> classificationPrompt = promptService.classificationPrompt(input, conversationLogs);
-
-            ClassificationResponse classificationResult = chainService.classificationChain(classificationPrompt);
-            String mainTaskNo = classificationResult.getMainTaskNumber();
-            String subTaskNo = classificationResult.getSubTaskNumber();
-            log.info("🔗1️⃣ [{}] Task Classification Completed by - Main Task No: {}, Sub Task No: {}", user.getUserId(), mainTaskNo, subTaskNo);
-
-            // Main Task 분류
-            ChatbotResponse response;
-            switch (mainTaskNo) {
-                // 복지 서비스
-                case "001" -> {
-                    response = welfareService(subTaskNo, input, conversationLogs, user);
-                }
-                // 금융 서비스
-                case "002" -> {
-                    return null;
-                }
-                default -> {
-                    response = dailyConversation(input, conversationLogs);
-                }
-            }
-
-            log.info("🔗2️⃣ [{}] Response generated for: {}", user.getUserId(), response.getContent());
-
+        if (conversationLogs.isEmpty() && request.getInput().equals("Greeting")) {
+            response = generateGreeting(request, user.getUserNo());
+            log.info("🖐️ [{}] Greeting generated for: {}", user.getUserId(), response.getContent());
             return response;
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         }
+
+        // 사용자 입력에 따른 작업 분류
+        List<Map<String, String>> classificationPrompt = promptService.classificationPrompt(input, conversationLogs);
+
+        ClassificationResponse classificationResult = chainService.classificationChain(classificationPrompt);
+        String mainTaskNo = classificationResult.getMainTaskNumber();
+        String subTaskNo = classificationResult.getSubTaskNumber();
+        log.info("🔗1️⃣ [{}] Task Classification Completed by - Main Task No: \u001B[34m{}\u001B[0m, Sub Task No: \u001B[34m{}\u001B[0m", user.getUserId(), mainTaskNo, subTaskNo);
+
+        // Main Task 분류
+        switch (mainTaskNo) {
+            // 복지 서비스
+            case "001" -> {
+                response = generateWelfareService(subTaskNo, input, conversationLogs, user);
+            }
+            // 금융 서비스
+            case "002" -> {
+                return null;
+            }
+            default -> {
+                response = generateDailyConversation(input, conversationLogs);
+            }
+        }
+
+        // 전체 token 계산
+        calculateToken(response, classificationResult);
+
+        log.info("🔗2️⃣ [{}] Response generated for: {}", user.getUserId(), response.getContent());
+        return response;
+
     }
 
-    private ChatbotResponse dailyConversation(String input, List<ConversationLogResponse> conversationLogs) throws JsonProcessingException {
+    private ChatbotResponse generateGreeting(ConversationRequest request, long userNo) {
+        List<ConversationLogResponse> conversationLogList = conversationRoomService.readLatestConversationRoom(userNo, request.getConversationRoomNo());
+        String conversationLogListString = conversationLogList != null ? "\nPrevious Conversation:\n" + conversationLogList.stream()
+                .map(ConversationLogResponse::toLogString)
+                .collect(Collectors.joining("\n")) : "";
+
+        List<String> promptFilePathList = Arrays.asList("prompts/basic.prompt", "prompts/greeting.prompt");
+        List<ConversationLogResponse> conversationLogs = Collections.emptyList();
+        List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, "", conversationLogs, conversationLogListString);
+        return chainService.chatbotChain(chatbotPrompt);
+    }
+
+    private ChatbotResponse generateDailyConversation(String input, List<ConversationLogResponse> conversationLogs) throws JsonProcessingException {
         List<String> promptFilePathList = Collections.singletonList("prompts/basic.prompt");
         List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
         return chainService.chatbotChain(chatbotPrompt);
     }
 
-    private ChatbotResponse welfareService(String subTaskNo, String input, List<ConversationLogResponse> conversationLogs, ReadUserResponse user) throws JsonProcessingException {
+    private ChatbotResponse generateWelfareService(String subTaskNo, String input, List<ConversationLogResponse> conversationLogs, ReadUserResponse user) throws JsonProcessingException {
+        RedirectionResponse redirectionResult = null;
+        ReservationResponse reservationResult = null;
+
         // Chatbot Prompt 제작
         List<String> promptFilePathList = Arrays.asList("prompts/basic.prompt", "prompts/welfare.prompt");
         List<Map<String, String>> chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs);
 
         // Sub Task 분류
-        RedirectionResponse redirectionResult = null;
-        ReservationResponse reservationResult = null;
         switch (subTaskNo) {
+            // 복지 서비스 바로가기
             case "001-02" -> {
                 List<Map<String, String>> redirectionPrompt = promptService.redirectionPrompt(input, conversationLogs);
                 redirectionResult = chainService.redirectionChain(redirectionPrompt);
-                log.info("🔗3️⃣ [{}] Instruction Chain Completed - Service Number: {}, Action Required: {}", user.getUserId(), redirectionResult.getServiceNumber(), redirectionResult.isActionRequired());
+                log.info("🔗3️⃣ [{}] Redirection Chain Completed - Action Required: \u001B[32m{}\u001B[0m, Service Number: \u001B[34m{}\u001B[0m", user.getUserId(), redirectionResult.isActionRequired(), redirectionResult.getServiceName());
             }
+            // 돌봄 서비스 예약하기
             case "001-03" -> {
                 List<Map<String, String>> reservationPrompt = promptService.reservationPrompt(input, conversationLogs);
                 reservationResult = chainService.reservationChain(reservationPrompt);
+                log.info("🔗3️⃣ [{}] Reservation Chain Completed - Action Required: \u001B[32m{}\u001B[0m, Service Type Number: \u001B[34m{}\u001B[0m, Reservation Date: {}, Reservation Time Number: {}",
+                        user.getUserId(),
+                        reservationResult.isActionRequired(),
+                        reservationResult.getServiceTypeNumber(),
+                        reservationResult.getReservationDate(),
+                        reservationResult.getReservationTimeNumber());
             }
+            // 돌봄 서비스 예약 내역 확인
             case "001-04" -> {
                 List<ReadWelfareBookResponse> welfareBookList = welfareBookService.readAllByLastMonth(user.getUserNo());
                 List<WelfareBookInfoDto> bookList = welfareBookList.stream()
                         .map(source -> modelMapper.map(source, WelfareBookInfoDto.class))
                         .toList();
 
-                // chatbotPrompt에 추가 정보로 bookList 문자열을 넣음
                 String bookListString = "\nAdditional Info:\n" + bookList.stream()
                         .map(WelfareBookInfoDto::toString)  // 각 DTO 객체를 문자열로 변환
                         .collect(Collectors.joining("\n"));
@@ -108,9 +136,7 @@ public class TextResponseService {
                 chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs, bookListString);
             }
         }
-        System.out.println("====================================================");
-        System.out.println(chatbotPrompt);
-        System.out.println("====================================================");
+
         // 답변 생성
         ChatbotResponse response = chainService.chatbotChain(chatbotPrompt);
 
@@ -118,12 +144,41 @@ public class TextResponseService {
         if (redirectionResult != null) {
             response.setActionRequired(redirectionResult.isActionRequired());
             response.setRedirectionResult(redirectionResult);
+            calculateToken(response, redirectionResult);
         }
         if (reservationResult != null) {
             response.setActionRequired(reservationResult.isActionRequired());
             response.setReservationResult(reservationResult);
+            calculateToken(response, reservationResult);
         }
 
         return response;
+    }
+
+    private void calculateToken(ChatbotResponse response, ClassificationResponse classificationResult) {
+        log.debug("🪙 Classification Tokens - PromptTokens: {}, CompletionTokens: {}, TotalTokens: {}", classificationResult.getPromptTokens(), classificationResult.getCompletionTokens(), classificationResult.getTotalTokens());
+        log.debug("🪙 Chatbot Tokens - PromptTokens: {}, CompletionTokens: {}, TotalTokens: {}", response.getPromptTokens(), response.getCompletionTokens(), response.getTotalTokens());
+
+        response.setPromptTokens(response.getPromptTokens() + classificationResult.getPromptTokens());
+        response.setCompletionTokens(response.getCompletionTokens() + classificationResult.getCompletionTokens());
+        response.setTotalTokens(response.getTotalTokens() + classificationResult.getTotalTokens());
+    }
+
+    private void calculateToken(ChatbotResponse response, RedirectionResponse redirectionResult) {
+        log.debug("🪙 Redirection Tokens - PromptTokens: {}, CompletionTokens: {}, TotalTokens: {}", redirectionResult.getPromptTokens(), redirectionResult.getCompletionTokens(), redirectionResult.getTotalTokens());
+        log.debug("🪙 Chatbot Tokens - PromptTokens: {}, CompletionTokens: {}, TotalTokens: {}", response.getPromptTokens(), response.getCompletionTokens(), response.getTotalTokens());
+
+        response.setPromptTokens(response.getPromptTokens() + redirectionResult.getPromptTokens());
+        response.setCompletionTokens(response.getCompletionTokens() + redirectionResult.getCompletionTokens());
+        response.setTotalTokens(response.getTotalTokens() + redirectionResult.getTotalTokens());
+    }
+
+    private void calculateToken(ChatbotResponse response, ReservationResponse reservationResult) {
+        log.debug("🪙 Reservation Tokens - PromptTokens: {}, CompletionTokens: {}, TotalTokens: {}", reservationResult.getPromptTokens(), reservationResult.getCompletionTokens(), reservationResult.getTotalTokens());
+        log.debug("🪙 Chatbot Tokens - PromptTokens: {}, CompletionTokens: {}, TotalTokens: {}", response.getPromptTokens(), response.getCompletionTokens(), response.getTotalTokens());
+
+        response.setPromptTokens(response.getPromptTokens() + reservationResult.getPromptTokens());
+        response.setCompletionTokens(response.getCompletionTokens() + reservationResult.getCompletionTokens());
+        response.setTotalTokens(response.getTotalTokens() + reservationResult.getTotalTokens());
     }
 }

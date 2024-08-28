@@ -13,4 +13,5 @@ public class ConversationRoomResponse {
     private Timestamp conversationStartAt;
     private Timestamp conversationEndAt;
     private Long userNo;
+
 }

@@ -27,6 +27,9 @@ public class ChatbotService {
     @Value("${MODEL_NAME}")
     private String modelName;
 
+    @Value("${MINI_MODEL_NAME}")
+    private String miniModelName;
+
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
 
     /**
@@ -39,7 +42,7 @@ public class ChatbotService {
      * @return ChatbotResponse 챗봇의 응답 데이터
      */
     public ChatbotResponse getChatbotResponse(List<Map<String, String>> messagesList, Map<String, Object> responseSchema) {
-        return sendRequest(messagesList, responseSchema);
+        return sendRequest(miniModelName, messagesList, responseSchema);
     }
 
     /**
@@ -51,7 +54,7 @@ public class ChatbotService {
      * @return ChatbotResponse 챗봇의 응답 데이터
      */
     public ChatbotResponse getChatbotResponse(List<Map<String, String>> messagesList) {
-        return sendRequest(messagesList, null);
+        return sendRequest(modelName, messagesList, null);
     }
 
     /**
@@ -63,7 +66,7 @@ public class ChatbotService {
      * @param responseSchema 응답 스키마 (필요한 경우)
      * @return ChatbotResponse 챗봇의 응답 데이터
      */
-    private ChatbotResponse sendRequest(List<Map<String, String>> messagesList, Map<String, Object> responseSchema) {
+    private ChatbotResponse sendRequest(String model, List<Map<String, String>> messagesList, Map<String, Object> responseSchema) {
         // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -71,7 +74,7 @@ public class ChatbotService {
 
         // 요청 본문 데이터 생성
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("model", modelName);
+        requestBody.put("model", model);
 
         // messagesList를 배열로 변환하여 requestBody에 추가
         requestBody.put("messages", messagesList.toArray(new Map[0]));
