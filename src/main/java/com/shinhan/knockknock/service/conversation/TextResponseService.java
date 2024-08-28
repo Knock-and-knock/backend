@@ -41,7 +41,9 @@ public class TextResponseService {
         List<ConversationLogResponse> conversationLogs = conversationLogService.findLastNByConversationRoomNo(5, request.getConversationRoomNo());
 
         if (conversationLogs.isEmpty() && request.getInput().equals("Greeting")) {
-            generateGreeting(request, user.getUserNo());
+            response = generateGreeting(request, user.getUserNo());
+            log.info("🔗2️⃣ [{}] Greeting generated for: {}", user.getUserId(), response.getContent());
+            return response;
         }
 
         // 사용자 입력에 따른 작업 분류
@@ -75,9 +77,9 @@ public class TextResponseService {
 
     }
 
-    private void generateGreeting(ConversationRequest request, long userNo) {
+    private ChatbotResponse generateGreeting(ConversationRequest request, long userNo) {
         List<ConversationLogResponse> conversationLogList = conversationRoomService.readLatestConversationRoom(userNo, request.getConversationRoomNo());
-        String conversationLogListString = "\nAdditional Info:\n" + conversationLogList.stream()
+        String conversationLogListString = "\nPrevious Conversation:\n" + conversationLogList.stream()
                 .map(ConversationLogResponse::toLogString)
                 .collect(Collectors.joining("\n"));
         System.out.println(conversationLogListString);
@@ -90,6 +92,8 @@ public class TextResponseService {
         System.out.println(chatbotPrompt);
         System.out.println("===================================");
         System.out.println("===================================");
+
+        return chainService.chatbotChain(chatbotPrompt);
     }
 
     private ChatbotResponse generateDailyConversation(String input, List<ConversationLogResponse> conversationLogs) throws JsonProcessingException {
