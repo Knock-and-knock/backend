@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 public class CardCategoryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name= "cardcategory_no")
     private Long cardCategoryNo;
 

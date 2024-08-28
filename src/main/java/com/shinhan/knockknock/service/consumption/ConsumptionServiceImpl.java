@@ -1,6 +1,5 @@
 package com.shinhan.knockknock.service.consumption;
 
-import com.shinhan.knockknock.domain.dto.consumption.ReadConsumptionRequest;
 import com.shinhan.knockknock.domain.dto.consumption.ReadConsumptionResponse;
 import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
 import com.shinhan.knockknock.repository.CardRepository;
@@ -27,8 +26,9 @@ public class ConsumptionServiceImpl implements ConsumptionService {
     /**
      * 주어진 사용자 번호와 날짜 범위를 기반으로 월별 소비 리포트를 생성
      *
-     * @param userNo               사용자 번호
-     * @param readConsumptionRequest 소비 리포트 요청 정보(startDate, endDate)
+     * @param userNo - 사용자 번호
+     * @param startDate - 검색 기준 시작일
+     * @param endDate - 검색 기준 마감일
      * @return {
      *     "cardId": 1,
      *     "categoryName": "교통",
@@ -37,10 +37,8 @@ public class ConsumptionServiceImpl implements ConsumptionService {
      *     "family": false
      *   },
      */
-    public List<ReadConsumptionResponse> readConsumptionReport(Long userNo, ReadConsumptionRequest readConsumptionRequest) {
+    public List<ReadConsumptionResponse> readConsumptionReport(Long userNo, Date startDate, Date endDate) {
         List<String> cardNos = readCardNoByUserNo(userNo);
-        Date startDate = readConsumptionRequest.getStartDate();
-        Date endDate = readConsumptionRequest.getEndDate();
 
         List<CardHistoryEntity> cardHistories = consumptionRepository
                 .findCardHistoriesByCard_CardNoInAndCardHistoryApproveBetween(cardNos, startDate, endDate);
