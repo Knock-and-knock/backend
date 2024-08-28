@@ -24,4 +24,5 @@ public class CreateUserRequest {
     private UserRoleEnum userType;
     @Schema(example = "123456")
     private String userSimplePassword;
+    private Boolean isBioLogin;
 }

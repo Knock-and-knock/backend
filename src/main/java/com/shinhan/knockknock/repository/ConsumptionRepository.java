@@ -1,7 +1,9 @@
 package com.shinhan.knockknock.repository;
 
+import com.shinhan.knockknock.domain.entity.CardCategoryEntity;
 import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.sql.Date;
 import java.util.List;

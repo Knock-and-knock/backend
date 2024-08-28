@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface NotificationRepository extends JpaRepository<NotificationEntity, Long> {
     List<NotificationEntity> findByUserNo(Long userNo);
+    Long countByUserNoAndNotificationIsCheck(Long userNo, boolean notificationIsCheck);
 }
