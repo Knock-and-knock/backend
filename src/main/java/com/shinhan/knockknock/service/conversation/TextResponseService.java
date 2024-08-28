@@ -55,8 +55,7 @@ public class TextResponseService {
             }
             // 금융 서비스
             case "002" -> {
-                financeTaskService.generateFinancialService(subTaskNo, input, conversationLogs, user);
-                return null;
+                response = financeTaskService.generateFinancialService(subTaskNo, input, conversationLogs, user);
             }
             // 일상 대화
             default -> {
