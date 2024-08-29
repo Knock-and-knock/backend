@@ -147,7 +147,7 @@ public class MatchControllerTest {
                 .orElse(new MatchEntity());
         UpdateMatchRequest request = UpdateMatchRequest.builder()
                 .matchNo(match.getMatchNo())
-                .answer("ACCEPT")
+                .matchStatus("ACCEPT")
                 .build();
         String requestBody = objectMapper.writeValueAsString(request);
 
@@ -169,7 +169,7 @@ public class MatchControllerTest {
         MatchEntity match = matchSetting("WAIT");
         UpdateMatchRequest request = UpdateMatchRequest.builder()
                 .matchNo(match.getMatchNo())
-                .answer("ACCEPT")
+                .matchStatus("ACCEPT")
                 .build();
         String requestBody = objectMapper.writeValueAsString(request);
 
@@ -191,7 +191,7 @@ public class MatchControllerTest {
 
         UpdateMatchRequest request = UpdateMatchRequest.builder()
                 .matchNo(match.getMatchNo())
-                .answer("ACCEPT")
+                .matchStatus("ACCEPT")
                 .build();
         String requestBody = objectMapper.writeValueAsString(request);
 
