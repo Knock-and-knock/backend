@@ -14,5 +14,5 @@ public class UpdateMatchRequest {
     @Schema(example = "6")
     private long matchNo;
     @Schema(example = "ACCEPT")
-    private String answer;
+    private String matchStatus;
 }

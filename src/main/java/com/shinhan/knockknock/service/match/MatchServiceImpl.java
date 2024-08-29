@@ -5,6 +5,7 @@ import com.shinhan.knockknock.domain.dto.match.CreateMatchResponse;
 import com.shinhan.knockknock.domain.dto.match.UpdateMatchRequest;
 import com.shinhan.knockknock.domain.entity.MatchEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
+import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import com.shinhan.knockknock.repository.MatchRepository;
 import com.shinhan.knockknock.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,12 +39,15 @@ public class MatchServiceImpl implements MatchService {
         String protectorId = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity protectorUser = userRepository.findByUserId(protectorId)
                 .orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다."));
+        if(!protectorUser.getUserType().equals(UserRoleEnum.PROTECTOR)) {
+            throw new RuntimeException("피보호자는 매칭 요청이 불가능합니다.");
+        }
 
         // 피보호자 계정 존재 여부 확인
+        String userPhone = request.getProtegePhone().replace("-", "");
         UserEntity protegeUser = userRepository.findByUserNameAndUserPhone(
-                        request.getProtegeName(), request.getProtegePhone())
+                        request.getProtegeName(), userPhone)
                 .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
-
         // 기존 매칭 기록 확인
         MatchEntity match = matchRepository.findByUserProtectorAndUserProtege(protectorUser, protegeUser)
                 .orElse(MatchEntity.builder()
@@ -81,11 +85,11 @@ public class MatchServiceImpl implements MatchService {
 
         MatchEntity match = matchRepository.findById(request.getMatchNo())
                 .orElseThrow(() -> new NoSuchElementException("매칭이 존재하지 않습니다."));
-
+        System.out.println(request.getMatchStatus());
         switch (match.getMatchStatus()) {
             case "WAIT" -> {
-                if (request.getAnswer().equals("ACCEPT") | request.getAnswer().equals("REJECT")) {
-                    match.setMatchStatus(request.getAnswer());
+                if (request.getMatchStatus().equals("ACCEPT") | request.getMatchStatus().equals("REJECT")) {
+                    match.setMatchStatus(request.getMatchStatus());
                 } else {
                     throw new RuntimeException("잘못된 응답입니다.");
                 }
