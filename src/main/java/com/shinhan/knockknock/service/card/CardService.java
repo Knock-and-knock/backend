@@ -2,6 +2,7 @@ package com.shinhan.knockknock.service.card;
 
 import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.card.ReadCardResponse;
+import com.shinhan.knockknock.domain.dto.card.ReadCardSingleResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 
@@ -15,21 +16,17 @@ public interface CardService {
     // 카드 발급
     public CreateCardIssueResponse createPostCard(CardIssueEntity cardIssueEntity, String password);
 
-    // 본인 카드 조회
+    // 본인 카드 리스트 조회
     public List<ReadCardResponse> readGetCards(Long userNo);
+
+    // 본인 카드 하나의 현재 월의 총 소비내역 조회
+    public ReadCardSingleResponse readgetCard(Long cardId);
 
     // Entity -> DTO
     default ReadCardResponse transformEntityToDTO(CardEntity cardEntity){
         ReadCardResponse readCardResponse = ReadCardResponse
                 .builder()
-                .cardNo(cardEntity.getCardNo())
-                .cardCvc(cardEntity.getCardCvc())
-                .cardEname(cardEntity.getCardEname())
-                .cardBank(cardEntity.getCardBank())
-                .cardAccount(cardEntity.getCardAccount())
-                .cardAmountDate(cardEntity.getCardAmountDate())
-                .cardExpiredate(cardEntity.getCardExpiredate().toString())
-                .cardAddress(cardEntity.getCardAddress())
+                .cardId(cardEntity.getCardId())
                 .cardIsFamily(cardEntity.isCardIsfamily())
                 .build();
         return readCardResponse;
