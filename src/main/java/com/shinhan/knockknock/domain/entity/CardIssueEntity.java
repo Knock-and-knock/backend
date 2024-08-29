@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @Data
@@ -53,7 +52,7 @@ public class CardIssueEntity {
 
     @Column(name= "cardissue_amountdate")
     @NotNull
-    private Date cardIssueAmountDate;
+    private String cardIssueAmountDate;
 
     @Column(name= "cardissue_source")
     @NotNull
