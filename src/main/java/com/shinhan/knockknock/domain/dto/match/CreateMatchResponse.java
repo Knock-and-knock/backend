@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateMatchResponse {
+    private long matchNo;
     @Schema(example = "보호자별명")
     private String matchProtectorName;
     @Schema(example = "보호자실명")

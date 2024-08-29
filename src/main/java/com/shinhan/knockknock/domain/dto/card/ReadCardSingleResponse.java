@@ -1,4 +1,4 @@
-package com.shinhan.knockknock.domain.dto.consumption;
+package com.shinhan.knockknock.domain.dto.card;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReadConsumptionResponse {
+public class ReadCardSingleResponse {
     private Long cardId;
-    private String categoryName;
-    private int totalAmount;
-    private int amount;
+    private Long totalAmount;
 }

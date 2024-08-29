@@ -2,11 +2,13 @@ package com.shinhan.knockknock.service.card;
 
 import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.card.ReadCardResponse;
+import com.shinhan.knockknock.domain.dto.card.ReadCardSingleResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 import com.shinhan.knockknock.domain.entity.NotificationEntity;
 import com.shinhan.knockknock.repository.CardIssueRepository;
 import com.shinhan.knockknock.repository.CardRepository;
+import com.shinhan.knockknock.repository.ConsumptionRepository;
 import com.shinhan.knockknock.service.notification.NotificationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -32,6 +36,8 @@ public class CardServiceImpl implements CardService {
     CardIssueRepository cardIssueRepository;
     @Autowired
     NotificationServiceImpl notificationService;
+    @Autowired
+    ConsumptionRepository consumptionRepository;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -61,6 +67,12 @@ public class CardServiceImpl implements CardService {
         LocalDate localDate = todayDate.toLocalDate();
         LocalDate newLocalDate = localDate.plusYears(5);
         Date expireDate = Date.valueOf(newLocalDate);
+
+        // 결제일 처리 // firstday, middleday, lastday
+        String amountDate = cardIssueEntity.getCardIssueAmountDate();
+        if(amountDate.equals("firstday")){amountDate="01";}
+        else if (amountDate.equals("middleday")){amountDate="02";}
+        else {amountDate="03";}
 
         CardEntity cardEntity = CardEntity.builder()
                 .cardNo(cardNo)
@@ -99,7 +111,7 @@ public class CardServiceImpl implements CardService {
         return createCardIssueResponse;
     }
 
-    // 본인 카드 조회
+    // 본인 카드 리스트 조회
     @Override
     public List<ReadCardResponse> readGetCards(Long userNo) {
         int countCardIssue = 0;
@@ -126,15 +138,34 @@ public class CardServiceImpl implements CardService {
                     .collect(Collectors.toList());
 
             // 만료 일자 형식 변환
-            readCardResponses.forEach(readCardResponse -> {
-                String cardExpireDate = readCardResponse.getCardExpiredate();
-                String date = cardExpireDate.substring(2, 7);
-                date = date.replace("-", "/");
-                readCardResponse.setCardExpiredate(date);
-            });
+            //readCardResponses.forEach(readCardResponse -> {
+            //    String cardExpireDate = readCardResponse.getCardExpiredate();
+            //    String date = cardExpireDate.substring(2, 7);
+            //    date = date.replace("-", "/");
+            //    readCardResponse.setCardExpiredate(date);
+            //});
 
             return readCardResponses;
         }
+    }
+
+    // 본인 카드 하나의 현재 월의 총 소비내역 조회
+    public ReadCardSingleResponse readgetCard(Long cardId){
+
+        YearMonth currentMonth = YearMonth.now();
+        LocalDateTime startDate = currentMonth.atDay(1).atStartOfDay();
+        LocalDateTime endDate = currentMonth.atEndOfMonth().atTime(23, 59, 59);
+
+        Long cardTotalAmount = consumptionRepository.findTotalAmountByCardIdAndCurrentMonth(cardId, startDate, endDate);
+        if (cardTotalAmount == null){ cardTotalAmount = 0L; }
+
+        ReadCardSingleResponse readCardSingleResponse = ReadCardSingleResponse
+                .builder()
+                .cardId(cardId)
+                .totalAmount(cardTotalAmount)
+                .build();
+
+        return readCardSingleResponse;
     }
 
 

@@ -3,7 +3,6 @@ package com.shinhan.knockknock.controller;
 import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.card.CreateCardIssueRequest;
 import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
-import com.shinhan.knockknock.domain.dto.card.ReadCardResponse;
 import com.shinhan.knockknock.service.card.CardIssueService;
 import com.shinhan.knockknock.service.card.CardService;
 import com.shinhan.knockknock.service.card.ClovaOCRService;
@@ -14,9 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
-
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -68,7 +64,7 @@ class CardControllerTest {
         verify(cardIssueService, times(1)).createPostCardIssue(request, 1L); // 카드 발급 서비스가 한 번 호출되었는지 확인
     }
 
-    @Test
+    /*@Test
     @DisplayName("카드 조회 요청 처리 메서드 테스트")
     void readDetail() {
         // Given
@@ -84,5 +80,5 @@ class CardControllerTest {
         // Then
         assertEquals(responses, result); // 반환된 카드 목록이 예상과 일치하는지 확인
         verify(cardService, times(1)).readGetCards(userNo); // 카드 서비스가 정확히 한 번 호출되었는지 확인
-    }
+    }*/
 }

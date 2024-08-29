@@ -1,13 +1,19 @@
 package com.shinhan.knockknock.service.consumption;
 
 import com.shinhan.knockknock.domain.dto.consumption.ReadConsumptionResponse;
+import com.shinhan.knockknock.domain.entity.CardEntity;
+import com.shinhan.knockknock.domain.entity.CardCategoryEntity;
 import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
+import com.shinhan.knockknock.repository.CardCategoryRepository;
 import com.shinhan.knockknock.repository.CardRepository;
 import com.shinhan.knockknock.repository.ConsumptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.util.Calendar;
+import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,27 +23,33 @@ import java.util.stream.Collectors;
 public class ConsumptionServiceImpl implements ConsumptionService {
     private final ConsumptionRepository consumptionRepository;
     private final CardRepository cardRepository;
+    private final CardCategoryRepository cardCategoryRepository;
 
     // userNo로 cardNo 조회
     public List<String> readCardNoByUserNo(Long userNo) {
         return cardRepository.findCardNoByUserNo(userNo);
     }
 
+    @Override
+    public List<CardEntity> readCardByUserNo(Long userNo) {
+        return cardRepository.findCardByUserNo(userNo);
+    }
+
     /**
      * 주어진 사용자 번호와 날짜 범위를 기반으로 월별 소비 리포트를 생성
      *
-     * @param userNo - 사용자 번호
+     * @param userNo    - 사용자 번호
      * @param startDate - 검색 기준 시작일
-     * @param endDate - 검색 기준 마감일
+     * @param endDate   - 검색 기준 마감일
      * @return {
-     *     "cardId": 1,
-     *     "categoryName": "교통",
-     *     "totalAmount": 218000,
-     *     "amount": 25000,
-     *     "family": false
-     *   },
+     * "cardId": 1,
+     * "categoryName": "교통",
+     * "totalAmount": 218000,
+     * "amount": 25000,
+     * "family": false
+     * },
      */
-    public List<ReadConsumptionResponse> readConsumptionReport(Long userNo, Date startDate, Date endDate) {
+    public List<ReadConsumptionResponse> readConsumptionReportList(Long userNo, Date startDate, Date endDate) {
         List<String> cardNos = readCardNoByUserNo(userNo);
 
         List<CardHistoryEntity> cardHistories = consumptionRepository
@@ -76,6 +88,64 @@ public class ConsumptionServiceImpl implements ConsumptionService {
                                 .build()
                         )
                 ).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReadConsumptionResponse> readConsumptionReportForConversation(Long userNo, Date currentDate) {
+        // 현재 날짜로부터 해당 달의 시작일과 종료일을 계산
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+
+        // 월의 첫날 설정
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date startDate = new Date(calendar.getTimeInMillis());
+
+        // 월의 마지막 날 설정
+        calendar.add(Calendar.MONTH, 1);  // 다음 달로 이동
+        calendar.set(Calendar.DAY_OF_MONTH, 1);  // 다음 달의 첫 날로 설정
+        calendar.add(Calendar.DATE, -1);  // 하루를 빼서 이번 달의 마지막 날로 설정
+        Date endDate = new Date(calendar.getTimeInMillis());
+
+        // 계산된 날짜를 사용하여 리포트 생성
+        return readConsumptionReport(userNo, startDate, endDate);
+    }
+
+    /**
+     * 주어진 cardId와 startDate, endDate로 소비 리포트를 생성
+     *
+     * @param cardId    - 카드 식별번호
+     * @param startDate - 검색 기준 시작일
+     * @param endDate   - 검색 기준 마감일
+     * @return List<ReadConsumptionResponse>
+     */
+    public List<ReadConsumptionResponse> readConsumptionReport(Long cardId, java.sql.Date startDate, java.sql.Date endDate) {
+        // 모든 카테고리를 조회
+        List<CardCategoryEntity> categories = cardCategoryRepository.findAll();
+
+        // 카드 ID와 날짜 범위로 소비 내역 조회
+        List<CardHistoryEntity> cardHistories = consumptionRepository.findCardHistoriesByCardIdAndDateRange(cardId, startDate, endDate);
+
+        // 카테고리별 금액 합산
+        Map<String, Integer> categoryAmountMap = cardHistories.stream()
+                .collect(Collectors.groupingBy(
+                        cardHistory -> cardHistory.getCardCategory().getCardCategoryName(),
+                        Collectors.summingInt(CardHistoryEntity::getCardHistoryAmount)
+                ));
+
+        // 총 금액 계산
+        int totalAmount = categoryAmountMap.values().stream()
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        // 리포트 생성
+        return categories.stream()
+                .map(category -> ReadConsumptionResponse.builder()
+                        .cardId(cardId)
+                        .categoryName(category.getCardCategoryName())
+                        .totalAmount(totalAmount)
+                        .amount(categoryAmountMap.getOrDefault(category.getCardCategoryName(), 0))
+                        .build())
+                .collect(Collectors.toList());
     }
 
 }

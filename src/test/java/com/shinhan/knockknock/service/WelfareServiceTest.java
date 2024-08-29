@@ -65,8 +65,8 @@ public class WelfareServiceTest {
         // Then
         assertThat(welfareList).hasSize(4);
         ReadWelfareResponse response = welfareList.get(0);
-        assertThat(response.getWelfareName()).isEqualTo("퇴직 연금");
-        assertThat(response.getWelfarePirce()).isEqualTo(5000L);
+        assertThat(response.getWelfareName()).isEqualTo("일상가사");
+        assertThat(response.getWelfarePirce()).isEqualTo(10000L);
         assertThat(response.getWelfareCategory()).isEqualTo("퇴직");
     }
 

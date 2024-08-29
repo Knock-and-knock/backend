@@ -3,8 +3,11 @@ package com.shinhan.knockknock.service;
 import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomResponse;
 import com.shinhan.knockknock.domain.dto.conversation.ConversationRoomUpdateRequest;
 import com.shinhan.knockknock.domain.entity.ConversationRoomEntity;
+import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.repository.ConversationRoomRepository;
+import com.shinhan.knockknock.repository.UserRepository;
 import com.shinhan.knockknock.service.conversation.ConversationRoomService;
+import com.shinhan.knockknock.service.user.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +32,15 @@ public class ConversationRoomTest {
     @Autowired
     ConversationRoomRepository conversationRoomRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @Test
     @DisplayName("대화방 생성 테스트")
     public void testCreateConversationRoom() {
         // Given
-        long userNo = 1L;
+        UserEntity user = userRepository.findAll().get(0);
+        long userNo = user.getUserNo();
 
         // When
         Long conversationRoomNo = conversationRoomService.createConversationRoom(userNo);
@@ -49,7 +56,8 @@ public class ConversationRoomTest {
     @DisplayName("대화방 전체 조회 테스트")
     public void testReadAllConversationRoom() {
         // Given
-        long userNo = 1L;
+        UserEntity user = userRepository.findAll().get(0);
+        long userNo = user.getUserNo();
         conversationRoomService.createConversationRoom(userNo);
 
         // When
@@ -65,7 +73,8 @@ public class ConversationRoomTest {
     @DisplayName("대화방 수정 테스트")
     public void testUpdateConversationRoom() {
         // Given
-        long userNo = 1L;
+        UserEntity user = userRepository.findAll().get(0);
+        long userNo = user.getUserNo();
         Long conversationRoomNo = conversationRoomService.createConversationRoom(userNo);
 
         // When
@@ -85,7 +94,8 @@ public class ConversationRoomTest {
     @DisplayName("대화방 종료 시간 수정 테스트")
     public void testUpdateConversationRoomEndAt() {
         // Given
-        long userNo = 1L;
+        UserEntity user = userRepository.findAll().get(0);
+        long userNo = user.getUserNo();
         Long conversationRoomNo = conversationRoomService.createConversationRoom(userNo);
 
         // When
@@ -101,7 +111,8 @@ public class ConversationRoomTest {
     @DisplayName("대화방 삭제 테스트")
     public void testDeleteConversation() {
         // Given
-        long userNo = 1L;
+        UserEntity user = userRepository.findAll().get(0);
+        long userNo = user.getUserNo();
         Long conversationRoomNo = conversationRoomService.createConversationRoom(userNo);
 
         // When

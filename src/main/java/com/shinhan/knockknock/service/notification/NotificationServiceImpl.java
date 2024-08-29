@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -62,7 +63,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         // 현재 시간을 java에서 찍어서 DB 저장과 실시간 알림에 모두 사용
         // 이후에 알림 조회할 때 데이터 차이가 없게
-        notificationEntity.setNotificationDateTime(new Date(System.currentTimeMillis()));
+        notificationEntity.setNotificationDateTime(new Timestamp(System.currentTimeMillis()));  // 변경된 부분
         notificationRepository.save(notificationEntity);
 
         ReadNotificationResponse notificationResponse = transformEntityToDTO(notificationEntity);
