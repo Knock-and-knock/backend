@@ -1,9 +1,11 @@
 package com.shinhan.knockknock.service.conversation.task;
 
+import com.shinhan.knockknock.domain.dto.consumption.ReadConsumptionResponse;
 import com.shinhan.knockknock.domain.dto.conversation.ChatbotResponse;
 import com.shinhan.knockknock.domain.dto.conversation.ConversationLogResponse;
 import com.shinhan.knockknock.domain.dto.user.ReadUserResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
+import com.shinhan.knockknock.service.cardhistory.CardHistoryService;
 import com.shinhan.knockknock.service.consumption.ConsumptionService;
 import com.shinhan.knockknock.service.conversation.ChainService;
 import com.shinhan.knockknock.service.conversation.PromptService;
@@ -21,6 +23,7 @@ public class FinanceTaskService {
     private final PromptService promptService;
     private final ChainService chainService;
     private final ConsumptionService consumptionService;
+    private final CardHistoryService cardHistoryService;
 
     public ChatbotResponse generateFinancialService(String subTaskNo, String input, List<ConversationLogResponse> conversationLogs, ReadUserResponse user) {
         // Chatbot Prompt 제작
@@ -34,11 +37,14 @@ public class FinanceTaskService {
             }
             // 소비 리포트 확인
             case "002-02" -> {
-                List<CardEntity> cardList = consumptionService.readCardByUserNo(user.getUserNo());
-                for (CardEntity card:cardList){
-                    System.out.println(card.getCardNo());
-                }
-//                consumptionService.readConsumptionReportForConversation();
+                CardEntity card = cardHistoryService.readTopUsedCardLastMonth(user.getUserNo());
+
+                String report = consumptionService.readConsumptionReportForConversation(card, "2024-08");
+                System.out.println("#################################");
+                System.out.println(report);
+                System.out.println("#################################");
+
+                chatbotPrompt = promptService.chatbotPrompt(promptFilePathList, input, conversationLogs, report);
             }
         }
 

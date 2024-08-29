@@ -7,6 +7,7 @@ import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.repository.CardHistoryRepository;
+import com.shinhan.knockknock.repository.CardRepository;
 import com.shinhan.knockknock.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +26,9 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    CardRepository cardRepo;
 
     @Override
     public Long createCardHistory(CreateCardHistoryRequest request) {
@@ -62,6 +67,12 @@ public class CardHistoryServiceImpl implements CardHistoryService {
                         card.getCardBank(), card.getCardAccount())
                 .orElseThrow(() -> new NoSuchElementException("관련 사용자를 찾을 수 없습니다."));
         return relatedUser.getUserName();
+    }
+
+    @Override
+    public CardEntity readTopUsedCardLastMonth(Long userNo) {
+        long cardNo = cardHistoryRepo.findTopUsedCardNoLastMonthByUser(userNo).orElse(0L);
+        return cardRepo.findById(cardNo).orElse(null);
     }
 
     @Override
