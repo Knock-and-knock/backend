@@ -17,13 +17,9 @@ import java.util.concurrent.*;
 public class ConversationService {
 
     private final TextResponseService textResponseService;
-
     private final TextToSpeechService textToSpeechService;
-
     private final ConversationLogService conversationLogService;
-
     private final ConversationRoomService conversationRoomService;
-
     private final UserService userService;
 
     public ConversationResponse conversation(ConversationRequest request, long userNo) {
@@ -36,7 +32,7 @@ public class ConversationService {
         // Chatbot 답변 생성
         ChatbotResponse response;
         try {
-            response = executeWithTimeout(() -> textResponseService.TextResponse(request, user), 7, TimeUnit.SECONDS);
+            response = executeWithTimeout(() -> textResponseService.TextResponse(request, user));
         } catch (TimeoutException e) {
             log.warn("⚠️ TextResponse timed out for input={}, conversationRoomNo={}", request.getInput(), request.getConversationRoomNo());
             response = ChatbotResponse.builder()
@@ -50,24 +46,7 @@ public class ConversationService {
         }
 
         // Chatbot 답변 검사
-        ConversationLogRequest conversationLog;
-        String content = response.getContent();
-        if (content == null || content.isEmpty()) {
-            log.warn("⚠️ Chatbot response is empty: content={}, totalTokens={}", response.getContent(), response.getTotalTokens());
-            conversationLog = ConversationLogRequest.builder()
-                    .conversationLogInput(request.getInput())
-                    .conversationLogResponse("문제가 발생했습니다. 다시 한번 말해주세요.")
-                    .conversationLogToken(response.getTotalTokens())
-                    .conversationRoomNo(request.getConversationRoomNo())
-                    .build();
-        } else {
-            conversationLog = ConversationLogRequest.builder()
-                    .conversationLogInput(request.getInput())
-                    .conversationLogResponse(response.getContent())
-                    .conversationLogToken(response.getTotalTokens())
-                    .conversationRoomNo(request.getConversationRoomNo())
-                    .build();
-        }
+        ConversationLogRequest conversationLog = makeConversationLogRequest(request, response);
 
         // 대화 내역 저장
         conversationLogService.createConversationLog(conversationLog);
@@ -89,13 +68,35 @@ public class ConversationService {
                 .build();
     }
 
-    public <T> T executeWithTimeout(Callable<T> task, long timeout, TimeUnit timeUnit)
+    private ConversationLogRequest makeConversationLogRequest(ConversationRequest request, ChatbotResponse response) {
+        ConversationLogRequest conversationLog;
+        String content = response.getContent();
+        if (content == null || content.isEmpty()) {
+            log.warn("⚠️ Chatbot response is empty: content={}, totalTokens={}", response.getContent(), response.getTotalTokens());
+            conversationLog = ConversationLogRequest.builder()
+                    .conversationLogInput(request.getInput())
+                    .conversationLogResponse("문제가 발생했습니다. 다시 한번 말해주세요.")
+                    .conversationLogToken(response.getTotalTokens())
+                    .conversationRoomNo(request.getConversationRoomNo())
+                    .build();
+        } else {
+            conversationLog = ConversationLogRequest.builder()
+                    .conversationLogInput(request.getInput())
+                    .conversationLogResponse(response.getContent())
+                    .conversationLogToken(response.getTotalTokens())
+                    .conversationRoomNo(request.getConversationRoomNo())
+                    .build();
+        }
+        return conversationLog;
+    }
+
+    private <T> T executeWithTimeout(Callable<T> task)
             throws TimeoutException, Exception {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<T> future = executor.submit(task);
 
         try {
-            return future.get(timeout, timeUnit);
+            return future.get(7, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             future.cancel(true);  // 작업 취소
             throw e;  // 타임아웃 예외를 다시 던짐

@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.service.consumption;
 
 import com.shinhan.knockknock.domain.dto.consumption.ReadConsumptionResponse;
+import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardCategoryEntity;
 import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
 import com.shinhan.knockknock.repository.CardCategoryRepository;
@@ -10,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.util.Calendar;
 import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,6 +28,11 @@ public class ConsumptionServiceImpl implements ConsumptionService {
     // userNo로 cardNo 조회
     public List<String> readCardNoByUserNo(Long userNo) {
         return cardRepository.findCardNoByUserNo(userNo);
+    }
+
+    @Override
+    public List<CardEntity> readCardByUserNo(Long userNo) {
+        return cardRepository.findCardByUserNo(userNo);
     }
 
     /**
@@ -81,6 +89,25 @@ public class ConsumptionServiceImpl implements ConsumptionService {
                         )
                 ).collect(Collectors.toList());
     }
+
+    @Override
+    public List<ReadConsumptionResponse> readConsumptionReportForConversation(Long userNo, Date currentDate) {
+        // 현재 날짜로부터 해당 달의 시작일과 종료일을 계산
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+
+        // 월의 첫날 설정
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date startDate = new Date(calendar.getTimeInMillis());
+
+        // 월의 마지막 날 설정
+        calendar.add(Calendar.MONTH, 1);  // 다음 달로 이동
+        calendar.set(Calendar.DAY_OF_MONTH, 1);  // 다음 달의 첫 날로 설정
+        calendar.add(Calendar.DATE, -1);  // 하루를 빼서 이번 달의 마지막 날로 설정
+        Date endDate = new Date(calendar.getTimeInMillis());
+
+        // 계산된 날짜를 사용하여 리포트 생성
+        return readConsumptionReport(userNo, startDate, endDate);
 
     /**
      * 주어진 cardId와 startDate, endDate로 소비 리포트를 생성

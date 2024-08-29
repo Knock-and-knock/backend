@@ -44,6 +44,7 @@ public class ConversationRoomController {
     public ConversationTimeResponse readLastConversationTime(@RequestHeader("Authorization") String header) {
         long userNo = jwtProvider.getUserNoFromHeader(header);
         Timestamp lastConversationTime = conversationRoomService.readLastConversationTime(userNo);
+
         return ConversationTimeResponse.builder()
                 .conversationEndAt(lastConversationTime)
                 .build();

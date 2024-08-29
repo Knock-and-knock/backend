@@ -13,4 +13,7 @@ public interface CardRepository extends JpaRepository<CardEntity, Long> {
     @Query("SELECT c.cardNo FROM CardEntity c WHERE c.userNo = :userNo")
     List<String> findCardNoByUserNo(@Param("userNo") Long userNo);
 
+    @Query("SELECT c FROM CardEntity c WHERE c.userNo = :userNo")
+    List<CardEntity> findCardByUserNo(@Param("userNo") Long userNo);
+
 }
