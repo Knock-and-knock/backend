@@ -30,7 +30,7 @@ public class NotificationEntity {
 
     @Column(name="notification_datetime")
     @NotNull
-    private Date notificationDateTime;
+    private Timestamp notificationDateTime;
 
     @Column(name="notification_ischeck", columnDefinition = "boolean default false")
     @NotNull
