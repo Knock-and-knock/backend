@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -42,23 +42,17 @@ public class CardHistoryServiceImpl implements CardHistoryService {
     public List<ReadCardHistoryResponse> readAll(Long cardId) {
         try {
             List<CardHistoryEntity> entityList = cardHistoryRepo.findByCard_CardId(cardId);
-            return entityList.stream().map(entity -> {
-                CardEntity card = entity.getCard();
-                return entityToDto(entity, card);
-            }).collect(Collectors.toList());
+            return entityList.stream().map(this::entityToDto).collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("카드 내역 조회에 실패했습니다.", e);
         }
     }
 
     @Override
-    public List<ReadCardHistoryResponse> readAllWithinDateRange(Long cardId, LocalDateTime startDate, LocalDateTime endDate) {
+    public List<ReadCardHistoryResponse> readAllWithinDateRange(Long cardId, Timestamp startDate, Timestamp endDate) {
         try {
-            List<CardHistoryEntity> entityList = cardHistoryRepo.findByCard_CardIdAndOrderDateBetween(cardId, startDate, endDate);
-            return entityList.stream().map(entity -> {
-                CardEntity card = entity.getCard();
-                return entityToDto(entity, card);
-            }).collect(Collectors.toList());
+            List<CardHistoryEntity> entityList = cardHistoryRepo.findByCard_CardIdAndCardHistoryApproveBetween(cardId, startDate, endDate);
+            return entityList.stream().map(this::entityToDto).collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("카드 내역 조회에 실패했습니다.", e);
         }
@@ -78,24 +72,24 @@ public class CardHistoryServiceImpl implements CardHistoryService {
                 .cardHistoryNo(request.getCardHistoryNo())
                 .cardHistoryAmount(request.getCardHistoryAmount())
                 .cardHistoryShopname(request.getCardHistoryShopname())
-                .cardHistoryApprove(request.getCardHistoryApprove())
+                .cardHistoryApprove(new Timestamp(System.currentTimeMillis())) // 예시로 현재 시간 사용
                 .cardCategory(CardCategoryEntity.builder().cardCategoryNo(request.getCardCategoryNo()).build())
                 .card(CardEntity.builder().cardId(request.getCardNo()).build())
                 .build();
     }
 
     @Override
-    public ReadCardHistoryResponse entityToDto(CardHistoryEntity entity, CardEntity card) {
+    public ReadCardHistoryResponse entityToDto(CardHistoryEntity entity) {
         return ReadCardHistoryResponse.builder()
                 .cardHistoryAmount(entity.getCardHistoryAmount())
                 .cardHistoryShopname(entity.getCardHistoryShopname())
                 .cardHistoryApprove(entity.getCardHistoryApprove())
                 .cardCategoryNo(entity.getCardCategoryNo())
                 .cardNo(entity.getCardId())
-                .cardBank(card.getCardBank())
-                .cardAccount(card.getCardAccount())
-                .isCardFamily(card.isCardIsfamily())
+                .cardBank(entity.getCardBank())
+                .cardAccount(entity.getCardAccount())
+                .isCardFamily(entity.isCardFamily())
+                .cardHistoryIsCansle(entity.getCardHistoryIsCansle() != null && entity.getCardHistoryIsCansle())
                 .build();
     }
 }
-

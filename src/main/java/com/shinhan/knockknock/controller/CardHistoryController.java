@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -43,9 +45,19 @@ public class CardHistoryController {
             List<ReadCardHistoryResponse> cardHistories;
 
             if (startDateStr != null && endDateStr != null) {
-                LocalDateTime startDate = LocalDateTime.parse(startDateStr);
-                LocalDateTime endDate = LocalDateTime.parse(endDateStr);
-                cardHistories = cardHistoryService.readAllWithinDateRange(cardId, startDate, endDate);
+                // 날짜만 입력된 경우, 시간을 기본값으로 설정
+                LocalDate startDate = LocalDate.parse(startDateStr);
+                LocalDate endDate = LocalDate.parse(endDateStr);
+
+                // startDate는 00:00:00, endDate는 23:59:59로 설정
+                LocalDateTime startDateTime = startDate.atStartOfDay();
+                LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+
+                // Timestamp로 변환
+                Timestamp startTimestamp = Timestamp.valueOf(startDateTime);
+                Timestamp endTimestamp = Timestamp.valueOf(endDateTime);
+
+                cardHistories = cardHistoryService.readAllWithinDateRange(cardId, startTimestamp, endTimestamp);
             } else {
                 cardHistories = cardHistoryService.readAll(cardId);
             }
@@ -110,4 +122,5 @@ public class CardHistoryController {
         }
     }
 }
+
 
