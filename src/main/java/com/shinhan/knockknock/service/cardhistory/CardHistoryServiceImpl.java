@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -28,7 +29,6 @@ public class CardHistoryServiceImpl implements CardHistoryService {
     @Override
     public Long createCardHistory(CreateCardHistoryRequest request) {
         try {
-            // DTO를 엔티티로 변환하고 저장
             CardHistoryEntity newCardHistory = cardHistoryRepo.save(dtoToEntity(request));
             return newCardHistory.getCardHistoryNo();
         } catch (DataAccessException e) {
@@ -41,15 +41,24 @@ public class CardHistoryServiceImpl implements CardHistoryService {
     @Override
     public List<ReadCardHistoryResponse> readAll(Long cardId) {
         try {
-            // 특정 카드 ID에 해당하는 모든 카드 내역 조회
             List<CardHistoryEntity> entityList = cardHistoryRepo.findByCard_CardId(cardId);
-
-            // 각 카드 내역을 DTO로 변환
             return entityList.stream().map(entity -> {
-                CardEntity card = entity.getCard(); // CardEntity 가져오기
+                CardEntity card = entity.getCard();
                 return entityToDto(entity, card);
             }).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("카드 내역 조회에 실패했습니다.", e);
+        }
+    }
 
+    @Override
+    public List<ReadCardHistoryResponse> readAllWithinDateRange(Long cardId, LocalDateTime startDate, LocalDateTime endDate) {
+        try {
+            List<CardHistoryEntity> entityList = cardHistoryRepo.findByCard_CardIdAndOrderDateBetween(cardId, startDate, endDate);
+            return entityList.stream().map(entity -> {
+                CardEntity card = entity.getCard();
+                return entityToDto(entity, card);
+            }).collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("카드 내역 조회에 실패했습니다.", e);
         }
@@ -57,7 +66,6 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Override
     public String findUserNameForFamilyCard(CardEntity card) {
-        // 카드가 가족 카드인 경우, 같은 은행과 계정을 가진 다른 사용자를 찾습니다.
         UserEntity relatedUser = userRepository.findByCards_CardBankAndCards_CardAccountAndCards_CardIsfamilyFalse(
                         card.getCardBank(), card.getCardAccount())
                 .orElseThrow(() -> new NoSuchElementException("관련 사용자를 찾을 수 없습니다."));
@@ -66,7 +74,6 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Override
     public CardHistoryEntity dtoToEntity(CreateCardHistoryRequest request) {
-        // DTO를 엔티티로 변환
         return CardHistoryEntity.builder()
                 .cardHistoryNo(request.getCardHistoryNo())
                 .cardHistoryAmount(request.getCardHistoryAmount())
@@ -79,7 +86,6 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Override
     public ReadCardHistoryResponse entityToDto(CardHistoryEntity entity, CardEntity card) {
-        // 엔티티를 DTO로 변환
         return ReadCardHistoryResponse.builder()
                 .cardHistoryAmount(entity.getCardHistoryAmount())
                 .cardHistoryShopname(entity.getCardHistoryShopname())
@@ -92,3 +98,4 @@ public class CardHistoryServiceImpl implements CardHistoryService {
                 .build();
     }
 }
+

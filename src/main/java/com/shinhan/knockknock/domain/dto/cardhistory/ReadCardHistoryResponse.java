@@ -24,7 +24,7 @@ public class ReadCardHistoryResponse {
     private Timestamp cardHistoryApprove;
     @Schema(example = "1")
     private Long cardCategoryNo;
-    @Schema(example = "1")
+    @Schema(example = "1234-1234-1234-1234")
     private Long cardNo;
     @Schema(example = "신한은행")
     private String cardBank;

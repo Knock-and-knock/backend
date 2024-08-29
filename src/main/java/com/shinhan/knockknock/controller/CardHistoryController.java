@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -35,13 +36,23 @@ public class CardHistoryController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping
-    public ResponseEntity<List<ReadCardHistoryResponse>> readAll(@RequestParam("cardId") Long cardId) {
+    public ResponseEntity<List<ReadCardHistoryResponse>> readAll(@RequestParam("cardId") Long cardId,
+                                                                 @RequestParam(value = "startDate", required = false) String startDateStr,
+                                                                 @RequestParam(value = "endDate", required = false) String endDateStr) {
         try {
-            List<ReadCardHistoryResponse> cardHistories = cardHistoryService.readAll(cardId);
+            List<ReadCardHistoryResponse> cardHistories;
+
+            if (startDateStr != null && endDateStr != null) {
+                LocalDateTime startDate = LocalDateTime.parse(startDateStr);
+                LocalDateTime endDate = LocalDateTime.parse(endDateStr);
+                cardHistories = cardHistoryService.readAllWithinDateRange(cardId, startDate, endDate);
+            } else {
+                cardHistories = cardHistoryService.readAll(cardId);
+            }
+
             return ResponseEntity.ok(cardHistories);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -87,11 +98,9 @@ public class CardHistoryController {
     @GetMapping("/{cardId}")
     public ResponseEntity<?> getFamilyCardUserName(@PathVariable("cardId") Long cardId) {
         try {
-            // cardId를 사용하여 CardEntity를 조회
             CardEntity cardEntity = cardRepository.findById(cardId)
                     .orElseThrow(() -> new NoSuchElementException("해당 카드가 존재하지 않습니다."));
 
-            // CardEntity를 사용하여 관련 사용자의 이름 조회
             String userName = cardHistoryService.findUserNameForFamilyCard(cardEntity);
             return ResponseEntity.ok(userName);
         } catch (NoSuchElementException e) {
@@ -101,3 +110,4 @@ public class CardHistoryController {
         }
     }
 }
+
