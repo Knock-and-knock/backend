@@ -52,7 +52,13 @@ public class ConversationRoomServiceImpl implements ConversationRoomService {
     @Override
     public Timestamp readLastConversationTime(long userNo) {
         ConversationRoomEntity room = conversationRoomRepository.findLatestByUserNo(userNo);
-        return room != null ? room.getConversationRoomEndAt() : null;
+
+        if (room == null){
+            return null;
+        } else if (room.getConversationRoomEndAt() ==null) {
+            return room.getConversationRoomStartAt();
+        }
+        return room.getConversationRoomEndAt();
     }
 
     @Override
