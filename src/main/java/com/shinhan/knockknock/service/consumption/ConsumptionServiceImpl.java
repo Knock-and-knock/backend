@@ -38,16 +38,16 @@ public class ConsumptionServiceImpl implements ConsumptionService {
     /**
      * 주어진 사용자 번호와 날짜 범위를 기반으로 월별 소비 리포트를 생성
      *
-     * @param userNo - 사용자 번호
+     * @param userNo    - 사용자 번호
      * @param startDate - 검색 기준 시작일
-     * @param endDate - 검색 기준 마감일
+     * @param endDate   - 검색 기준 마감일
      * @return {
-     *     "cardId": 1,
-     *     "categoryName": "교통",
-     *     "totalAmount": 218000,
-     *     "amount": 25000,
-     *     "family": false
-     *   },
+     * "cardId": 1,
+     * "categoryName": "교통",
+     * "totalAmount": 218000,
+     * "amount": 25000,
+     * "family": false
+     * },
      */
     public List<ReadConsumptionResponse> readConsumptionReportList(Long userNo, Date startDate, Date endDate) {
         List<String> cardNos = readCardNoByUserNo(userNo);
@@ -108,13 +108,14 @@ public class ConsumptionServiceImpl implements ConsumptionService {
 
         // 계산된 날짜를 사용하여 리포트 생성
         return readConsumptionReport(userNo, startDate, endDate);
+    }
 
     /**
      * 주어진 cardId와 startDate, endDate로 소비 리포트를 생성
      *
-     * @param cardId - 카드 식별번호
+     * @param cardId    - 카드 식별번호
      * @param startDate - 검색 기준 시작일
-     * @param endDate - 검색 기준 마감일
+     * @param endDate   - 검색 기준 마감일
      * @return List<ReadConsumptionResponse>
      */
     public List<ReadConsumptionResponse> readConsumptionReport(Long cardId, java.sql.Date startDate, java.sql.Date endDate) {
