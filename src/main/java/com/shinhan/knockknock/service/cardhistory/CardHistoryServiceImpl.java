@@ -10,6 +10,7 @@ import com.shinhan.knockknock.repository.CardHistoryRepository;
 import com.shinhan.knockknock.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -40,8 +41,10 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Override
     public List<ReadCardHistoryResponse> readAll(Long cardId) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "cardHistoryApprove");
+
         try {
-            List<CardHistoryEntity> entityList = cardHistoryRepo.findByCard_CardId(cardId);
+            List<CardHistoryEntity> entityList = cardHistoryRepo.findByCard_CardId(cardId, sort);
             return entityList.stream().map(this::entityToDto).collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("카드 내역 조회에 실패했습니다.", e);
