@@ -2,7 +2,6 @@ package com.shinhan.knockknock.service.card;
 
 import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.card.ReadCardResponse;
-import com.shinhan.knockknock.domain.dto.card.ReadCardSingleResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 import com.shinhan.knockknock.domain.entity.NotificationEntity;
@@ -46,6 +45,7 @@ public class CardServiceImpl implements CardService {
         scheduler.schedule(() -> createPostCard(cardIssueEntity, password), 10, TimeUnit.SECONDS);
     }
 
+    // 카드 발급
     @Override
     public CreateCardIssueResponse createPostCard(CardIssueEntity cardIssueEntity, String password) {
         Random random = new Random();
@@ -112,15 +112,14 @@ public class CardServiceImpl implements CardService {
     }
 
     // 본인 카드 리스트 조회
+    // userNo로 CardEntity 리스트를 조회한 후, 각 카드에 대해 현재 월의 총 소비 금액을 계산하여 ReadCardResponse 객체에 포함
     @Override
     public List<ReadCardResponse> readGetCards(Long userNo) {
         int countCardIssue = 0;
-        // 여러 ID에 해당하는 CardEntity 목록 조회
-        List<CardEntity> cardEntities = cardRepository.findByUserNo(userNo);
+        List<CardEntity> cardEntities = cardRepository.findByUserNo(userNo); // 카드 리스트 조회
 
         if(cardEntities.isEmpty()){ // 1. if 발급된 카드가 없다
             countCardIssue = cardIssueRepository.countByUserNo(userNo);
-            // System.out.println("카드이슈건수: " + countCardIssue);
             if (countCardIssue == 0){ // 2. if CardIssue 테이블에 신청 정보가 없다 -> 발급된 카드가 없습니다.
                 ReadCardResponse readCardResponse = new ReadCardResponse();
                 readCardResponse.setCardResponseMessage("발급된 카드가 없습니다.");
@@ -132,41 +131,33 @@ public class CardServiceImpl implements CardService {
             }
 
         } else {
-            // 각 CardEntity를 ReadCardResponse로 변환
             List<ReadCardResponse> readCardResponses = cardEntities.stream()
-                    .map(this::transformEntityToDTO)
-                    .collect(Collectors.toList());
+                    .map(cardEntity -> {
+                        Long cardId = cardEntity.getCardId();
 
-            // 만료 일자 형식 변환
-            //readCardResponses.forEach(readCardResponse -> {
-            //    String cardExpireDate = readCardResponse.getCardExpiredate();
-            //    String date = cardExpireDate.substring(2, 7);
-            //    date = date.replace("-", "/");
-            //    readCardResponse.setCardExpiredate(date);
-            //});
+                        // 이번 달 카드별 사용 금액 계산
+                        YearMonth currentMonth = YearMonth.now();
+                        LocalDateTime startDate = currentMonth.atDay(1).atStartOfDay();
+                        LocalDateTime endDate = currentMonth.atEndOfMonth().atTime(23, 59, 59);
+                        Long totalAmount = consumptionRepository.findTotalAmountByCardIdAndCurrentMonth(cardId, startDate, endDate);
+
+                        if (totalAmount == null) {
+                            totalAmount = 0L;
+                        }
+
+                        return ReadCardResponse.builder()
+                                .cardId(cardEntity.getCardId())
+                                .cardNo(cardEntity.getCardNo())
+                                .cardBank(cardEntity.getCardBank())
+                                .cardIsFamily(cardEntity.isCardIsfamily())
+                                .totalAmount(totalAmount)
+                                .cardResponseMessage("카드가 정상적으로 조회되었습니다.")
+                                .build();
+                    })
+                    .collect(Collectors.toList());
 
             return readCardResponses;
         }
     }
-
-    // 본인 카드 하나의 현재 월의 총 소비내역 조회
-    public ReadCardSingleResponse readgetCard(Long cardId){
-
-        YearMonth currentMonth = YearMonth.now();
-        LocalDateTime startDate = currentMonth.atDay(1).atStartOfDay();
-        LocalDateTime endDate = currentMonth.atEndOfMonth().atTime(23, 59, 59);
-
-        Long cardTotalAmount = consumptionRepository.findTotalAmountByCardIdAndCurrentMonth(cardId, startDate, endDate);
-        if (cardTotalAmount == null){ cardTotalAmount = 0L; }
-
-        ReadCardSingleResponse readCardSingleResponse = ReadCardSingleResponse
-                .builder()
-                .cardId(cardId)
-                .totalAmount(cardTotalAmount)
-                .build();
-
-        return readCardSingleResponse;
-    }
-
 
 }

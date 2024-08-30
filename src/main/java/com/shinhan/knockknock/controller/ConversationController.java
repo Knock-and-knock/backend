@@ -6,6 +6,7 @@ import com.shinhan.knockknock.domain.dto.conversation.ConversationResponse;
 import com.shinhan.knockknock.service.conversation.ConversationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -27,10 +28,18 @@ public class ConversationController {
 
     @PostMapping
     @Operation(summary = "말동무 대화 [In Progress]", description = "말동무의 답변을 생성합니다.")
-    public ResponseEntity<ConversationResponse> conversation(@RequestHeader("Authorization") String header, @RequestBody ConversationRequest request) {
+    public ResponseEntity<ConversationResponse> conversation(
+            @RequestHeader("Authorization") String header,
+            @RequestBody ConversationRequest request,
+            HttpServletRequest httpServletRequest) {
+
         long userNo = jwtProvider.getUserNoFromHeader(header);
 
-        log.info("📌 Received conversation request: input=\u001B[34m{}\u001B[0m, conversationRoomNo=\u001B[34m{}\u001B[0m", request.getInput(), request.getConversationRoomNo());
+        // 사용자 IP 주소 추출
+        String clientIp = getClientIp(httpServletRequest);
+
+        log.info("📌 Received conversation request from IP: \u001B[34m{}\u001B[0m, input=\u001B[34m{}\u001B[0m, conversationRoomNo=\u001B[34m{}\u001B[0m",
+                clientIp, request.getInput(), request.getConversationRoomNo());
 
         long startTime = System.currentTimeMillis();
         ConversationResponse response = conversationService.conversation(request, userNo);
@@ -42,5 +51,25 @@ public class ConversationController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 }

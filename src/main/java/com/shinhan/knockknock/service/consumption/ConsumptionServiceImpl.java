@@ -1,8 +1,8 @@
 package com.shinhan.knockknock.service.consumption;
 
 import com.shinhan.knockknock.domain.dto.consumption.ReadConsumptionResponse;
-import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardCategoryEntity;
+import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
 import com.shinhan.knockknock.repository.CardCategoryRepository;
 import com.shinhan.knockknock.repository.CardRepository;
@@ -11,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.time.LocalDateTime;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -91,23 +91,63 @@ public class ConsumptionServiceImpl implements ConsumptionService {
     }
 
     @Override
-    public List<ReadConsumptionResponse> readConsumptionReportForConversation(Long userNo, Date currentDate) {
-        // 현재 날짜로부터 해당 달의 시작일과 종료일을 계산
+    public String readConsumptionReportForConversation(CardEntity card, String date) {
+        // 입력된 날짜 문자열 ("2024-08")을 Date 객체로 변환
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
+        java.util.Date parsedDate;
+        try {
+            parsedDate = dateFormat.parse(date);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid date format. Expected format is yyyy-MM", e);
+        }
+
+        // Calendar 객체를 생성하고 파싱된 날짜를 설정
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
+        calendar.setTime(parsedDate);
 
         // 월의 첫날 설정
         calendar.set(Calendar.DAY_OF_MONTH, 1);
-        Date startDate = new Date(calendar.getTimeInMillis());
+        java.sql.Date startDate = new java.sql.Date(calendar.getTimeInMillis());
 
         // 월의 마지막 날 설정
         calendar.add(Calendar.MONTH, 1);  // 다음 달로 이동
         calendar.set(Calendar.DAY_OF_MONTH, 1);  // 다음 달의 첫 날로 설정
         calendar.add(Calendar.DATE, -1);  // 하루를 빼서 이번 달의 마지막 날로 설정
-        Date endDate = new Date(calendar.getTimeInMillis());
+        java.sql.Date endDate = new java.sql.Date(calendar.getTimeInMillis());
 
         // 계산된 날짜를 사용하여 리포트 생성
-        return readConsumptionReport(userNo, startDate, endDate);
+        List<ReadConsumptionResponse> consumptionReport = readConsumptionReport(card.getCardId(), startDate, endDate);
+
+        // 문자열 포맷을 위한 SimpleDateFormat 생성
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        // 총 소비액을 계산 (totalAmount는 같은 값을 가진다고 가정)
+        int totalAmount = consumptionReport.isEmpty() ? 0 : consumptionReport.get(0).getTotalAmount();
+
+        // 최종 문자열 빌더
+        StringBuilder reportBuilder = new StringBuilder();
+
+        // 시작 날짜, 끝 날짜, 카드 ID, 총 소비액 추가
+        reportBuilder.append("Start Date: ").append(outputDateFormat.format(startDate))
+                .append(", End Date: ").append(outputDateFormat.format(endDate))
+                .append(", Card Number: ").append(card.getCardNo().split("-")[0])
+                .append(", Total Consumption: ").append(totalAmount)
+                .append("\nCategory-wise Consumption:\n");
+
+        // 각 카테고리별 소비 내역 및 백분율 추가
+        for (ReadConsumptionResponse response : consumptionReport) {
+            int amount = response.getAmount();
+            double percentage = (totalAmount > 0) ? ((double) amount / totalAmount) * 100 : 0;
+
+            reportBuilder.append(response.getCategoryName())
+                    .append(": ")
+                    .append(amount)
+                    .append(" (")
+                    .append(String.format("%.2f", percentage))
+                    .append("%)\n");
+        }
+
+        return reportBuilder.toString();
     }
 
     /**
