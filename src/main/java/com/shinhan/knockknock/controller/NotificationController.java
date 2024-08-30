@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import retrofit2.http.PUT;
 
 import java.util.List;
 import java.util.Map;
@@ -72,6 +73,15 @@ public class NotificationController {
     @GetMapping("/read/count")
     public Long readNotificationCount(@RequestHeader("Authorization") String header){
         return notificationService.readNotificationCount(jwtProvider.getUserNoFromHeader(header));
+    }
+
+    // 알림 전체 읽기
+    @Operation(summary = "알림 전체 체크", description= "알림 전체 체크")
+    @PutMapping("/allcheck")
+    public String readAllNotifications(@RequestHeader("Authorization") String header){
+        Long userNo = jwtProvider.getUserNoFromHeader(header);
+        notificationService.readAllNotifications(userNo);
+        return "notification success";
     }
 
 }
