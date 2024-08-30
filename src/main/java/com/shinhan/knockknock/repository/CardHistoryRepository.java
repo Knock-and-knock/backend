@@ -5,10 +5,14 @@ import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
 import jakarta.persistence.EntityResult;
 import jakarta.persistence.FieldResult;
 import jakarta.persistence.SqlResultSetMapping;
+import org.springframework.data.domain.Sort;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,5 +30,8 @@ public interface CardHistoryRepository extends JpaRepository<CardHistoryEntity, 
             nativeQuery = true)
     Optional<Long> findTopUsedCardNoLastMonthByUser(@Param("userId") Long userId);
 
+    List<CardHistoryEntity> findByCard_CardId(Long cardId, Sort sort);
+
+    List<CardHistoryEntity> findByCard_CardIdAndCardHistoryApproveBetween(Long cardId, Timestamp startDate, Timestamp endDate);
 
 }

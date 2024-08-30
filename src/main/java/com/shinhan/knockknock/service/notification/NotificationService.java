@@ -14,6 +14,7 @@ public interface NotificationService {
     List<ReadNotificationResponse> readNotifications(Long userNo);
     ReadNotificationResponse readNotification(Long notificationId);
     public Long readNotificationCount(Long userNo);
+    public void readAllNotifications(Long userNo);
 
     // Entity -> DTO
     default ReadNotificationResponse transformEntityToDTO(NotificationEntity notificationEntity) {

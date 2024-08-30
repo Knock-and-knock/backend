@@ -5,8 +5,11 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
@@ -17,6 +20,9 @@ public class SwaggerConfig {
                 .version("v0.0.1")
                 .title("Knock Knock API 명세")
                 .description("Knock Knock의 API 명세입니다.");
+
+        Server server = new Server();
+        server.setUrl("https://ds-knock-knock.duckdns.org");
 
         // Define the Security Scheme for JWT token
         SecurityScheme apiKey = new SecurityScheme()
@@ -33,6 +39,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
                 .addSecurityItem(securityRequirement)
+                .servers(List.of(server))
                 .info(info);
     }
 
