@@ -3,6 +3,7 @@ package com.shinhan.knockknock.service.card;
 import com.shinhan.knockknock.domain.dto.card.CreateCardIssueRequest;
 import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.card.ReadCardIssueResponse;
+import com.shinhan.knockknock.domain.dto.card.ReadMemberInfo;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 import com.shinhan.knockknock.domain.entity.RiskEnum;
 
@@ -10,6 +11,9 @@ import java.sql.Date;
 import java.util.List;
 
 public interface CardIssueService {
+
+    // 기본 정보 조회
+    public ReadMemberInfo readMemberInfo(Long userNo);
 
     // 카드 발급 요청
     public CreateCardIssueResponse createPostCardIssue(CreateCardIssueRequest request, Long userNo);
