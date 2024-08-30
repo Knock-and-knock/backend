@@ -22,6 +22,9 @@ public interface CardHistoryService {
     // 가족 카드의 관련 사용자의 이름을 찾는 메서드
     String findUserNameForFamilyCard(CardEntity card);
 
+    // 최근 한달간 가장 많이 사용한 카드를 찾는 메서드
+    CardEntity readTopUsedCardLastMonth(Long userNo);
+
     // DTO를 엔티티로 변환하는 기본 메서드
     CardHistoryEntity dtoToEntity(CreateCardHistoryRequest request);
 

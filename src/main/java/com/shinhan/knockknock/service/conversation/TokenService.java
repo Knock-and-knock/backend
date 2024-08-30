@@ -1,9 +1,6 @@
 package com.shinhan.knockknock.service.conversation;
 
-import com.shinhan.knockknock.domain.dto.conversation.ChatbotResponse;
-import com.shinhan.knockknock.domain.dto.conversation.ClassificationResponse;
-import com.shinhan.knockknock.domain.dto.conversation.RedirectionResponse;
-import com.shinhan.knockknock.domain.dto.conversation.ReservationResponse;
+import com.shinhan.knockknock.domain.dto.conversation.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -35,5 +32,14 @@ public class TokenService {
         response.setPromptTokens(response.getPromptTokens() + reservationResult.getPromptTokens());
         response.setCompletionTokens(response.getCompletionTokens() + reservationResult.getCompletionTokens());
         response.setTotalTokens(response.getTotalTokens() + reservationResult.getTotalTokens());
+    }
+
+    public void calculateToken(ChatbotResponse response, ConsumptionResponse consumptionReportResult) {
+        log.debug("🪙 Reservation Tokens - PromptTokens: {}, CompletionTokens: {}, TotalTokens: {}", consumptionReportResult.getPromptTokens(), consumptionReportResult.getCompletionTokens(), consumptionReportResult.getTotalTokens());
+        log.debug("🪙 Chatbot Tokens - PromptTokens: {}, CompletionTokens: {}, TotalTokens: {}", response.getPromptTokens(), response.getCompletionTokens(), response.getTotalTokens());
+
+        response.setPromptTokens(response.getPromptTokens() + consumptionReportResult.getPromptTokens());
+        response.setCompletionTokens(response.getCompletionTokens() + consumptionReportResult.getCompletionTokens());
+        response.setTotalTokens(response.getTotalTokens() + consumptionReportResult.getTotalTokens());
     }
 }
