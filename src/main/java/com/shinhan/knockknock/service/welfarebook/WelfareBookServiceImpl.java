@@ -12,6 +12,7 @@ import com.shinhan.knockknock.repository.WelfareRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class WelfareBookServiceImpl implements WelfareBookService {
     final WelfareRepository welfareRepository;
     final MatchRepository matchRepository;
 
+    @Transactional
     @Override
     public Long createWelfareBook(CreateWelfareBookRequest request, Long userNo) {
         // 일반 사용자의 복지 서비스 신청 또는 보호자가 매칭된 일반 사용자를 대신한 신청 처리
@@ -40,7 +42,10 @@ public class WelfareBookServiceImpl implements WelfareBookService {
 
         WelfareBookEntity newWelfareBook = welfareBookRepo.save(dtoToEntity(request, user, welfare));
 
-        user.setUserAddress(request.getUserAddress());
+        String fullAddress = request.getProtegeAddress() + "/" + request.getProtegeAddressDetail();
+        System.out.println(fullAddress);
+
+        user.setUserAddress(fullAddress);
         user.setUserHeight(request.getUserHeight());
         user.setUserBirth(request.getUserBirth());
         user.setUserDisease(request.getUserDisease());

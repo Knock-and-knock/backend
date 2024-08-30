@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -24,6 +25,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/api/v1/welfare-book")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "4. 복지 예약 내역", description = "복지 예약 목록 API")
 public class WelfareBookController {
 
@@ -74,6 +76,8 @@ public class WelfareBookController {
             @Valid @RequestBody CreateWelfareBookRequest request,
             BindingResult bindingResult) {
 
+        log.info("===============================");
+
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력된 값이 없습니다.");
         }
@@ -89,6 +93,11 @@ public class WelfareBookController {
             if (match != null && match.getUserProtector().getUserNo().equals(userNo)) {
                 userNo = match.getUserProtege().getUserNo();
             }
+
+            System.out.println("Protege Address: " + request.getProtegeAddress());
+            System.out.println("Protege Address Detail: " + request.getProtegeAddressDetail());
+            log.info("Protege Address: " + request.getProtegeAddress());
+            log.info("Protege Address Detail: " + request.getProtegeAddressDetail());
 
             Long welfareBookNo = welfareBookService.createWelfareBook(request, userNo);
             return ResponseEntity.status(HttpStatus.CREATED).body(welfareBookNo);

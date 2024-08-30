@@ -52,9 +52,8 @@ public class CreateWelfareBookRequest {
     @NotNull
     private Date userBirth;
 
-    @Schema(example = "서울시 마포구 월드컵대로")
-    @NotBlank
-    private String userAddress;
+    private String protegeAddress;
+    private String protegeAddressDetail;
 
     @Schema(example = "2")
     @NotNull
