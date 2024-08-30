@@ -5,6 +5,8 @@ import com.shinhan.knockknock.domain.dto.cardhistory.ReadCardHistoryResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CardHistoryService {
@@ -14,6 +16,9 @@ public interface CardHistoryService {
     // 모든 카드 내역 조회 메서드
     List<ReadCardHistoryResponse> readAll(Long cardId);
 
+    // 카드 내역 날짜별 조회
+    List<ReadCardHistoryResponse> readAllWithinDateRange(Long cardId, Timestamp startDate, Timestamp endDate);
+
     // 가족 카드의 관련 사용자의 이름을 찾는 메서드
     String findUserNameForFamilyCard(CardEntity card);
 
@@ -21,5 +26,5 @@ public interface CardHistoryService {
     CardHistoryEntity dtoToEntity(CreateCardHistoryRequest request);
 
     // 엔티티를 DTO로 변환하는 기본 메서드
-    ReadCardHistoryResponse entityToDto(CardHistoryEntity entity, CardEntity card);
+    ReadCardHistoryResponse entityToDto(CardHistoryEntity entity);
 }
