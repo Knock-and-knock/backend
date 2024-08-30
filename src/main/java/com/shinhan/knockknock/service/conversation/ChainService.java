@@ -3,10 +3,7 @@ package com.shinhan.knockknock.service.conversation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shinhan.knockknock.domain.dto.conversation.ChatbotResponse;
-import com.shinhan.knockknock.domain.dto.conversation.ClassificationResponse;
-import com.shinhan.knockknock.domain.dto.conversation.RedirectionResponse;
-import com.shinhan.knockknock.domain.dto.conversation.ReservationResponse;
+import com.shinhan.knockknock.domain.dto.conversation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -109,6 +106,24 @@ public class ChainService {
                 .serviceTypeNumber(rootNode.path("serviceTypeNumber").asInt())
                 .reservationDate(rootNode.path("reservationDate").asText())
                 .reservationTimeNumber(rootNode.path("reservationTimeNumber").asInt())
+                .promptTokens(response.getPromptTokens())
+                .completionTokens(response.getCompletionTokens())
+                .totalTokens(response.getTotalTokens())
+                .build();
+    }
+
+    public ConsumptionResponse consumptionReportChain(List<Map<String, String>> prompt) throws JsonProcessingException {
+        Map<String, Object> responseSchema = new HashMap<>();
+        responseSchema.put("year", Map.of("type", "number"));
+        responseSchema.put("month", Map.of("type", "number"));
+
+        ChatbotResponse response = chatbotService.getChatbotResponse(prompt, responseSchema);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getContent());
+        return ConsumptionResponse.builder()
+                .year(rootNode.path("year").asInt())
+                .month(rootNode.path("month").asInt())
                 .promptTokens(response.getPromptTokens())
                 .completionTokens(response.getCompletionTokens())
                 .totalTokens(response.getTotalTokens())

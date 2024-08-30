@@ -64,11 +64,12 @@ public class PromptService {
      * @return 프롬프트 메시지를 포함한 리스트
      */
     public List<Map<String, String>> reservationPrompt(String input, List<ConversationLogResponse> conversationLogs) {
-        // Prompt에 현재 날짜 추가
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String dateStr = LocalDate.now().format(formatter);
-        String systemPrompt = loadPrompt("prompts/reservation.prompt") + "\nToday's date: " + dateStr;
+        String systemPrompt = loadPrompt("prompts/reservation.prompt") + getCurrentDate();
+        return makePrompt(systemPrompt, input, conversationLogs);
+    }
 
+    public List<Map<String, String>> consumptionReportPrompt(String input, List<ConversationLogResponse> conversationLogs) {
+        String systemPrompt = loadPrompt("prompts/consumption_report.prompt") + getCurrentDate();
         return makePrompt(systemPrompt, input, conversationLogs);
     }
 
@@ -83,11 +84,7 @@ public class PromptService {
      * @return 프롬프트 메시지를 포함한 리스트
      */
     public List<Map<String, String>> chatbotPrompt(List<String> promptFilePathList, String input, List<ConversationLogResponse> conversationLogs) {
-        // Prompt에 현재 날짜 추가
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String dateStr = LocalDate.now().format(formatter);
-        String systemPrompt = loadPrompts(promptFilePathList) + "\nToday's date: " + dateStr;
-
+        String systemPrompt = loadPrompts(promptFilePathList) + getCurrentDate();
         return makePrompt(systemPrompt, input, conversationLogs);
     }
 
@@ -108,10 +105,8 @@ public class PromptService {
             List<ConversationLogResponse> conversationLogs,
             String additionalInfo
     ) {
-        // Prompt에 현재 날짜 추가
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String dateStr = LocalDate.now().format(formatter);
-        String systemPrompt = loadPrompts(promptFilePathList) + "\n" + additionalInfo + "\nToday's date: " + dateStr;
+
+        String systemPrompt = loadPrompts(promptFilePathList) + "\n" + additionalInfo + getCurrentDate();
 
         return makePrompt(systemPrompt, input, conversationLogs);
     }
@@ -191,5 +186,11 @@ public class PromptService {
         } catch (IOException e) {
             throw new ChatbotException("Failed to load prompt from: " + promptFilePath, e);
         }
+    }
+
+    public String getCurrentDate(){
+        // Prompt에 현재 날짜 추가
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return "\nToday's date: " + LocalDate.now().format(formatter);
     }
 }
