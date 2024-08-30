@@ -3,9 +3,12 @@ package com.shinhan.knockknock.service.card;
 import com.shinhan.knockknock.domain.dto.card.CreateCardIssueRequest;
 import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.card.ReadCardIssueResponse;
+import com.shinhan.knockknock.domain.dto.card.ReadMemberInfo;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
+import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.exception.NoCardIssueFoundException;
 import com.shinhan.knockknock.repository.CardIssueRepository;
+import com.shinhan.knockknock.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,7 +23,21 @@ public class CardIssueServiceImpl implements CardIssueService {
     CardIssueRepository cardIssueRepository;
     @Autowired
     CardService cardService;
+    @Autowired
+    UserRepository userRepository;
 
+    // 기본 정보 조회
+    public ReadMemberInfo readMemberInfo(Long userNo){
+        UserEntity userEntity = userRepository.findByUserNo(userNo);
+        ReadMemberInfo readMemberInfo = ReadMemberInfo
+                .builder()
+                .userName(userEntity.getUserName())
+                .userPhone(userEntity.getUserPhone())
+                .build();
+        return readMemberInfo;
+    }
+
+    // 카드 발급
     @Override
     public CreateCardIssueResponse createPostCardIssue(CreateCardIssueRequest request, Long userNo) {
 

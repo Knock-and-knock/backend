@@ -26,6 +26,13 @@ public class CardController {
     private final ClovaOCRService clovaOCRService;
     private final JwtProvider jwtProvider;
 
+    // 기본 정보 조회
+    @Operation(summary = "기본 정보 조회", description= "카드 신청 전 기본 정보 조회")
+    @GetMapping("myInfo")
+    public ReadMemberInfo readMemberInfo(@RequestHeader("Authorization") String header){
+        return cardIssueService.readMemberInfo(jwtProvider.getUserNoFromHeader(header));
+    }
+
     /*
     200 OK: 서버가 요청을 성공적으로 처리했으며, 그 결과를 클라이언트에게 반환하고 있다는 것을 의미
     202 ACCEPTED: 서버가 요청을 수신했으며, 이를 처리할 것임을 의미(비동기)
