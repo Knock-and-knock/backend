@@ -1,8 +1,6 @@
 package com.shinhan.knockknock.config;
 
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -27,6 +25,8 @@ public class CustomSqlLoader {
     public void loadSqlFiles() throws Exception {
         // 실행할 SQL 파일들 리스트
         String[] sqlFiles = {
+                "sql/user.sql",
+                "sql/card.sql",
                 "sql/cardcategory.sql",
                 "sql/cardhistory.sql",
                 "sql/welfare.sql"
