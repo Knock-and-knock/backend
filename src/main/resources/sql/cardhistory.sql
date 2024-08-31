@@ -1,19 +1,4 @@
 
-/*
-  Category
- */
-
--- card
-DELETE FROM cardhistory_tb;
-DELETE FROM cardcategory_tb;
-INSERT INTO cardcategory_tb (cardcategory_no, cardcategory_name) VALUES (1,'식비');
-INSERT INTO cardcategory_tb (cardcategory_no, cardcategory_name) VALUES (2,'잡화');
-INSERT INTO cardcategory_tb (cardcategory_no, cardcategory_name) VALUES (3,'교통');
-INSERT INTO cardcategory_tb (cardcategory_no, cardcategory_name) VALUES (4,'생활');
-INSERT INTO cardcategory_tb (cardcategory_no, cardcategory_name) VALUES (5,'쇼핑');
-INSERT INTO cardcategory_tb (cardcategory_no, cardcategory_name) VALUES (6,'유흥');
-INSERT INTO cardcategory_tb (cardcategory_no, cardcategory_name) VALUES (7,'의료');
-INSERT INTO cardcategory_tb (cardcategory_no, cardcategory_name) VALUES (8,'기타');
 INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (1, '스타벅스 홍대점', 40000, '2024-01-15 10:20:00.000', 1);
 INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (1, '이마트 강남점', 95000, '2024-01-20 11:30:00.000', 5);
 INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (1, '롯데시네마 강남점', 15000, '2024-01-25 14:00:00.000', 6);
