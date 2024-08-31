@@ -69,6 +69,16 @@ public class CardHistoryController {
         }
     }
 
+    @Operation(summary = "카드 내역 조회 Detail", description = "특정 카드의 사용 내역을 Detail조회하는 API입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "카드 내역 조회 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @GetMapping("/{cardHistoryNo}")
+    public DetailCardHistoryResponse readDetail(@PathVariable("cardHistoryNo") Long cardHistoryNo){
+        return cardHistoryService.readDetail(cardHistoryNo);
+    }
+
     @Operation(summary = "카드 내역 생성", description = "카드 사용시 내역을 생성하는 API입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "카드 내역 생성 성공"),

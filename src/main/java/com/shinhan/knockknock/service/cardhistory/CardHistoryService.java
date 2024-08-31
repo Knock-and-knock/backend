@@ -16,6 +16,8 @@ public interface CardHistoryService {
     // 모든 카드 내역 조회 메서드
     List<ReadCardHistoryResponse> readAll(Long cardId);
 
+    DetailCardHistoryResponse readDetail(Long cardHistoryNo);
+
     // 카드 내역 날짜별 조회
     List<ReadCardHistoryResponse> readAllWithinDateRange(Long cardId, Timestamp startDate, Timestamp endDate);
 

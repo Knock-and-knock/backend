@@ -19,9 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+
 @Service
+@EnableAsync  // 비동기 처리를 활성화
 public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Autowired
@@ -31,18 +36,61 @@ public class CardHistoryServiceImpl implements CardHistoryService {
     private UserRepository userRepository;
 
     @Autowired
-    CardRepository cardRepo;
+    private CardRepository cardRepo;
 
     @Override
     public Long createCardHistory(CreateCardHistoryRequest request) {
         try {
             CardHistoryEntity newCardHistory = cardHistoryRepo.save(dtoToEntity(request));
-            return newCardHistory.getCardHistoryNo();
+            Long cardHistoryNo = newCardHistory.getCardHistoryNo();
+
+            // 비동기로 탐지 기능 실행
+            detectFraudulentTransaction(newCardHistory.getCard().getCardId());
+
+            return cardHistoryNo;
         } catch (DataAccessException e) {
             throw new RuntimeException("카드 내역 생성 중 데이터베이스 오류가 발생했습니다.", e);
         } catch (Exception e) {
             throw new RuntimeException("카드 내역 생성에 실패했습니다.", e);
         }
+    }
+
+    @Async  // 비동기 처리 메서드
+    public void detectFraudulentTransaction(Long cardId) {
+        try {
+            // 카드 내역 조회
+            List<CardHistoryEntity> cardHistoryList = cardHistoryRepo.findByCard_CardId(cardId, Sort.by(Sort.Direction.DESC, "cardHistoryApprove"));
+
+            // 결제 금액 리스트 생성
+            List<Integer> transactionAmounts = cardHistoryList.stream()
+                    .map(CardHistoryEntity::getCardHistoryAmount)
+                    .collect(Collectors.toList());
+
+            // 탐지 기능 수행
+            double threshold = calculateTransactionThreshold(transactionAmounts);
+
+            // 탐지 결과 확인 및 출력
+            if (transactionAmounts.stream().anyMatch(amount -> amount > threshold)) {
+                System.out.println("이상금융거래가 탐지 되었습니다.");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("이상 거래 탐지 중 오류가 발생했습니다.", e);
+        }
+    }
+
+    public double calculateTransactionThreshold(List<Integer> transactions) {
+        if (transactions == null || transactions.isEmpty()) {
+            return 600000;  // 카드 내역이 없을 때 600000 반환
+        }
+
+        double sum = 0;
+        for (double transaction : transactions) {
+            sum += transaction;
+        }
+        double average = sum / transactions.size();
+
+        double threshold = average * 3;
+        return threshold < 600000 ? 600000 : threshold;
     }
 
     @Override
@@ -67,6 +115,11 @@ public class CardHistoryServiceImpl implements CardHistoryService {
         }
     }
 
+    public DetailCardHistoryResponse readDetail(Long cardHistoryNo){
+        Optional<CardHistoryEntity> entity = cardHistoryRepo.findById(cardHistoryNo);
+        return (DetailCardHistoryResponse) entity.stream().map(this::entityToDtoDetail);
+    }
+
     @Override
     public String findUserNameForFamilyCard(CardEntity card) {
         UserEntity relatedUser = userRepository.findByCards_CardBankAndCards_CardAccountAndCards_CardIsfamilyFalse(
@@ -86,7 +139,6 @@ public class CardHistoryServiceImpl implements CardHistoryService {
         CardHistoryEntity cardHistory = cardHistoryRepo.findById(cardHistoryNo)
                 .orElseThrow(() -> new NoSuchElementException("해당 카드 내역이 존재하지 않습니다."));
 
-        // cardHistoryIsCansle을 true로 설정
         cardHistory.setCardHistoryIsCansle(true);
         cardHistoryRepo.save(cardHistory);
     }
