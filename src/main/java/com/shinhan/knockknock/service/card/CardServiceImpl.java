@@ -2,12 +2,8 @@ package com.shinhan.knockknock.service.card;
 
 import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.card.ReadCardResponse;
-import com.shinhan.knockknock.domain.entity.CardEntity;
-import com.shinhan.knockknock.domain.entity.CardIssueEntity;
-import com.shinhan.knockknock.domain.entity.NotificationEntity;
-import com.shinhan.knockknock.repository.CardIssueRepository;
-import com.shinhan.knockknock.repository.CardRepository;
-import com.shinhan.knockknock.repository.ConsumptionRepository;
+import com.shinhan.knockknock.domain.entity.*;
+import com.shinhan.knockknock.repository.*;
 import com.shinhan.knockknock.service.notification.NotificationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,6 +36,10 @@ public class CardServiceImpl implements CardService {
     ConsumptionRepository consumptionRepository;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private MatchRepository matchRepository;
 
     @Async("taskExecutor")
     public void scheduleCreatePostCard(CardIssueEntity cardIssueEntity, String password) {
@@ -113,10 +114,23 @@ public class CardServiceImpl implements CardService {
 
     // 본인 카드 리스트 조회
     // userNo로 CardEntity 리스트를 조회한 후, 각 카드에 대해 현재 월의 총 소비 금액을 계산하여 ReadCardResponse 객체에 포함
+    // userNo가 피보호자면 매칭테이블 조회해서 보호자 userNo의 가족카드를 조회해서 붙이기
     @Override
     public List<ReadCardResponse> readGetCards(Long userNo) {
         int countCardIssue = 0;
+        Long protectorUserNo = null;
+        String userType = String.valueOf(userRepository.findByUserNo(userNo).getUserType()); // 보호자 여부
+
+        if (userType.equals("PROTEGE")) { // 피보호자면 매칭테이블 조회해서 보호자 userNo를 가져오기
+            protectorUserNo = getProtectorUserNo(userNo);
+        }
+
         List<CardEntity> cardEntities = cardRepository.findByUserNo(userNo); // 카드 리스트 조회
+
+        if (protectorUserNo != null) { // 피보호자인 경우, 보호자의 카드도 함께 조회
+            List<CardEntity> protectorCardEntities = cardRepository.findFamilyCardsByUserNo(protectorUserNo);
+            cardEntities.addAll(protectorCardEntities);
+        }
 
         if(cardEntities.isEmpty()){ // 1. if 발급된 카드가 없다
             countCardIssue = cardIssueRepository.countByUserNo(userNo);
@@ -158,6 +172,16 @@ public class CardServiceImpl implements CardService {
 
             return readCardResponses;
         }
+    }
+
+    private Long getProtectorUserNo(Long userNo) {
+        // 피보호자 유저 번호로 매칭 정보를 가져옴
+        Optional<MatchEntity> matchEntityOptional = matchRepository.findByUserProtege_UserNo(userNo);
+
+        // 매칭 정보가 존재하는 경우 보호자의 UserNo 반환, 존재하지 않으면 null 반환
+        return matchEntityOptional
+                .map(matchEntity -> matchEntity.getUserProtector().getUserNo())
+                .orElse(null);
     }
 
 }

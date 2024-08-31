@@ -1,7 +1,5 @@
 package com.shinhan.knockknock.domain.dto.cardhistory;
 
-import com.shinhan.knockknock.domain.entity.CardCategoryEntity;
-import com.shinhan.knockknock.domain.entity.CardEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +9,10 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class CreateCardHistoryRequest {
+public class DetailCardHistoryResponse {
     @Schema(example = "55000")
     private int cardHistoryAmount;
     @Schema(example = "올리브영 연남점")
@@ -23,9 +21,7 @@ public class CreateCardHistoryRequest {
     private Timestamp cardHistoryApprove;
     @Schema(example = "1")
     private Long cardCategoryNo;
-    @Schema(example = "1")
-    private Long cardId;
-    @Schema(example = "true")
+    @Schema(example = "True")
     private boolean isCardFamily;
     @Schema(example = "false")
     private boolean cardHistoryIsCansle;

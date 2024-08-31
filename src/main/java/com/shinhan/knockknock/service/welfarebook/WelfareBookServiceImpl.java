@@ -2,6 +2,7 @@ package com.shinhan.knockknock.service.welfarebook;
 
 import com.shinhan.knockknock.domain.dto.welfarebook.CreateWelfareBookRequest;
 import com.shinhan.knockknock.domain.dto.welfarebook.ReadWelfareBookResponse;
+import com.shinhan.knockknock.domain.entity.MatchEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.domain.entity.WelfareBookEntity;
 import com.shinhan.knockknock.domain.entity.WelfareEntity;
@@ -74,9 +75,17 @@ public class WelfareBookServiceImpl implements WelfareBookService {
 
     @Override
     public List<ReadWelfareBookResponse> readAllByUserNo(Long userNo) {
-        // userNo 별로 복지 예약 내역 조회
-        Sort sort = Sort.by(Sort.Direction.DESC, "welfareBookReservationDate");
+        // userNo로 매칭된 userProtege가 있는지 확인
+        MatchEntity match = matchRepository.findByUserProtectorAndUserProtege(userRepository.findById(userNo).get(), null)
+                .orElse(null);
 
+        // 만약 매칭된 userProtege가 있다면, 해당 protege의 userNo로 설정
+        if (match != null) {
+            userNo = match.getUserProtege().getUserNo();
+        }
+
+        // userNo (매칭된 protege의 userNo 또는 입력된 userNo)로 예약 내역 조회
+        Sort sort = Sort.by(Sort.Direction.DESC, "welfareBookReservationDate");
         List<WelfareBookEntity> entityList = welfareBookRepo.findByUser_UserNo(userNo, sort);
 
         return entityList.stream().map(this::entityToDto).collect(Collectors.toList());
