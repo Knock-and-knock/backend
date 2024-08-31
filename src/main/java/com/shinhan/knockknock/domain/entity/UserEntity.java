@@ -16,10 +16,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_tb", uniqueConstraints = {@UniqueConstraint(
+@Table(name = "user_tb"/*, uniqueConstraints = {@UniqueConstraint(
         name = "user_name_phone_unique",
         columnNames={"user_name", "user_phone"}
-)})
+)}*/)
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
