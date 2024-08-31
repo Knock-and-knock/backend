@@ -2,6 +2,7 @@ package com.shinhan.knockknock.controller;
 
 import com.shinhan.knockknock.domain.dto.cardcategory.CreateCardCategoryRequest;
 import com.shinhan.knockknock.domain.dto.cardhistory.CreateCardHistoryRequest;
+import com.shinhan.knockknock.domain.dto.cardhistory.DetailCardHistoryResponse;
 import com.shinhan.knockknock.domain.dto.cardhistory.ReadCardHistoryResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.repository.CardRepository;
@@ -39,8 +40,8 @@ public class CardHistoryController {
     })
     @GetMapping
     public ResponseEntity<List<ReadCardHistoryResponse>> readAll(@RequestParam("cardId") Long cardId,
-                                                                 @RequestParam(value = "startDate", required = false) String startDateStr,
-                                                                 @RequestParam(value = "endDate", required = false) String endDateStr) {
+                                                                   @RequestParam(value = "startDate", required = false) String startDateStr,
+                                                                   @RequestParam(value = "endDate", required = false) String endDateStr) {
         try {
             List<ReadCardHistoryResponse> cardHistories;
 
@@ -119,6 +120,24 @@ public class CardHistoryController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("사용자 조회 중 오류가 발생했습니다.");
+        }
+    }
+
+    @Operation(summary = "카드내역 취소", description = "카드내역을 취소할 때 사용하는 API입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "카드 내역 취소 성공"),
+            @ApiResponse(responseCode = "404", description = "해당 카드 내역을 찾을 수 없습니다."),
+            @ApiResponse(responseCode = "500", description = "서버 오류로 인한 취소 실패")
+    })
+    @PutMapping("/{cardHistoryNo}")
+    public ResponseEntity<String> cancelCardHistory(@PathVariable("cardHistoryNo") Long cardHistoryNo) {
+        try {
+            cardHistoryService.cancelCardHistory(cardHistoryNo);
+            return ResponseEntity.ok("카드 내역이 성공적으로 취소되었습니다.");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카드 내역 취소 중 오류가 발생했습니다.");
         }
     }
 }

@@ -1,12 +1,12 @@
 package com.shinhan.knockknock.service.cardhistory;
 
 import com.shinhan.knockknock.domain.dto.cardhistory.CreateCardHistoryRequest;
+import com.shinhan.knockknock.domain.dto.cardhistory.DetailCardHistoryResponse;
 import com.shinhan.knockknock.domain.dto.cardhistory.ReadCardHistoryResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CardHistoryService {
@@ -29,5 +29,9 @@ public interface CardHistoryService {
     CardHistoryEntity dtoToEntity(CreateCardHistoryRequest request);
 
     // 엔티티를 DTO로 변환하는 기본 메서드
+    DetailCardHistoryResponse entityToDtoDetail(CardHistoryEntity entity);
+
     ReadCardHistoryResponse entityToDto(CardHistoryEntity entity);
+
+    void cancelCardHistory(Long cardHistoryNo);
 }

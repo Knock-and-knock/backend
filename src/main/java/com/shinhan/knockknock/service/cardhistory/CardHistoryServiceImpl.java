@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.service.cardhistory;
 
 import com.shinhan.knockknock.domain.dto.cardhistory.CreateCardHistoryRequest;
+import com.shinhan.knockknock.domain.dto.cardhistory.DetailCardHistoryResponse;
 import com.shinhan.knockknock.domain.dto.cardhistory.ReadCardHistoryResponse;
 import com.shinhan.knockknock.domain.entity.CardCategoryEntity;
 import com.shinhan.knockknock.domain.entity.CardEntity;
@@ -13,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,28 +81,44 @@ public class CardHistoryServiceImpl implements CardHistoryService {
         return cardRepo.findById(cardNo).orElse(null);
     }
 
+    @Transactional
+    public void cancelCardHistory(Long cardHistoryNo) {
+        CardHistoryEntity cardHistory = cardHistoryRepo.findById(cardHistoryNo)
+                .orElseThrow(() -> new NoSuchElementException("해당 카드 내역이 존재하지 않습니다."));
+
+        // cardHistoryIsCansle을 true로 설정
+        cardHistory.setCardHistoryIsCansle(true);
+        cardHistoryRepo.save(cardHistory);
+    }
+
     @Override
     public CardHistoryEntity dtoToEntity(CreateCardHistoryRequest request) {
         return CardHistoryEntity.builder()
-                .cardHistoryNo(request.getCardHistoryNo())
                 .cardHistoryAmount(request.getCardHistoryAmount())
                 .cardHistoryShopname(request.getCardHistoryShopname())
                 .cardHistoryApprove(new Timestamp(System.currentTimeMillis())) // 예시로 현재 시간 사용
                 .cardCategory(CardCategoryEntity.builder().cardCategoryNo(request.getCardCategoryNo()).build())
-                .card(CardEntity.builder().cardId(request.getCardNo()).build())
+                .card(CardEntity.builder().cardId(request.getCardId()).build())
                 .build();
     }
 
+    @Override
+    public DetailCardHistoryResponse entityToDtoDetail(CardHistoryEntity entity) {
+        return DetailCardHistoryResponse.builder()
+                .cardHistoryAmount(entity.getCardHistoryAmount())
+                .cardHistoryShopname(entity.getCardHistoryShopname())
+                .cardHistoryApprove(entity.getCardHistoryApprove())
+                .cardCategoryNo(entity.getCardCategoryNo())
+                .isCardFamily(entity.isCardFamily())
+                .cardHistoryIsCansle(entity.getCardHistoryIsCansle() != null && entity.getCardHistoryIsCansle())
+                .build();
+    }
     @Override
     public ReadCardHistoryResponse entityToDto(CardHistoryEntity entity) {
         return ReadCardHistoryResponse.builder()
                 .cardHistoryAmount(entity.getCardHistoryAmount())
                 .cardHistoryShopname(entity.getCardHistoryShopname())
                 .cardHistoryApprove(entity.getCardHistoryApprove())
-                .cardCategoryNo(entity.getCardCategoryNo())
-                .cardNo(entity.getCardId())
-                .cardBank(entity.getCardBank())
-                .cardAccount(entity.getCardAccount())
                 .isCardFamily(entity.isCardFamily())
                 .cardHistoryIsCansle(entity.getCardHistoryIsCansle() != null && entity.getCardHistoryIsCansle())
                 .build();
