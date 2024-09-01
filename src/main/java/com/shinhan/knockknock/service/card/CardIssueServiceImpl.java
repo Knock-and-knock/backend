@@ -56,16 +56,11 @@ public class CardIssueServiceImpl implements CardIssueService {
                 .build();
     }
 
-    public List<ReadCardIssueResponse> readIssueInfo(Long userNo) {
-        List<CardIssueEntity> cardIssueEntities = cardIssueRepository.findAllByUserNo(userNo);
+    public ReadCardIssueResponse readLatestIssueInfo(Long userNo) {
+        CardIssueEntity cardIssueEntity = cardIssueRepository.findTopByUserNoOrderByIssueDateDesc(userNo)
+                .orElseThrow(() -> new NoCardIssueFoundException("최근 발급된 카드 신청 정보가 없습니다. 개인카드를 발급해주세요."));
 
-        if (cardIssueEntities == null || cardIssueEntities.isEmpty()) {
-            throw new NoCardIssueFoundException("발급된 신청 정보가 없습니다. 개인카드를 발급해주세요.");
-        }
-
-        return cardIssueEntities.stream()
-                .map(this::transformEntityToDTO)
-                .collect(Collectors.toList());
+        return transformEntityToDTO(cardIssueEntity);
     }
 
 
