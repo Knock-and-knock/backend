@@ -43,14 +43,36 @@ public class CreateCardIssueRequest {
     private String cardIssueFirstAddress;
     private String cardIssueSecondAddress;
 
-    // AgreeDeserializer 클래스 내부에 추가
     public static class AgreeDeserializer extends JsonDeserializer<Boolean> {
         @Override
         public Boolean deserialize(JsonParser jp, DeserializationContext ctxt)
                 throws IOException {
-            // JSON 객체에서 status 필드를 읽어 boolean 값으로 변환
-            JsonNode node = jp.getCodec().readTree(jp); // TreeNode를 JsonNode로 캐스팅
-            return "true".equalsIgnoreCase(node.get("cardIssueIsAgree").asText());
+            JsonNode node = jp.getCodec().readTree(jp);
+
+            // 중첩된 구조 처리
+            if (node.has("cardIssueIsAgree")) {
+                JsonNode nestedNode = node.get("cardIssueIsAgree");
+                if (nestedNode.isBoolean()) {
+                    return nestedNode.asBoolean();  // 중첩된 Boolean 값 처리
+                } else if (nestedNode.isTextual()) {
+                    return "true".equalsIgnoreCase(nestedNode.asText());  // 중첩된 문자열 처리
+                }
+            }
+
+            // 단순한 구조 처리
+            if (node.isBoolean()) {
+                return node.asBoolean();  // Boolean 값 처리
+            } else if (node.isTextual()) {
+                String textValue = node.asText();
+                if ("true".equalsIgnoreCase(textValue)) {
+                    return true;
+                } else if ("false".equalsIgnoreCase(textValue)) {
+                    return false;
+                }
+            }
+
+            throw new IOException("Invalid value for cardIssueIsAgree: " + node.asText());
         }
     }
+
 }
