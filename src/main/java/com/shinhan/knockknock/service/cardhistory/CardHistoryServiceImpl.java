@@ -120,13 +120,13 @@ public class CardHistoryServiceImpl implements CardHistoryService {
         return (DetailCardHistoryResponse) entity.stream().map(this::entityToDtoDetail);
     }
 
-    @Override
-    public String findUserNameForFamilyCard(CardEntity card) {
-        UserEntity relatedUser = userRepository.findByCards_CardBankAndCards_CardAccountAndCards_CardIsfamilyFalse(
-                        card.getCardBank(), card.getCardAccount())
-                .orElseThrow(() -> new NoSuchElementException("관련 사용자를 찾을 수 없습니다."));
-        return relatedUser.getUserName();
-    }
+//    @Override
+//    public String findUserNameForFamilyCard(CardEntity card) {
+//        UserEntity relatedUser = userRepository.findByCards_CardBankAndCards_CardAccountAndCards_CardIsfamilyFalse(
+//                        card.getCardBank(), card.getCardAccount())
+//                .orElseThrow(() -> new NoSuchElementException("관련 사용자를 찾을 수 없습니다."));
+//        return relatedUser.getUserName();
+//    }
 
     @Override
     public CardEntity readTopUsedCardLastMonth(Long userNo) {
