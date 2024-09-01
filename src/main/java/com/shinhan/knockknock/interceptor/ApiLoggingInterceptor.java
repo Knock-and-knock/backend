@@ -1,5 +1,6 @@
 package com.shinhan.knockknock.interceptor;
 
+import com.shinhan.knockknock.util.IpUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ public class ApiLoggingInterceptor implements HandlerInterceptor {
     public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) {
         String method = request.getMethod();
         String uri = request.getRequestURI();
-        String ipAddress = request.getRemoteAddr();
+        String ipAddress = IpUtil.getClientIp(request);
 
         // 메서드에 따라 색상 변경
         String methodColor = switch (method) {
@@ -38,7 +39,7 @@ public class ApiLoggingInterceptor implements HandlerInterceptor {
         };
 
         String formattedLog = String.format(
-                "🌐 %s%-15s%s | 🔍 [%s%-4s%s] %s%-30s%s ",
+                "🌐 %s%-15s%s | 🔍 [%s%-4s%s] %s%-40s%s ",
                 CYAN, ipAddress, RESET,
                 methodColor, method, RESET,
                 PURPLE, uri, RESET
