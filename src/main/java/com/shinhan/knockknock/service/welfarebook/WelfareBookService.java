@@ -26,12 +26,14 @@ public interface WelfareBookService {
     // Entity -> DTO
     default ReadWelfareBookResponse entityToDto(WelfareBookEntity entity) {
         return ReadWelfareBookResponse.builder()
+                .welfareBookNo(entity.getWelfareBookNo())
                 .welfareBookStartDate(entity.getWelfareBookStartDate())
                 .welfareBookEndDate(entity.getWelfareBookEndDate())
                 .welfareBookIsCansle(entity.isWelfareBookIsCansle())
                 .welfareBookIsComplete(entity.isWelfareBookIsComplete())
                 .welfareTotalPrice(entity.getWelfareTotalPrice())
                 .welfareBookReservationDate(entity.getWelfareBookReservationDate())
+                .welfareBookUseTime(entity.getWelfareBookUseTime())
                 .userName(entity.getUser().getUserName())
                 .userGender(entity.getUserGender())
                 .welfareName(entity.getWelfareName())

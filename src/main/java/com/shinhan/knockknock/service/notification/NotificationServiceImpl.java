@@ -104,7 +104,7 @@ public class NotificationServiceImpl implements NotificationService {
      * @return List<ReadNotificationResponse> - 해당 사용자 모든 알림 조회
      */
     public List<ReadNotificationResponse> readNotifications(Long userNo){
-        return notificationRepository.findByUserNo(userNo)
+        return notificationRepository.findByUserNoOrderByNotificationDateTimeDesc(userNo)
                 .stream()
                 .map(this::transformEntityToDTO)
                 .toList();

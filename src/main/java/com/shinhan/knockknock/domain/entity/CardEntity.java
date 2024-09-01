@@ -1,5 +1,6 @@
 package com.shinhan.knockknock.domain.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -69,4 +70,12 @@ public class CardEntity {
     @Column(name= "card_address")
     @NotNull
     private String cardAddress;
+
+    @Nullable
+    @Column(name= "card_userkname")
+    private String cardUserKname;
+
+    @Nullable
+    @Column(name= "card_userphone")
+    private String cardUserPhone;
 }

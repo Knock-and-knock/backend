@@ -8,16 +8,19 @@ import com.shinhan.knockknock.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.io.Console;
 import java.security.Key;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtProvider {
 
     private final Key key;
@@ -90,13 +93,13 @@ public class JwtProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            System.out.println("Invalid JWT Token");
+            log.info("Invalid JWT Token");
         } catch (ExpiredJwtException e) {
-            System.out.println("Expired JWT Token");
+            log.debug("Expired JWT Token");
         } catch (UnsupportedJwtException e) {
-            System.out.println("Unsupported JWT Token");
+            log.info("Unsupported JWT Token");
         } catch (IllegalArgumentException e) {
-            System.out.println("JWT claims string is empty.");
+            log.info("JWT claims string is empty.");
         }
         return false;
     }

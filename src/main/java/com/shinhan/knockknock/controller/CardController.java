@@ -58,8 +58,8 @@ public class CardController {
 
     @Operation(summary = "개인 카드 신청정보 조회", description = "추후에 가족카드를 발급하기 위해 사용할 저장된 개인카드 신청정보 조회")
     @GetMapping("/readInfo")
-    public List<ReadCardIssueResponse> readIssueInfo(@RequestHeader("Authorization") String header) {
-        return cardIssueService.readIssueInfo(jwtProvider.getUserNoFromHeader(header));
+    public ReadCardIssueResponse readIssueInfo(@RequestHeader("Authorization") String header) {
+        return cardIssueService.readLatestIssueInfo(jwtProvider.getUserNoFromHeader(header));
     }
 
     @Operation(summary = "신분증 인증 보류")
