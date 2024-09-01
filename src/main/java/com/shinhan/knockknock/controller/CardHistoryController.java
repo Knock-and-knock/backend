@@ -92,6 +92,7 @@ public class CardHistoryController {
             Long cardHistoryNo = cardHistoryService.createCardHistory(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(cardHistoryNo);
         } catch (Exception e) {
+            System.out.println(e);
             log.info(String.valueOf(e));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카드 내역 생성 중 오류가 발생했습니다.");
         }
