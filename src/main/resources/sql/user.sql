@@ -21,4 +21,11 @@ INSERT INTO user_tb
 VALUES('1954-08-24', 2, 168, false, '2024-08-22', 66, '서울특별시 마포구 월드컵북로4길 77/1층 2강의실', '당뇨, 고혈압', 'test', '테스트', '$2a$10$Af1dMKPPwkTFkVceKAyj8.EzcVZdY7mzS2b394cUUXcufnq2CAHVO', '01087654321', '$2a$10$uSfIBekuRZA0xr8ihTGDWuKDPvVrUj5wiYQwQx7nVavzE82ygMHCi', 'PROTEGE', NULL);
 INSERT INTO user_tb
 (user_birth, user_gender, user_height, user_iswithdraw, user_joindate, user_weight, user_address, user_disease, user_id, user_name, user_password, user_phone, user_simplepassword, user_type, user_biopassword)
-VALUES('1932-08-29', 2, 161, false, '2024-08-22', 54, '서울시 마포구 월드컵대로/1층', '고혈압', 'test01', '테스트01', '$2a$10$vs.Xe1huTYyfonCodNSRbeztn1o93yhm05F3PYrj0gvagNcuLmzV6', '01099998888', '$2a$10$lW9Dq3LJmgigM6OJjx8li.xaG/IW4Sai65FuGuGLemWTA/n1YstZa', 'PROTEGE', NULL);
+VALUES('1932-08-29', 2, 161, false, '2024-08-22', 54, '서울시 마포구 월드컵대로/1층', '고혈압', 'test00', '테스트01', '$2a$10$vs.Xe1huTYyfonCodNSRbeztn1o93yhm05F3PYrj0gvagNcuLmzV6', '01099998888', '$2a$10$lW9Dq3LJmgigM6OJjx8li.xaG/IW4Sai65FuGuGLemWTA/n1YstZa', 'PROTEGE', NULL);
+
+INSERT INTO user_tb
+(user_birth, user_gender, user_height, user_iswithdraw, user_joindate, user_weight, user_address, user_disease, user_id, user_name, user_password, user_phone, user_simplepassword, user_type, user_biopassword)
+VALUES('2024-08-01', 1, 1, false, '2024-09-01', 1, NULL, NULL, 'test01', '보호자님', '$2a$10$7.OETnb65gufAE5KIocX7eUqFnT6QapUzyQX23UFR7SguJ3fSqH2u', '01066666666', '$2a$10$ptcSFYwKLz9GrFcpfD8duOcWBHAcOIl50/yZJ0MAPSpnNpyvRXELe', 'PROTECTOR', NULL);
+INSERT INTO user_tb
+(user_birth, user_gender, user_height, user_iswithdraw, user_joindate, user_weight, user_address, user_disease, user_id, user_name, user_password, user_phone, user_simplepassword, user_type, user_biopassword)
+VALUES('2024-08-30', 2, 2, false, '2024-09-01', 2, NULL, '고혈압', 'test02', '피보호자님', '$2a$10$rrqxs.924/hJYKaf.cOnuue/po3tcNhZ8Yxf/jFqtJbJyndzUQsKW', '01077777777', '$2a$10$PfxEDhIIlvcoosaYmIzWkehANIf7yiumN1XyqvvWVUEE2uO0zV/WO', 'PROTEGE', NULL);
