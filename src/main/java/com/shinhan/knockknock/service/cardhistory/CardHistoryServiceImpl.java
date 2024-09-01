@@ -168,6 +168,7 @@ public class CardHistoryServiceImpl implements CardHistoryService {
     @Override
     public ReadCardHistoryResponse entityToDto(CardHistoryEntity entity) {
         return ReadCardHistoryResponse.builder()
+                .cardHistoryNo(entity.getCardHistoryNo())
                 .cardHistoryAmount(entity.getCardHistoryAmount())
                 .cardHistoryShopname(entity.getCardHistoryShopname())
                 .cardHistoryApprove(entity.getCardHistoryApprove())
