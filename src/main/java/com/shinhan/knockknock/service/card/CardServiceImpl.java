@@ -78,6 +78,9 @@ public class CardServiceImpl implements CardService {
         else if (amountDate.equals("middleday")){amountDate="15";}
         else {amountDate="30";}
 
+        // 전화번호 user_tb랑 형식 맞추기
+        String phoneNum = cardIssuePhone.replaceAll("-", "");
+
         CardEntity cardEntity = CardEntity.builder()
                 .cardNo(cardNo)
                 .cardCvc(formattedCvc)
@@ -92,7 +95,7 @@ public class CardServiceImpl implements CardService {
                 .cardIsfamily(cardIssueEntity.isCardIssueIsFamily())
                 .cardAddress(cardIssueEntity.getCardIssueAddress())
                 .cardUserKname(cardIssueKname)
-                .cardUserPhone(cardIssuePhone)
+                .cardUserPhone(phoneNum)
                 .build();
 
         // 카드 발급

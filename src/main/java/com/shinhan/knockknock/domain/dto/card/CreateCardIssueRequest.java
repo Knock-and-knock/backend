@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -19,6 +21,9 @@ import java.io.IOException;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateCardIssueRequest {
+
+    private static final Logger logger = LoggerFactory.getLogger(CreateCardIssueRequest.class);
+
     private String cardIssueKname;
     private String cardIssuePhone;
     private String cardIssueFirstEname;
@@ -43,6 +48,48 @@ public class CreateCardIssueRequest {
     private String cardIssueFirstAddress;
     private String cardIssueSecondAddress;
 
+    public void validate() {
+
+        if (cardIssuePassword == null || cardIssuePassword.isEmpty()) {
+            logger.error("카드 발급 요청의 비밀번호가 유효하지 않습니다: {}", cardIssuePassword);
+            throw new IllegalArgumentException("카드 발급 비밀번호는 필수입니다.");
+        }
+
+        if (cardIssueBank == null || cardIssueBank.isEmpty()) {
+            logger.error("카드 발급 요청의 은행명이 유효하지 않습니다: {}", cardIssueBank);
+            throw new IllegalArgumentException("카드 발급 요청의 은행명은 필수입니다.");
+        }
+
+        if (cardIssueAccount == null || cardIssueAccount.isEmpty()) {
+            logger.error("카드 발급 요청의 계좌 번호가 유효하지 않습니다: {}", cardIssueAccount);
+            throw new IllegalArgumentException("카드 발급 요청의 계좌 번호는 필수입니다.");
+        }
+
+        if (cardIssueIncome == null || cardIssueIncome.isEmpty()) {
+            logger.error("카드 발급 요청의 소득 정보가 유효하지 않습니다: {}", cardIssueIncome);
+            throw new IllegalArgumentException("카드 발급 요청의 소득 정보는 필수입니다.");
+        }
+
+        if (cardIssueCredit == null || cardIssueCredit.isEmpty()) {
+            logger.error("카드 발급 요청의 신용 정보가 유효하지 않습니다: {}", cardIssueCredit);
+            throw new IllegalArgumentException("카드 발급 요청의 신용 정보는 필수입니다.");
+        }
+
+        if (cardIssueAmountDate == null || cardIssueAmountDate.isEmpty()) {
+            logger.error("카드 발급 요청의 결제 날짜가 유효하지 않습니다: {}", cardIssueAmountDate);
+            throw new IllegalArgumentException("카드 발급 요청의 금액 날짜는 필수입니다.");
+        }
+
+        if (cardIssueSource == null || cardIssueSource.isEmpty()) {
+            logger.error("카드 발급 요청의 자금 출처가 유효하지 않습니다: {}", cardIssueSource);
+            throw new IllegalArgumentException("카드 발급 요청의 자금 출처는 필수입니다.");
+        }
+
+        if (cardIssuePurpose == null || cardIssuePurpose.isEmpty()) {
+            logger.error("카드 발급 요청의 목적이 유효하지 않습니다: {}", cardIssuePurpose);
+            throw new IllegalArgumentException("카드 발급 요청의 목적은 필수입니다.");
+        }
+    }
 
     public static class AgreeDeserializer extends JsonDeserializer<Boolean> {
         @Override
@@ -72,10 +119,7 @@ public class CreateCardIssueRequest {
                 }
             }
 
-
             throw new IOException("Invalid value for cardIssueIsAgree: " + node.asText());
         }
     }
-
-
 }

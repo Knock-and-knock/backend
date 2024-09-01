@@ -41,6 +41,9 @@ public class CardIssueServiceImpl implements CardIssueService {
     @Override
     public CreateCardIssueResponse createPostCardIssue(CreateCardIssueRequest request, Long userNo) {
 
+        // 요청 검증
+        request.validate();
+
         // CardIssueEntity에 token에서 가져온 userNo 붙이고 생성
         CardIssueEntity cardIssueEntity = transformDTOToEntity(request);
         cardIssueEntity.setUserNo(userNo);
