@@ -72,6 +72,7 @@ public class CreateCardIssueRequest {
                 }
             }
 
+            
             throw new IOException("Invalid value for cardIssueIsAgree: " + node.asText());
         }
     }
