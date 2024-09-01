@@ -49,10 +49,15 @@ public class CardHistoryServiceImpl implements CardHistoryService {
     @Override
     public Long createCardHistory(CreateCardHistoryRequest request) {
         try {
+            // 카드 엔티티가 존재하는지 확인
+            CardEntity card = cardRepo.findById(request.getCardId())
+                    .orElseThrow(() -> new RuntimeException("해당 카드가 존재하지 않습니다."));
+
+            // CardHistoryEntity 생성 및 저장
             CardHistoryEntity newCardHistory = cardHistoryRepo.save(dtoToEntity(request));
             Long cardHistoryNo = newCardHistory.getCardHistoryNo();
 
-            Long userNo = cardRepo.findUserNoByCardId(request.getCardId());
+            Long userNo = card.getUserNo();
 
             // 비동기로 탐지 기능 실행
             detectFraudulentTransaction(newCardHistory.getCard().getCardId(), newCardHistory.getCardHistoryAmount(), userNo);
@@ -68,6 +73,7 @@ public class CardHistoryServiceImpl implements CardHistoryService {
             throw new RuntimeException("카드 내역 생성에 실패했습니다.", e);
         }
     }
+
 
     @Async  // 비동기 처리 메서드
     public void detectFraudulentTransaction(Long cardId, int newTransactionAmount, Long userNo) {
