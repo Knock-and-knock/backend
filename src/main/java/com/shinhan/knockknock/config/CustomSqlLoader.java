@@ -26,6 +26,7 @@ public class CustomSqlLoader {
         // 실행할 SQL 파일들 리스트
         String[] sqlFiles = {
                 "sql/user.sql",
+                "sql/cardissue.sql",
                 "sql/card.sql",
                 "sql/cardcategory.sql",
                 "sql/cardhistory.sql",
