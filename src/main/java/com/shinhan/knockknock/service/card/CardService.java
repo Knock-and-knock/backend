@@ -10,10 +10,10 @@ import java.util.List;
 public interface CardService {
 
     // 비동기 카드 발급 수헹
-    public void scheduleCreatePostCard(CardIssueEntity cardIssueEntity, String password);
+    public void scheduleCreatePostCard(CardIssueEntity cardIssueEntity, String password, String cardIssueKname, String cardIssuePhone);
 
     // 카드 발급
-    public CreateCardIssueResponse createPostCard(CardIssueEntity cardIssueEntity, String password);
+    public CreateCardIssueResponse createPostCard(CardIssueEntity cardIssueEntity, String password, String cardIssueKname, String cardIssuePhone);
 
     // 본인 카드 리스트 조회
     public List<ReadCardResponse> readGetCards(Long userNo);

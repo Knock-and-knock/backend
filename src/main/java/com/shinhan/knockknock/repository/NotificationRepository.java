@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface NotificationRepository extends JpaRepository<NotificationEntity, Long> {
-    List<NotificationEntity> findByUserNo(Long userNo);
+    List<NotificationEntity> findByUserNoOrderByNotificationDateTimeDesc(Long userNo);
     Long countByUserNoAndNotificationIsCheck(Long userNo, boolean notificationIsCheck);
     @Transactional
     @Modifying
