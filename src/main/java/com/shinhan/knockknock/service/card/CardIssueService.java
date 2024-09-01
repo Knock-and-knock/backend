@@ -61,6 +61,7 @@ public interface CardIssueService {
                 .cardIssueSource(cardIssueEntity.getCardIssueSource())
                 .cardIssueIsHighrisk(cardIssueEntity.getCardIssueIsHighrisk())
                 .cardIssuePurpose(cardIssueEntity.getCardIssuePurpose())
+                .cardIssueIsFamily(String.valueOf(cardIssueEntity.isCardIssueIsFamily()))
                 .build();
         return readCardIssueResponse;
     }
