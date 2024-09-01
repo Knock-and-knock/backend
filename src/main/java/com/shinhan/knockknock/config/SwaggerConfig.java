@@ -6,9 +6,11 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -21,15 +23,7 @@ public class SwaggerConfig {
                 .title("Knock Knock API 명세")
                 .description("Knock Knock의 API 명세입니다.");
 
-        // 첫 번째 서버 설정: 현재 사용 중인 서버
-        Server productionServer = new Server();
-        productionServer.setUrl("https://ds-knock-knock.duckdns.org");
-        productionServer.setDescription("Production Server");
-
-        // 두 번째 서버 설정: 로컬 서버
-        Server localServer = new Server();
-        localServer.setUrl("http://localhost:9090");
-        localServer.setDescription("Local Server");
+        List<Server> servers = getServers();
 
         // Define the Security Scheme for JWT token
         SecurityScheme apiKey = new SecurityScheme()
@@ -46,8 +40,26 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
                 .addSecurityItem(securityRequirement)
-                .servers(List.of(productionServer, localServer)) // 서버 리스트에 추가
+                .servers(servers) // 서버 리스트에 추가
                 .info(info);
+    }
+
+    @NotNull
+    private static List<Server> getServers() {
+        List<Server> servers = new ArrayList<>();
+
+        // 두 번째 서버 설정: 현재 사용 중인 서버
+        Server productionServer = new Server();
+        productionServer.setUrl("https://ds-knock-knock.duckdns.org");
+        productionServer.setDescription("Production Server");
+        servers.add(productionServer);
+
+        // 첫 번째 서버 설정: 로컬 서버
+        Server localServer = new Server();
+        localServer.setUrl("http://localhost:9090");
+        localServer.setDescription("Local Server");
+        servers.add(localServer);
+        return servers;
     }
 
 }
