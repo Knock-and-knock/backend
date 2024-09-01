@@ -1,6 +1,5 @@
 package com.shinhan.knockknock.service.cardhistory;
 
-import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.cardhistory.CreateCardHistoryRequest;
 import com.shinhan.knockknock.domain.dto.cardhistory.DetailCardHistoryResponse;
 import com.shinhan.knockknock.domain.dto.cardhistory.ReadCardHistoryResponse;
@@ -90,10 +89,10 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
             // 탐지 결과 확인 및 알림 발송
             if (newTransactionAmount > threshold) {
-                String notificationContent = newTransactionAmount + "원 결제되어 이상 결제 탐지 되었습니다.";
+                String notificationContent = newTransactionAmount + "원 결제되어 이상결제 탐지 되었습니다.";
                 NotificationEntity notificationEntity = NotificationEntity.builder()
-                        .notificationCategory("이상 거래 탐지")
-                        .notificationTitle("이상 거래 알림")
+                        .notificationCategory("이상거래 탐지")
+                        .notificationTitle("이상거래 알림")
                         .notificationContent(notificationContent)
                         .userNo(userNo)
                         .build();
@@ -131,8 +130,10 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Override
     public List<ReadCardHistoryResponse> readAllWithinDateRange(Long cardId, Timestamp startDate, Timestamp endDate) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "cardHistoryApprove");
+
         try {
-            List<CardHistoryEntity> entityList = cardHistoryRepo.findByCard_CardIdAndCardHistoryApproveBetween(cardId, startDate, endDate);
+            List<CardHistoryEntity> entityList = cardHistoryRepo.findByCard_CardIdAndCardHistoryApproveBetween(cardId, startDate, endDate, sort);
             return entityList.stream().map(this::entityToDto).collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("카드 내역 조회에 실패했습니다.", e);
