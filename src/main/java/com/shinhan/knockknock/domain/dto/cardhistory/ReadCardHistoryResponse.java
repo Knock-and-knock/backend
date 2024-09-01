@@ -16,6 +16,8 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Builder
 public class ReadCardHistoryResponse {
+    @Schema(example = "1")
+    private Long cardHistoryNo;
     @Schema(example = "55000")
     private int cardHistoryAmount;
     @Schema(example = "올리브영 연남점")

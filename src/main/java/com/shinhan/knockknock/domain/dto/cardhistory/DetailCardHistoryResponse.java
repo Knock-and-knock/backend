@@ -20,7 +20,7 @@ public class DetailCardHistoryResponse {
     @Schema(example = "2024-08-08 17:30")
     private Timestamp cardHistoryApprove;
     @Schema(example = "1")
-    private Long cardCategoryNo;
+    private String cardCategoryName;
     @Schema(example = "True")
     private boolean isCardFamily;
     @Schema(example = "false")
