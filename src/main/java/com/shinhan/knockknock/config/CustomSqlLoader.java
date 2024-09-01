@@ -30,7 +30,8 @@ public class CustomSqlLoader {
                 "sql/card.sql",
                 "sql/cardcategory.sql",
                 "sql/cardhistory.sql",
-                "sql/welfare.sql"
+                "sql/welfare.sql",
+                "sql/welfarebook.sql"
         };
         for (String sqlFile : sqlFiles) {
             Resource resource = resourcePatternResolver.getResource("classpath:" + sqlFile);
