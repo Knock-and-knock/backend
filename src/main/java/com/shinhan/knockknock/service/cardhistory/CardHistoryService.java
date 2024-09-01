@@ -22,7 +22,7 @@ public interface CardHistoryService {
     List<ReadCardHistoryResponse> readAllWithinDateRange(Long cardId, Timestamp startDate, Timestamp endDate);
 
     // 가족 카드의 관련 사용자의 이름을 찾는 메서드
-//    String findUserNameForFamilyCard(CardEntity card);
+    String findUserNameForFamilyCard(CardEntity card);
 
     // 최근 한달간 가장 많이 사용한 카드를 찾는 메서드
     CardEntity readTopUsedCardLastMonth(Long userNo);
