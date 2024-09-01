@@ -59,8 +59,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean readUserId(String userId) {
+        if(!validateUserId(userId))
+            throw new RuntimeException("영문, 숫자만 입력 가능합니다.");
         UserEntity findUser = userRepository.findByUserId(userId).orElse(null);
         return findUser == null;
+    }
+
+    private boolean validateUserId(String userId) {
+        String USER_ID_PATTERN = "^[a-zA-Z0-9]+$";
+        return userId.matches(USER_ID_PATTERN);
     }
 
     @Override
