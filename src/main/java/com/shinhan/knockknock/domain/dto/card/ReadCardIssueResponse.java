@@ -21,4 +21,5 @@ public class ReadCardIssueResponse {
     private String cardIssueSource;
     private RiskEnum cardIssueIsHighrisk;
     private String cardIssuePurpose;
+    private String cardIssueIsFamily;
 }
