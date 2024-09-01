@@ -9,6 +9,7 @@ import com.shinhan.knockknock.repository.CardHistoryRepository;
 import com.shinhan.knockknock.repository.CardRepository;
 import com.shinhan.knockknock.repository.UserRepository;
 import com.shinhan.knockknock.service.notification.NotificationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +28,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @Service
 @EnableAsync  // 비동기 처리를 활성화
+@Slf4j
 public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Autowired
@@ -57,8 +59,12 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
             return cardHistoryNo;
         } catch (DataAccessException e) {
+            System.out.println(e);
+            log.info(String.valueOf(e));
             throw new RuntimeException("카드 내역 생성 중 데이터베이스 오류가 발생했습니다.", e);
         } catch (Exception e) {
+            System.out.println(e);
+            log.info(String.valueOf(e));
             throw new RuntimeException("카드 내역 생성에 실패했습니다.", e);
         }
     }
