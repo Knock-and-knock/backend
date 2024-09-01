@@ -45,8 +45,26 @@ public class WelfareBookController {
     @GetMapping
     public ResponseEntity<?> readAllByUserNo(@RequestHeader("Authorization") String header) {
         Long userNo = jwtProvider.getUserNoFromHeader(header);
+
+        try {
+            // MatchEntity를 통해 보호자와 매칭된 사용자인지 확인
+            MatchEntity match = matchRepository.findByUserProtectorOrUserProtege(userRepository.findById(userNo).get(), userRepository.findById(userNo).get())
+                    .orElse(null);
+
+            // 만약 매칭이 되어있다면 보호자가 호출한 것이므로 userNo를 매칭된 일반 사용자의 userNo로 설정
+            if (match != null && match.getUserProtector().getUserNo().equals(userNo)) {
+                userNo = match.getUserProtege().getUserNo();
+            }
+
+            // 사용자의 복지 예약 내역 조회
             List<ReadWelfareBookResponse> welfareBooks = welfareBookService.readAllByUserNo(userNo);
             return ResponseEntity.ok(welfareBooks);
+
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자 정보가 존재하지 않습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("복지 예약 내역 조회 중 오류가 발생했습니다.");
+        }
     }
 
     @Operation(summary = "복지 예약 조회 detail [Not Use]", description = "복지 예약 내역 중 하나를 조회하는 API입니다.")
