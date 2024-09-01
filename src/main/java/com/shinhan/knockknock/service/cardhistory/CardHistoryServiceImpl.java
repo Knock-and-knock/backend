@@ -5,6 +5,7 @@ import com.shinhan.knockknock.domain.dto.cardhistory.CreateCardHistoryRequest;
 import com.shinhan.knockknock.domain.dto.cardhistory.DetailCardHistoryResponse;
 import com.shinhan.knockknock.domain.dto.cardhistory.ReadCardHistoryResponse;
 import com.shinhan.knockknock.domain.entity.*;
+import com.shinhan.knockknock.repository.CardCategoryRepository;
 import com.shinhan.knockknock.repository.CardHistoryRepository;
 import com.shinhan.knockknock.repository.CardRepository;
 import com.shinhan.knockknock.repository.UserRepository;
@@ -42,7 +43,7 @@ public class CardHistoryServiceImpl implements CardHistoryService {
     private NotificationService notificationService;
 
     @Autowired
-    private JwtProvider jwtProvider;
+    private CardCategoryRepository cardCategoryRepository;
 
     @Override
     public Long createCardHistory(CreateCardHistoryRequest request) {
@@ -182,11 +183,12 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Override
     public DetailCardHistoryResponse entityToDtoDetail(CardHistoryEntity entity) {
+        String cardCategoryName = String.valueOf(cardCategoryRepository.findCardCategoryNameByCardCategoryNo(entity.getCardCategoryNo()));
         return DetailCardHistoryResponse.builder()
                 .cardHistoryAmount(entity.getCardHistoryAmount())
                 .cardHistoryShopname(entity.getCardHistoryShopname())
                 .cardHistoryApprove(entity.getCardHistoryApprove())
-                .cardCategoryNo(entity.getCardCategoryNo())
+                .cardCategoryName(cardCategoryName)
                 .isCardFamily(entity.isCardFamily())
                 .cardHistoryIsCansle(entity.getCardHistoryIsCansle() != null && entity.getCardHistoryIsCansle())
                 .build();
