@@ -12,11 +12,11 @@ import java.util.Random;
 
 @Component
 @RequiredArgsConstructor
-@EnableScheduling
+//@EnableScheduling
 public class cardHistorySchedulerConfig {
     private final CardHistoryService cardHistoryService;
 
-    @Scheduled(fixedRate = 30000) // 30초마다 실행
+    //@Scheduled(fixedRate = 30000) // 30초마다 실행
     public void createCardHistoryAtFixedRate() {
         try {
             // 랜덤 금액 생성 (100,000원부터 3,000,000원까지 50,000원 단위)
