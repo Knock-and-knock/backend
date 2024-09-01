@@ -79,20 +79,20 @@ public class CardHistoryController {
         return cardHistoryService.readDetail(cardHistoryNo);
     }
 
-        @Operation(summary = "카드 내역 생성", description = "카드 사용시 내역을 생성하는 API입니다.")
-        @ApiResponses(value = {
-                @ApiResponse(responseCode = "201", description = "카드 내역 생성 성공"),
-                @ApiResponse(responseCode = "500", description = "서버 오류로 인한 카드 내역 생성 실패")
-        })
-        @PostMapping
-        public ResponseEntity<?> create(@RequestBody CreateCardHistoryRequest request) {
-            try {
-                Long cardHistoryNo = cardHistoryService.createCardHistory(request);
-                return ResponseEntity.status(HttpStatus.CREATED).body(cardHistoryNo);
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카드 내역 생성 중 오류가 발생했습니다.");
-            }
+    @Operation(summary = "카드 내역 생성", description = "카드 사용시 내역을 생성하는 API입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "카드 내역 생성 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류로 인한 카드 내역 생성 실패")
+    })
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody CreateCardHistoryRequest request) {
+        try {
+            Long cardHistoryNo = cardHistoryService.createCardHistory(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(cardHistoryNo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카드 내역 생성 중 오류가 발생했습니다.");
         }
+    }
 
     @Operation(summary = "카드 내역 카테고리 수정", description = "카드 내역 중 카테고리를 수정하는 API입니다.")
     @ApiResponses(value = {
