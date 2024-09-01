@@ -35,18 +35,26 @@ public class UserController {
     })
     @GetMapping("/validation/{userId}")
     public ResponseEntity<UserValidationResponse> duplicateCheckUserId(@PathVariable String userId) {
-        Boolean result = userService.readUserId(userId);
+        Boolean result = false;
         String message = "";
-        if (result) {
-            message = "사용가능한 아이디입니다.";
-        } else {
-            message = "이미 사용중인 아이디입니다.";
+        int status = 200;
+        try {
+            result = userService.readUserId(userId);
+            if (result) {
+                message = "사용가능한 아이디입니다.";
+            } else {
+                message = "이미 사용중인 아이디입니다.";
+            }
+        } catch (Exception e) {
+            message = e.getMessage();
+            status = 400;
         }
+
         UserValidationResponse response = UserValidationResponse.builder()
                 .message(message)
                 .result(result)
                 .build();
-        return ResponseEntity.status(200).body(response);
+        return ResponseEntity.status(status).body(response);
     }
 
     @Operation(summary = "SMS 전송", description = "회원가입시 전화번호 인증을 위한 SMS 전송")

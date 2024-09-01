@@ -13,6 +13,7 @@ import com.shinhan.knockknock.repository.TokenRepository;
 import com.shinhan.knockknock.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.model.MessageType;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -57,8 +59,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean readUserId(String userId) {
+        if(!validateUserId(userId))
+            throw new RuntimeException("영문, 숫자만 입력 가능합니다.");
         UserEntity findUser = userRepository.findByUserId(userId).orElse(null);
         return findUser == null;
+    }
+
+    private boolean validateUserId(String userId) {
+        String USER_ID_PATTERN = "^[a-zA-Z0-9]+$";
+        return userId.matches(USER_ID_PATTERN);
     }
 
     @Override
@@ -77,7 +86,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public SingleMessageSentResponse sendSms(String phone, String validationNum) {
         SingleMessageSentResponse messageSentResponse = sendMessage(phone, validationNum);
-        System.out.println(messageSentResponse);
+        log.info("✉ Send Sms - ValidationNumber: {}", validationNum);
         return messageSentResponse;
     }
 

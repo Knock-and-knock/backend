@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/v1/card-history")
 @RequiredArgsConstructor
 @Tag(name = "6. 카드 내역", description = "카드 내역 목록 API")
+@Slf4j
 public class CardHistoryController {
 
     final CardRepository cardRepository;
@@ -79,20 +81,21 @@ public class CardHistoryController {
         return cardHistoryService.readDetail(cardHistoryNo);
     }
 
-        @Operation(summary = "카드 내역 생성", description = "카드 사용시 내역을 생성하는 API입니다.")
-        @ApiResponses(value = {
-                @ApiResponse(responseCode = "201", description = "카드 내역 생성 성공"),
-                @ApiResponse(responseCode = "500", description = "서버 오류로 인한 카드 내역 생성 실패")
-        })
-        @PostMapping
-        public ResponseEntity<?> create(@RequestBody CreateCardHistoryRequest request) {
-            try {
-                Long cardHistoryNo = cardHistoryService.createCardHistory(request);
-                return ResponseEntity.status(HttpStatus.CREATED).body(cardHistoryNo);
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카드 내역 생성 중 오류가 발생했습니다.");
-            }
+    @Operation(summary = "카드 내역 생성", description = "카드 사용시 내역을 생성하는 API입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "카드 내역 생성 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류로 인한 카드 내역 생성 실패")
+    })
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody CreateCardHistoryRequest request) {
+        try {
+            Long cardHistoryNo = cardHistoryService.createCardHistory(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(cardHistoryNo);
+        } catch (Exception e) {
+            log.info(String.valueOf(e));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카드 내역 생성 중 오류가 발생했습니다.");
         }
+    }
 
     @Operation(summary = "카드 내역 카테고리 수정", description = "카드 내역 중 카테고리를 수정하는 API입니다.")
     @ApiResponses(value = {
