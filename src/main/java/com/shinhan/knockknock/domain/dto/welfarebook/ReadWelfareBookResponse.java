@@ -16,6 +16,8 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReadWelfareBookResponse {
+    @Schema(example = "1")
+    private Long welfareBookNo;
     @Schema(example = "2024-08-08 09:00")
     private Date welfareBookStartDate;
     @Schema(example = "2024-08-08 13:00")
@@ -32,6 +34,8 @@ public class ReadWelfareBookResponse {
     private String welfareName;
     @Schema(example = "돌봄")
     private String welfareCategory;
+    @Schema(example = "3")
+    private Integer welfareBookUseTime;
     @Schema(example = "60000")
     private Integer welfareTotalPrice;
     @Schema(example = "2024-08-26 17:35")
