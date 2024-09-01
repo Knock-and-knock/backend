@@ -42,13 +42,16 @@ public class CardServiceImpl implements CardService {
     private MatchRepository matchRepository;
 
     @Async("taskExecutor")
-    public void scheduleCreatePostCard(CardIssueEntity cardIssueEntity, String password) {
-        scheduler.schedule(() -> createPostCard(cardIssueEntity, password), 10, TimeUnit.SECONDS);
+    public void scheduleCreatePostCard(CardIssueEntity cardIssueEntity, String password
+            , String cardIssueKname, String cardIssuePhone) {
+        scheduler.schedule(() -> createPostCard(cardIssueEntity, password, cardIssueKname, cardIssuePhone)
+                , 10, TimeUnit.SECONDS);
     }
 
     // 카드 발급
     @Override
-    public CreateCardIssueResponse createPostCard(CardIssueEntity cardIssueEntity, String password) {
+    public CreateCardIssueResponse createPostCard(CardIssueEntity cardIssueEntity, String password
+            , String cardIssueKname, String cardIssuePhone) {
         Random random = new Random();
 
         // 카드번호 생성
@@ -72,8 +75,8 @@ public class CardServiceImpl implements CardService {
         // 결제일 처리 // firstday, middleday, lastday
         String amountDate = cardIssueEntity.getCardIssueAmountDate();
         if(amountDate.equals("firstday")){amountDate="01";}
-        else if (amountDate.equals("middleday")){amountDate="02";}
-        else {amountDate="03";}
+        else if (amountDate.equals("middleday")){amountDate="15";}
+        else {amountDate="30";}
 
         CardEntity cardEntity = CardEntity.builder()
                 .cardNo(cardNo)
@@ -82,12 +85,14 @@ public class CardServiceImpl implements CardService {
                 .cardPassword(password)
                 .cardBank(cardIssueEntity.getCardIssueBank())
                 .cardAccount(cardIssueEntity.getCardIssueAccount())
-                .cardAmountDate(String.valueOf(cardIssueEntity.getCardIssueAmountDate()))
+                .cardAmountDate(amountDate)
                 .cardExpiredate(expireDate)
                 .cardIssueNo(cardIssueEntity.getCardIssueNo())
                 .userNo(cardIssueEntity.getUserNo())
                 .cardIsfamily(cardIssueEntity.isCardIssueIsFamily())
                 .cardAddress(cardIssueEntity.getCardIssueAddress())
+                .cardUserKname(cardIssueKname)
+                .cardUserPhone(cardIssuePhone)
                 .build();
 
         // 카드 발급
@@ -114,23 +119,19 @@ public class CardServiceImpl implements CardService {
 
     // 본인 카드 리스트 조회
     // userNo로 CardEntity 리스트를 조회한 후, 각 카드에 대해 현재 월의 총 소비 금액을 계산하여 ReadCardResponse 객체에 포함
-    // userNo가 피보호자면 매칭테이블 조회해서 보호자 userNo의 가족카드를 조회해서 붙이기
+    // 사용자와 이름과 전화번호가 일치하는 카드 조회
     @Override
     public List<ReadCardResponse> readGetCards(Long userNo) {
         int countCardIssue = 0;
-        Long protectorUserNo = null;
-        String userType = String.valueOf(userRepository.findByUserNo(userNo).getUserType()); // 보호자 여부
+        String userName = String.valueOf(userRepository.findByUserNo(userNo).getUserName()); // 이름
+        String userPhone = String.valueOf(userRepository.findByUserNo(userNo).getUserPhone()); // 전화번호
 
-        if (userType.equals("PROTEGE")) { // 피보호자면 매칭테이블 조회해서 보호자 userNo를 가져오기
-            protectorUserNo = getProtectorUserNo(userNo);
-        }
+        // userNo로 카드 리스트 조회 ( 본인이 발급한 모든 카드 )
+        List<CardEntity> cardEntities = cardRepository.findByUserNo(userNo);
 
-        List<CardEntity> cardEntities = cardRepository.findByUserNo(userNo); // 카드 리스트 조회
-
-        if (protectorUserNo != null) { // 피보호자인 경우, 보호자의 카드도 함께 조회
-            List<CardEntity> protectorCardEntities = cardRepository.findFamilyCardsByUserNo(protectorUserNo);
-            cardEntities.addAll(protectorCardEntities);
-        }
+        // 이름 + 전화번호로 카드 리스트 조회 ( 다른 사람이 자신이 사용하도록 만든 가족카드 조회 )
+        List<CardEntity> cardEntitiesByNameAndPhone = cardRepository.findByCardUserKnameAndCardUserPhone(userName, userPhone);
+        cardEntities.addAll(cardEntitiesByNameAndPhone);
 
         if(cardEntities.isEmpty()){ // 1. if 발급된 카드가 없다
             countCardIssue = cardIssueRepository.countByUserNo(userNo);

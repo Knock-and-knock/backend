@@ -41,15 +41,14 @@ public class CardIssueServiceImpl implements CardIssueService {
     @Override
     public CreateCardIssueResponse createPostCardIssue(CreateCardIssueRequest request, Long userNo) {
 
-        String password = request.getCardIssuePassword();
-
         // CardIssueEntity에 token에서 가져온 userNo 붙이고 생성
         CardIssueEntity cardIssueEntity = transformDTOToEntity(request);
         cardIssueEntity.setUserNo(userNo);
         cardIssueRepository.save(cardIssueEntity);
 
         // 1분 후에 카드 발급 수행
-        cardService.scheduleCreatePostCard(cardIssueEntity, password);
+        cardService.scheduleCreatePostCard(cardIssueEntity, request.getCardIssuePassword()
+                , request.getCardIssueKname(), request.getCardIssuePhone());
 
         return CreateCardIssueResponse.builder()
                 .message("카드 발급 요청이 접수되었습니다.")
