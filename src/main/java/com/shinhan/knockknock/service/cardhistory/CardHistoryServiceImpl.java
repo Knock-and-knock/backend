@@ -10,6 +10,7 @@ import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.repository.CardHistoryRepository;
 import com.shinhan.knockknock.repository.CardRepository;
 import com.shinhan.knockknock.repository.UserRepository;
+import com.shinhan.knockknock.service.notification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Sort;
@@ -37,6 +38,9 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Autowired
     private CardRepository cardRepo;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Override
     public Long createCardHistory(CreateCardHistoryRequest request) {
