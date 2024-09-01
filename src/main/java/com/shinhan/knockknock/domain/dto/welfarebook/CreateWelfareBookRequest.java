@@ -68,7 +68,7 @@ public class CreateWelfareBookRequest {
     private int userWeight;
 
     @Schema(example = "고혈압")
-    @NotBlank
+    @NotNull
     private String userDisease;
 
     @Schema(example = "1")

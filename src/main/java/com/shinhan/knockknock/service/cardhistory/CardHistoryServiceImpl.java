@@ -1,17 +1,18 @@
 package com.shinhan.knockknock.service.cardhistory;
 
+import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.cardhistory.CreateCardHistoryRequest;
 import com.shinhan.knockknock.domain.dto.cardhistory.DetailCardHistoryResponse;
 import com.shinhan.knockknock.domain.dto.cardhistory.ReadCardHistoryResponse;
-import com.shinhan.knockknock.domain.entity.CardCategoryEntity;
-import com.shinhan.knockknock.domain.entity.CardEntity;
-import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
-import com.shinhan.knockknock.domain.entity.UserEntity;
+import com.shinhan.knockknock.domain.entity.*;
+import com.shinhan.knockknock.repository.CardCategoryRepository;
 import com.shinhan.knockknock.repository.CardHistoryRepository;
 import com.shinhan.knockknock.repository.CardRepository;
 import com.shinhan.knockknock.repository.UserRepository;
+import com.shinhan.knockknock.service.notification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,14 +39,22 @@ public class CardHistoryServiceImpl implements CardHistoryService {
     @Autowired
     private CardRepository cardRepo;
 
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private CardCategoryRepository cardCategoryRepository;
+
     @Override
     public Long createCardHistory(CreateCardHistoryRequest request) {
         try {
             CardHistoryEntity newCardHistory = cardHistoryRepo.save(dtoToEntity(request));
             Long cardHistoryNo = newCardHistory.getCardHistoryNo();
 
+            Long userNo = cardRepo.findUserNoByCardId(request.getCardId());
+
             // 비동기로 탐지 기능 실행
-            detectFraudulentTransaction(newCardHistory.getCard().getCardId());
+            detectFraudulentTransaction(newCardHistory.getCard().getCardId(), newCardHistory.getCardHistoryAmount(), userNo);
 
             return cardHistoryNo;
         } catch (DataAccessException e) {
@@ -56,42 +65,57 @@ public class CardHistoryServiceImpl implements CardHistoryService {
     }
 
     @Async  // 비동기 처리 메서드
-    public void detectFraudulentTransaction(Long cardId) {
+    public void detectFraudulentTransaction(Long cardId, int newTransactionAmount, Long userNo) {
         try {
-            // 카드 내역 조회
-            List<CardHistoryEntity> cardHistoryList = cardHistoryRepo.findByCard_CardId(cardId, Sort.by(Sort.Direction.DESC, "cardHistoryApprove"));
+            // 최근 거래내역 30개를 가져옴
+            List<CardHistoryEntity> cardHistoryList = cardHistoryRepo.findByCard_CardId(cardId, PageRequest.of(0, 30, Sort.by(Sort.Direction.DESC, "cardHistoryApprove")));
 
-            // 결제 금액 리스트 생성
-            List<Integer> transactionAmounts = cardHistoryList.stream()
-                    .map(CardHistoryEntity::getCardHistoryAmount)
-                    .collect(Collectors.toList());
+            // 거래 내역이 있을 경우 평균 계산
+            double threshold;
+            if (!cardHistoryList.isEmpty()) {
+                // 결제 금액 리스트 생성
+                List<Integer> transactionAmounts = cardHistoryList.stream()
+                        .map(CardHistoryEntity::getCardHistoryAmount)
+                        .collect(Collectors.toList());
 
-            // 탐지 기능 수행
-            double threshold = calculateTransactionThreshold(transactionAmounts);
+                // 평균값 계산
+                double average = calculateTransactionAverage(transactionAmounts);
 
-            // 탐지 결과 확인 및 출력
-            if (transactionAmounts.stream().anyMatch(amount -> amount > threshold)) {
-                System.out.println("이상금융거래가 탐지 되었습니다.");
+                // 임계값 설정 (평균값의 3배와 600000 중 더 큰 값)
+                threshold = Math.max(average * 3, 600000);
+            } else {
+                // 거래 내역이 없을 때 임계값 설정
+                threshold = 600000;
+            }
+
+            // 탐지 결과 확인 및 알림 발송
+            if (newTransactionAmount > threshold) {
+                String notificationContent = newTransactionAmount + "원 결제되어 이상 결제 탐지 되었습니다.";
+                NotificationEntity notificationEntity = NotificationEntity.builder()
+                        .notificationCategory("이상 거래 탐지")
+                        .notificationTitle("이상 거래 알림")
+                        .notificationContent(notificationContent)
+                        .userNo(userNo)
+                        .build();
+                notificationService.notify(notificationEntity);
             }
         } catch (Exception e) {
             throw new RuntimeException("이상 거래 탐지 중 오류가 발생했습니다.", e);
         }
     }
 
-    public double calculateTransactionThreshold(List<Integer> transactions) {
+    public double calculateTransactionAverage(List<Integer> transactions) {
         if (transactions == null || transactions.isEmpty()) {
-            return 600000;  // 카드 내역이 없을 때 600000 반환
+            return 0;  // 거래 내역이 없을 경우 0 반환
         }
 
         double sum = 0;
         for (double transaction : transactions) {
             sum += transaction;
         }
-        double average = sum / transactions.size();
-
-        double threshold = average * 3;
-        return threshold < 600000 ? 600000 : threshold;
+        return sum / transactions.size();
     }
+
 
     @Override
     public List<ReadCardHistoryResponse> readAll(Long cardId) {
@@ -159,11 +183,12 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Override
     public DetailCardHistoryResponse entityToDtoDetail(CardHistoryEntity entity) {
+        String cardCategoryName = String.valueOf(cardCategoryRepository.findCardCategoryNameByCardCategoryNo(entity.getCardCategoryNo()));
         return DetailCardHistoryResponse.builder()
                 .cardHistoryAmount(entity.getCardHistoryAmount())
                 .cardHistoryShopname(entity.getCardHistoryShopname())
                 .cardHistoryApprove(entity.getCardHistoryApprove())
-                .cardCategoryNo(entity.getCardCategoryNo())
+                .cardCategoryName(cardCategoryName)
                 .isCardFamily(entity.isCardFamily())
                 .cardHistoryIsCansle(entity.getCardHistoryIsCansle() != null && entity.getCardHistoryIsCansle())
                 .build();
