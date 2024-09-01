@@ -115,9 +115,12 @@ public class CardHistoryServiceImpl implements CardHistoryService {
         }
     }
 
-    public DetailCardHistoryResponse readDetail(Long cardHistoryNo){
+    public DetailCardHistoryResponse readDetail(Long cardHistoryNo) {
         Optional<CardHistoryEntity> entity = cardHistoryRepo.findById(cardHistoryNo);
-        return (DetailCardHistoryResponse) entity.stream().map(this::entityToDtoDetail);
+
+        // Optional에서 entityToDtoDetail로 변환 후 반환
+        return entity.map(this::entityToDtoDetail)
+                .orElse(null); // 또는 적절한 기본값이나 예외 처리
     }
 
     @Override
