@@ -18,8 +18,8 @@ public interface CardIssueService {
     // 카드 발급 요청
     public CreateCardIssueResponse createPostCardIssue(CreateCardIssueRequest request, Long userNo);
 
-    // 개인 카드 신청 정보 조회
-    public List<ReadCardIssueResponse> readIssueInfo(Long userNo);
+    // 가장 최근 개인 카드 신청 정보 조회
+    public ReadCardIssueResponse readLatestIssueInfo(Long userNo);
 
     // 영문 이름 처리
     public String mergeName(CreateCardIssueRequest createCardIssueRequest);

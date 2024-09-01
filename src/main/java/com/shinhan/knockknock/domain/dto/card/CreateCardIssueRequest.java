@@ -19,7 +19,8 @@ import java.io.IOException;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateCardIssueRequest {
-    //private String cardIssueResidentNo;
+    private String cardIssueKname;
+    private String cardIssuePhone;
     private String cardIssueFirstEname;
     private String cardIssueLastEname;
     private String cardIssueEname;
