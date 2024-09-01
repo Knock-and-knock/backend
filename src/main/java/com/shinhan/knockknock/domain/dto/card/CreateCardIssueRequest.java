@@ -76,7 +76,7 @@ public class CreateCardIssueRequest {
         }
 
         if (cardIssueAmountDate == null || cardIssueAmountDate.isEmpty()) {
-            logger.error("카드 발급 요청의 금액 날짜가 유효하지 않습니다: {}", cardIssueAmountDate);
+            logger.error("카드 발급 요청의 결제 날짜가 유효하지 않습니다: {}", cardIssueAmountDate);
             throw new IllegalArgumentException("카드 발급 요청의 금액 날짜는 필수입니다.");
         }
 
@@ -88,11 +88,6 @@ public class CreateCardIssueRequest {
         if (cardIssuePurpose == null || cardIssuePurpose.isEmpty()) {
             logger.error("카드 발급 요청의 목적이 유효하지 않습니다: {}", cardIssuePurpose);
             throw new IllegalArgumentException("카드 발급 요청의 목적은 필수입니다.");
-        }
-
-        if (cardIssueAddress == null || cardIssueAddress.isEmpty()) {
-            logger.error("카드 발급 요청의 주소가 유효하지 않습니다: {}", cardIssueAddress);
-            throw new IllegalArgumentException("카드 발급 요청의 주소는 필수입니다.");
         }
     }
 
