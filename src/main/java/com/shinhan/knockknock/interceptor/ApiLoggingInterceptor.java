@@ -37,10 +37,14 @@ public class ApiLoggingInterceptor implements HandlerInterceptor {
             default -> RESET;
         };
 
-        logger.info("🔍 [{}{}{}] {}{}{}, | 🌐 {}{}{}",
+        String formattedLog = String.format(
+                "🌐 %s%-15s%s | 🔍 [%s%-4s%s] %s%-30s%s ",
+                CYAN, ipAddress, RESET,
                 methodColor, method, RESET,
-                RESET, uri, RESET,
-                RESET, ipAddress, RESET);
+                PURPLE, uri, RESET
+        );
+
+        logger.info(formattedLog);
         return true;
     }
 }
