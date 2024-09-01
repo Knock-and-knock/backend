@@ -85,7 +85,7 @@ public class MatchServiceImpl implements MatchService {
 
         MatchEntity match = matchRepository.findById(request.getMatchNo())
                 .orElseThrow(() -> new NoSuchElementException("매칭이 존재하지 않습니다."));
-        System.out.println(request.getMatchStatus());
+
         switch (match.getMatchStatus()) {
             case "WAIT" -> {
                 if (request.getMatchStatus().equals("ACCEPT") | request.getMatchStatus().equals("REJECT")) {

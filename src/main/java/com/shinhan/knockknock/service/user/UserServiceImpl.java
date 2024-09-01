@@ -13,6 +13,7 @@ import com.shinhan.knockknock.repository.TokenRepository;
 import com.shinhan.knockknock.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.model.MessageType;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -77,7 +79,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public SingleMessageSentResponse sendSms(String phone, String validationNum) {
         SingleMessageSentResponse messageSentResponse = sendMessage(phone, validationNum);
-        System.out.println(messageSentResponse);
+        log.info("✉ Send Sms - ValidationNumber: {}", validationNum);
         return messageSentResponse;
     }
 
