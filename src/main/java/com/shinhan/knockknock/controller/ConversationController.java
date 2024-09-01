@@ -4,6 +4,7 @@ import com.shinhan.knockknock.auth.JwtProvider;
 import com.shinhan.knockknock.domain.dto.conversation.ConversationRequest;
 import com.shinhan.knockknock.domain.dto.conversation.ConversationResponse;
 import com.shinhan.knockknock.service.conversation.ConversationService;
+import com.shinhan.knockknock.util.IpUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +37,7 @@ public class ConversationController {
         long userNo = jwtProvider.getUserNoFromHeader(header);
 
         // 사용자 IP 주소 추출
-        String clientIp = getClientIp(httpServletRequest);
+        String clientIp = IpUtil.getClientIp(httpServletRequest);
 
         log.info("📌 Received conversation request from IP: \u001B[34m{}\u001B[0m, input=\u001B[34m{}\u001B[0m, conversationRoomNo=\u001B[34m{}\u001B[0m",
                 clientIp, request.getInput(), request.getConversationRoomNo());
@@ -51,25 +52,5 @@ public class ConversationController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
-    }
-
-    private String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_CLIENT_IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
     }
 }

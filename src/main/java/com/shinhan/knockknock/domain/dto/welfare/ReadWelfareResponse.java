@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReadWelfareResponse {
+    @Schema(example = "1")
+    private Long welfareNo;
     @Schema(example = "복지 서비스 이름")
     private String welfareName;
     @Schema(example = "6000")
