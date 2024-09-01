@@ -43,6 +43,7 @@ public class CreateCardIssueRequest {
     private String cardIssueFirstAddress;
     private String cardIssueSecondAddress;
 
+
     public static class AgreeDeserializer extends JsonDeserializer<Boolean> {
         @Override
         public Boolean deserialize(JsonParser jp, DeserializationContext ctxt)
@@ -74,5 +75,6 @@ public class CreateCardIssueRequest {
             throw new IOException("Invalid value for cardIssueIsAgree: " + node.asText());
         }
     }
+
 
 }
