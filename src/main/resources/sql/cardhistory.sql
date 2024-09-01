@@ -155,3 +155,21 @@ INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, c
 INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (5, '이케아 광명점', 100000, '2024-08-23 09:53:16.670', 5);
 INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (5, '현대백화점 신촌점', 450000, '2024-08-23 09:53:16.670', 5);
 INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (5, '가성비마트 신촌점', 15000, '2024-08-23 09:53:16.670', 2);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (5, '나이키 강남점', 100000, '2024-08-23 09:53:16.670', 5);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (5, '뉴발란스 명동점', 120000, '2024-08-23 09:53:16.670', 5);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (5, 'CU 강남점', 7000, '2024-08-23 09:53:16.670', 2);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (5, '롯데마트 용산점', 75000, '2024-08-23 09:53:16.670', 4);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (5, '이케아 광명점', 100000, '2024-08-23 09:53:16.670', 5);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (5, '현대백화점 신촌점', 450000, '2024-08-23 09:53:16.670', 5);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (5, '가성비마트 신촌점', 15000, '2024-08-23 09:53:16.670', 2);
+
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (6, '가성비마트 신촌점', 15000, '2024-08-23 09:53:16.670', 2);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (6, '나이키 강남점', 100000, '2024-08-23 09:53:16.670', 5);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (6, '뉴발란스 명동점', 120000, '2024-08-23 09:53:16.670', 5);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (6, 'CU 강남점', 7000, '2024-08-23 09:53:16.670', 2);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (7, '롯데마트 용산점', 75000, '2024-08-23 09:53:16.670', 4);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (7, '이케아 광명점', 100000, '2024-08-23 09:53:16.670', 5);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (7, '현대백화점 신촌점', 450000, '2024-08-23 09:53:16.670', 5);
+INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (7, '가성비마트 신촌점', 15000, '2024-08-23 09:53:16.670', 2);
+
+
