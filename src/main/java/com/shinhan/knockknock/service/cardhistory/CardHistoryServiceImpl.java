@@ -77,6 +77,7 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Async  // 비동기 처리 메서드
     public void detectFraudulentTransaction(Long cardId, int newTransactionAmount, Long userNo) {
+        System.out.println(userNo);
         try {
             // 최근 거래내역 30개를 가져옴
             List<CardHistoryEntity> cardHistoryList = cardHistoryRepo.findByCard_CardId(cardId, PageRequest.of(0, 30, Sort.by(Sort.Direction.DESC, "cardHistoryApprove")));
