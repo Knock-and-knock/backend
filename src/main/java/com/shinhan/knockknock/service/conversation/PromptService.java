@@ -68,6 +68,11 @@ public class PromptService {
         return makePrompt(systemPrompt, input, conversationLogs);
     }
 
+    public List<Map<String, String>> consumptionPrompt(String input, List<ConversationLogResponse> conversationLogs) {
+        String systemPrompt = loadPrompt("prompts/consumption.prompt") + getCurrentDate();
+        return makePrompt(systemPrompt, input, conversationLogs);
+    }
+
     public List<Map<String, String>> consumptionReportPrompt(String input, List<ConversationLogResponse> conversationLogs) {
         String systemPrompt = loadPrompt("prompts/consumption_report.prompt") + getCurrentDate();
         return makePrompt(systemPrompt, input, conversationLogs);
