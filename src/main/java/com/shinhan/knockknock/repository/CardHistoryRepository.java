@@ -34,5 +34,6 @@ public interface CardHistoryRepository extends JpaRepository<CardHistoryEntity, 
     List<CardHistoryEntity> findByCard_CardId(Long cardId, PageRequest pageRequest);
     List<CardHistoryEntity> findByCard_CardId(Long cardId, Sort sort);
     List<CardHistoryEntity> findByCard_CardIdAndCardHistoryApproveBetween(Long cardId, Timestamp startDate, Timestamp endDate, Sort sort);
+    List<CardHistoryEntity> findByCardHistoryApproveBefore(Timestamp startDate);
 
 }

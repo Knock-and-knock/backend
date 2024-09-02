@@ -42,7 +42,7 @@ public class CardIssueServiceImpl implements CardIssueService {
     public CreateCardIssueResponse createPostCardIssue(CreateCardIssueRequest request, Long userNo) {
 
         // 요청 검증
-        request.validate();
+        //request.validate();
 
         // CardIssueEntity에 token에서 가져온 userNo 붙이고 생성
         CardIssueEntity cardIssueEntity = transformDTOToEntity(request);
@@ -59,6 +59,7 @@ public class CardIssueServiceImpl implements CardIssueService {
                 .build();
     }
 
+    // 추후 가족 카드 발급 시 신청정보 조회
     public ReadCardIssueResponse readLatestIssueInfo(Long userNo) {
         CardIssueEntity cardIssueEntity = cardIssueRepository.findFirstByUserNoOrderByCardIssueIssueDateDesc(userNo)
                 .orElseThrow(() -> new NoCardIssueFoundException("최근 발급된 카드 신청 정보가 없습니다. 개인카드를 발급해주세요."));
