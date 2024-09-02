@@ -223,6 +223,19 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    @Override
+    public CreateSimplePaymentResponse validateSimplePayment(long userNo, CreateSimplePaymentRequest request) {
+        UserEntity user = userRepository.findById(userNo)
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
+
+        if(!passwordEncoder.matches(request.getUserPaymentPassword(), user.getUserPaymentPassword()))
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        return CreateSimplePaymentResponse.builder()
+                .message("비밀번호 인증에 성공하였습니다.")
+                .result(true)
+                .build();
+    }
+
     private SingleMessageSentResponse sendMessage(String phone, String validationNum) {
         Message message = new Message();
         message.setFrom(fromPhoneNumber);

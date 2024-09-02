@@ -15,6 +15,7 @@ public interface UserService {
     ReadUserResponse updateUser(long userNo, UpdateUserRequest request);
     Boolean deleteUser(long userNo);
     CreateSimplePaymentResponse createSimplePayment(long userNo, CreateSimplePaymentRequest request);
+    CreateSimplePaymentResponse validateSimplePayment(long userNo, CreateSimplePaymentRequest request);
 
     default UserEntity dtoToEntity(CreateUserRequest request){
         return UserEntity.builder()

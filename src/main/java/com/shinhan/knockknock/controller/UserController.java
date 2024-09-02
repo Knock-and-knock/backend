@@ -258,6 +258,29 @@ public class UserController {
         return ResponseEntity.status(status).body(response);
     }
 
+    @Operation(summary = "간편 결제 비밀번호 검증", description = "간편 결제 비밀번호 검증 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검증 성공"),
+            @ApiResponse(responseCode = "400", description = "검증 실패")
+    })
+    @PostMapping("/payment")
+    public ResponseEntity<CreateSimplePaymentResponse> createPayment(@RequestHeader("Authorization") String header,
+                                                                     @RequestBody CreateSimplePaymentRequest request) {
+        long userNo = jwtProvider.getUserNoFromHeader(header);
+        CreateSimplePaymentResponse response = null;
+        int status = 400;
+        try {
+            response = userService.validateSimplePayment(userNo, request);
+            status = 200;
+        } catch (Exception e) {
+            response = CreateSimplePaymentResponse.builder()
+                    .message(e.getMessage())
+                    .result(false)
+                    .build();
+        }
+        return ResponseEntity.status(status).body(response);
+    }
+
     private String generateRandomNumber() {
         Random random = new Random();
         StringBuilder numStr = new StringBuilder();
