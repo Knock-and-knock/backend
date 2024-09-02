@@ -202,7 +202,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public CreateSimplePaymentResponse createSimplePayment(long userNo, CreateSimplePaymentRequest request) {
+    public SimplePaymentResponse readSimplePayment(long userNo) {
+        UserEntity user = userRepository.findById(userNo)
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
+        String message = "";
+        boolean result = false;
+        if(user.getUserPaymentPassword() == null){
+            message = "간편결제 비밀번호를 등록해주세요.";
+        } else {
+            message = "간편결제 비밀번호가 등록되어 있습니다.";
+            result = true;
+        }
+
+        return SimplePaymentResponse.builder()
+                .message(message)
+                .result(result)
+                .build();
+    }
+
+    @Override
+    public SimplePaymentResponse createSimplePayment(long userNo, SimplePaymentRequest request) {
         UserEntity user = userRepository.findById(userNo)
                 .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
         String paymentPassword = request.getUserPaymentPassword();
@@ -217,20 +236,20 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("간편결제 비밀번호 등록 중 오류가 발생하였습니다..");
         }
 
-        return CreateSimplePaymentResponse.builder()
+        return SimplePaymentResponse.builder()
                 .message("간편 결제 비밀번호를 등록하였습니다.")
                 .result(true)
                 .build();
     }
 
     @Override
-    public CreateSimplePaymentResponse validateSimplePayment(long userNo, CreateSimplePaymentRequest request) {
+    public SimplePaymentResponse validateSimplePayment(long userNo, SimplePaymentRequest request) {
         UserEntity user = userRepository.findById(userNo)
                 .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
 
         if(!passwordEncoder.matches(request.getUserPaymentPassword(), user.getUserPaymentPassword()))
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
-        return CreateSimplePaymentResponse.builder()
+        return SimplePaymentResponse.builder()
                 .message("비밀번호 인증에 성공하였습니다.")
                 .result(true)
                 .build();
