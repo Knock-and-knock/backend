@@ -66,6 +66,14 @@ public class CardController {
         return cardIssueService.readLatestIssueInfo(jwtProvider.getUserNoFromHeader(header));
     }
 
+    @Operation(summary = "유저의 카드 유무", description = "유저의 카드 유무 boolean으로 반환")
+    @GetMapping("/isCard")
+    public ReadIsCardResponse readIsCard(@RequestHeader("Authorization") String header) {
+        Long userNo = jwtProvider.getUserNoFromHeader(header);
+        System.out.println(userNo);
+        return cardService.readIsCard(userNo);
+    }
+
     @Operation(summary = "신분증 인증 보류")
     @PostMapping("/auth")
     public void ocrService() {
