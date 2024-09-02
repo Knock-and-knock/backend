@@ -8,6 +8,7 @@ import com.shinhan.knockknock.service.card.ClovaOCRService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequestMapping("/api/v1/card")
 @RequiredArgsConstructor
 @Tag(name = "5. 카드", description = "카드 발급, 조회 API")
+@Slf4j
 public class CardController {
 
     private final CardIssueService cardIssueService;
@@ -44,7 +46,9 @@ public class CardController {
     public CreateCardIssueResponse createCardIssue(@RequestHeader("Authorization") String header , @RequestBody CreateCardIssueRequest request) {
         request.setCardIssueEname(cardIssueService.mergeName(request));
         request.setCardIssueAddress(cardIssueService.mergeAddress(request));
+        log.info("CreateCardIssueRequest: {}", request);
         CreateCardIssueResponse createCardIssueResponse = cardIssueService.createPostCardIssue(request, jwtProvider.getUserNoFromHeader(header));
+        log.info("CreateCardIssueResponse: {}", createCardIssueResponse);
         return createCardIssueResponse;
     }
 

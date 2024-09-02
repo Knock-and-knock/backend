@@ -50,13 +50,16 @@ public class ConsumptionServiceImpl implements ConsumptionService {
      * },
      */
     public List<ReadConsumptionResponse> readConsumptionReportList(Long userNo, Date startDate, Date endDate) {
+        // 사용자 번호를 기반으로 카드 번호 리스트 조회
         List<String> cardNos = readCardNoByUserNo(userNo);
 
+        // 카드 번호 리스트와 날짜 범위를 기반으로 카드 이력 조회
         List<CardHistoryEntity> cardHistories = consumptionRepository
                 .findCardHistoriesByCard_CardNoInAndCardHistoryApproveBetween(cardNos, startDate, endDate);
 
         // 카테고리별, 카드 번호별로 금액을 합산하여 Map으로 저장
         Map<String, Map<String, Integer>> categorySumMap = cardHistories.stream()
+                .filter(cardHistory -> cardHistory.getCardCategory() != null) // null 체크 추가
                 .collect(Collectors.groupingBy(
                         // 카드 이력의 카테고리 이름을 기준으로 그룹화
                         cardHistory -> cardHistory.getCardCategory().getCardCategoryName(),
@@ -77,18 +80,19 @@ public class ConsumptionServiceImpl implements ConsumptionService {
         return categorySumMap.entrySet().stream()
                 .flatMap(categoryEntry -> categoryEntry.getValue().entrySet().stream()
                         .map(cardEntry -> ReadConsumptionResponse.builder()
-                                .categoryName(categoryEntry.getKey())
-                                .amount(cardEntry.getValue())
-                                .totalAmount(totalAmount)
+                                .categoryName(categoryEntry.getKey())  // 카테고리 이름 설정
+                                .amount(cardEntry.getValue())  // 각 카드의 소비 금액 설정
+                                .totalAmount(totalAmount)  // 전체 소비 금액 설정
                                 .cardId(cardHistories.stream()
                                         .filter(ch -> ch.getCard().getCardNo().equals(cardEntry.getKey()))
                                         .findFirst()
                                         .map(ch -> ch.getCard().getCardId())
-                                        .orElse(null))
+                                        .orElse(null))  // 카드 ID 설정
                                 .build()
                         )
                 ).collect(Collectors.toList());
     }
+
 
     @Override
     public String readConsumptionReportForConversation(CardEntity card, String date) {
@@ -167,6 +171,7 @@ public class ConsumptionServiceImpl implements ConsumptionService {
 
         // 카테고리별 금액 합산
         Map<String, Integer> categoryAmountMap = cardHistories.stream()
+                .filter(cardHistory -> cardHistory.getCardCategory() != null) // null 체크 추가
                 .collect(Collectors.groupingBy(
                         cardHistory -> cardHistory.getCardCategory().getCardCategoryName(),
                         Collectors.summingInt(CardHistoryEntity::getCardHistoryAmount)
@@ -187,5 +192,6 @@ public class ConsumptionServiceImpl implements ConsumptionService {
                         .build())
                 .collect(Collectors.toList());
     }
+
 
 }

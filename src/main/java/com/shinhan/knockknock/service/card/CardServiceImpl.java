@@ -53,6 +53,7 @@ public class CardServiceImpl implements CardService {
     public CreateCardIssueResponse createPostCard(CardIssueEntity cardIssueEntity, String password
             , String cardIssueKname, String cardIssuePhone) {
         Random random = new Random();
+        String phoneNum = cardIssuePhone;
 
         // 카드번호 생성
         String[] randomNumbers = new String[4];
@@ -78,8 +79,19 @@ public class CardServiceImpl implements CardService {
         else if (amountDate.equals("middleday")){amountDate="15";}
         else {amountDate="30";}
 
-        // 전화번호 user_tb랑 형식 맞추기
-        String phoneNum = cardIssuePhone.replaceAll("-", "");
+        if (cardIssueKname == null || cardIssueKname.isEmpty()) {
+            cardIssueKname = null;
+        }
+
+        if (cardIssuePhone == null || cardIssuePhone.isEmpty()) {
+            phoneNum = null;
+        } else {
+            // 전화번호 user_tb랑 형식 맞추기
+            phoneNum = phoneNum.replaceAll("-", "");
+        }
+
+        System.out.println("cardUserKname: " + cardIssueKname);
+        System.out.println("cardUserPhone: " + phoneNum);
 
         CardEntity cardEntity = CardEntity.builder()
                 .cardNo(cardNo)
