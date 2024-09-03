@@ -1,9 +1,8 @@
 package com.shinhan.knockknock.config;
 
-import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
-import com.shinhan.knockknock.domain.entity.MatchEntity;
-import com.shinhan.knockknock.domain.entity.NotificationEntity;
+import com.shinhan.knockknock.domain.entity.*;
 import com.shinhan.knockknock.repository.CardHistoryRepository;
+import com.shinhan.knockknock.repository.CardRepository;
 import com.shinhan.knockknock.repository.MatchRepository;
 import com.shinhan.knockknock.repository.UserRepository;
 import com.shinhan.knockknock.service.notification.NotificationService;
@@ -15,53 +14,17 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.List;
-
+import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class SchedulerConfig {
     private final NotificationService notificationService;
     private final CardHistoryRepository cardHistoryRepository;
-    private final UserRepository userRepository;
     private final MatchRepository matchRepository;
+    private final CardRepository cardRepository;
+    private final UserRepository userRepository;
 
-    //@Scheduled(fixedDelay = 60000)
-    public void notifyForOldCardHistory() {
-        // 현재 날짜에서 2일 전 날짜 계산
-        Timestamp twoDaysAgo = new Timestamp(System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000));
-        System.out.println("현재날짜 -2일 : " + twoDaysAgo);
-
-        // 조건에 맞는 cardHistory 조회
-        List<CardHistoryEntity> cardHistories = cardHistoryRepository.findByCardHistoryApproveBefore(twoDaysAgo);
-        System.out.println(cardHistories.size());
-
-        for (CardHistoryEntity cardHistory : cardHistories) {
-            Long cardId = cardHistory.getCardId();
-            Long userNo = cardHistory.getCard().getUserNo();
-
-            // 해당 userNo에게 알림을 보냅니다.
-            NotificationEntity notificationEntity = NotificationEntity.builder()
-                    .notificationCategory("카드 내역 알림")
-                    .notificationTitle("마지막 카드 사용 내역")
-                    .notificationContent("마지막 카드 사용 내역이 2일 이상 지난 항목이 있습니다.")
-                    .userNo(userNo)
-                    .build();
-            notificationService.notify(notificationEntity);
-
-            // 보호자가 있다면 보호자에게도 알림을 보냅니다.
-            MatchEntity matchEntity = matchRepository.findByUserProtege_UserNo(userNo).orElse(null);
-            if (matchEntity != null && matchEntity.getUserProtector() != null) {
-                Long protectorNo = matchEntity.getUserProtector().getUserNo();
-                NotificationEntity protectorNotification = NotificationEntity.builder()
-                        .notificationCategory("마지막 카드 내역 알림")
-                        .notificationTitle("보호자 알림")
-                        .notificationContent("보호자에게 연결된 사용자의 카드 사용 내역이 2일 이상 지난 항목이 있습니다.")
-                        .userNo(protectorNo)
-                        .build();
-                notificationService.notify(protectorNotification);
-            }
-        }
-    }
     /*
         @Scheduled 속성
         fixedRate: 작업 수행시간과 상관없이 일정 주기마다 메소드를 호출하는 것
@@ -69,14 +32,51 @@ public class SchedulerConfig {
         initialDelay: 스케줄러에서 메소드가 등록되자마자 수행하는 것이 아닌 초기 지연시간을 설정
         cron: Cron 표현식을 사용하여 작업을 예약
      */
-    //@Scheduled(fixedDelay = 10000 * 6 * 60)
-    public void SchedulerTest(){
-        NotificationEntity notificationEntity = NotificationEntity.builder()
-                .notificationCategory("스케줄러")
-                .notificationTitle("스케줄러 테스트")
-                .notificationContent("스케줄러 테스트")
-                .userNo(1L)
-                .build();
-        notificationService.notify(notificationEntity);
+
+    // 서버 시작 후 10초 뒤 한번 수행, 이후 1일 마다 수행
+    @Scheduled(initialDelay = 10000, fixedRate = 24 * 60 * 60 * 1000)
+    public void notifyForOldCardHistory() {
+        // 조건 2일 (현재 시간 - 2일)
+        Timestamp twoDaysAgo = new Timestamp(System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000));
+
+        // 모든 카드 ID 조회
+        List<Long> allCardIds = cardRepository.findAllCardIds();
+
+        // 2일 동안 사용 내역이 없는 카드 번호 조회
+        List<Long> cardIdsWithoutUse = cardHistoryRepository.findCardIdsWithoutRecentUse(twoDaysAgo);
+
+        // 모든 카드 ID 중 2일 이내에 사용되지 않은 카드 ID만 필터링
+        List<Long> cardIdsToNotify = allCardIds.stream()
+                .filter(cardIdsWithoutUse::contains)
+                .toList();
+
+        // 필터링된 카드들에 대해 매칭된 보호자의 userNo를 찾아 알림 전송
+        for (Long cardId : cardIdsToNotify) {
+            CardEntity card = cardRepository.findById(cardId).orElse(null);
+            if (card != null) {
+                Long userNo = card.getUserNo();
+                // 가족 카드인 경우 Kname과 phone을 사용해 실제 사용자 식별
+                if (card.isCardIsfamily() && card.getCardUserKname() != null && card.getCardUserPhone() != null) {
+                    UserEntity actualUser = userRepository.findByUserNameAndUserPhone(
+                            card.getCardUserKname(), card.getCardUserPhone()).orElse(null);
+                    if (actualUser != null) {
+                        userNo = actualUser.getUserNo();
+                    }
+                }
+
+                // 매칭된 보호자 찾기
+                MatchEntity matchEntity = matchRepository.findByUserProtege_UserNo(userNo).orElse(null);
+                if (matchEntity != null && matchEntity.getUserProtector() != null) {
+                    Long protectorNo = matchEntity.getUserProtector().getUserNo();
+                    NotificationEntity protectorNotification = NotificationEntity.builder()
+                            .notificationCategory("이상 징후")
+                            .notificationTitle("매칭된 사용자 카드 미사용 2일 이상 경과")
+                            .notificationContent("매칭된 사용자의 카드가 2일 이상 사용되지 않았습니다. 상황을 확인해 주세요.")
+                            .userNo(protectorNo)
+                            .build();
+                    notificationService.notify(protectorNotification);
+                }
+            }
+        }
     }
 }

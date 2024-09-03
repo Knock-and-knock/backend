@@ -34,6 +34,13 @@ public interface CardHistoryRepository extends JpaRepository<CardHistoryEntity, 
     List<CardHistoryEntity> findByCard_CardId(Long cardId, PageRequest pageRequest);
     List<CardHistoryEntity> findByCard_CardId(Long cardId, Sort sort);
     List<CardHistoryEntity> findByCard_CardIdAndCardHistoryApproveBetween(Long cardId, Timestamp startDate, Timestamp endDate, Sort sort);
-    List<CardHistoryEntity> findByCardHistoryApproveBefore(Timestamp startDate);
+
+    // 2일 이내에 사용 내역이 없는 카드 조회
+    @Query("SELECT c.cardId FROM CardEntity c " +
+            "WHERE c.cardId NOT IN (" +
+            "  SELECT ch.card.cardId FROM CardHistoryEntity ch " +
+            "  WHERE ch.cardHistoryApprove >= :twoDaysAgo" +
+            ")")
+    List<Long> findCardIdsWithoutRecentUse(@Param("twoDaysAgo") Timestamp twoDaysAgo);
 
 }
