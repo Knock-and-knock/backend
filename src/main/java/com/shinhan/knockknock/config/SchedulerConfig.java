@@ -29,10 +29,11 @@ public class SchedulerConfig {
     public void notifyForOldCardHistory() {
         // 현재 날짜에서 2일 전 날짜 계산
         Timestamp twoDaysAgo = new Timestamp(System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000));
+        System.out.println("현재날짜 -2일 : " + twoDaysAgo);
 
         // 조건에 맞는 cardHistory 조회
         List<CardHistoryEntity> cardHistories = cardHistoryRepository.findByCardHistoryApproveBefore(twoDaysAgo);
-
+        System.out.println(cardHistories.size());
 
         for (CardHistoryEntity cardHistory : cardHistories) {
             Long cardId = cardHistory.getCardId();

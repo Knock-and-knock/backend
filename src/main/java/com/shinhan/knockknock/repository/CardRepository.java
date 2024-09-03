@@ -30,4 +30,7 @@ public interface CardRepository extends JpaRepository<CardEntity, Long> {
 
     Long countByUserNo(Long userNo);
 
+    @Query("SELECT COUNT(c) FROM CardEntity c WHERE c.cardUserKname = :userName AND c.cardUserPhone = :userPhone")
+    Long countByUserNameAndUserPhone(@Param("userName") String userName, @Param("userPhone") String userPhone);
+
 }
