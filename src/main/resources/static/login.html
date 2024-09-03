@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+</head>
+<body>
+<h1>로그인</h1>
+<form id="loginForm">
+    아이디: <input type="text" id="username" placeholder="아이디"><br>
+    패스워드: <input type="password" id="password" placeholder="패스워드"><br>
+    <button type="submit">로그인</button>
+</form>
+
+<p id="loginError" style="color:red;"></p>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const userId = document.getElementById('username').value;
+        const userPassword = document.getElementById('password').value;
+
+        fetch('api/v1/auth/login/normal', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId, userPassword }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('로그인 실패');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data); // data 구조를 확인
+                localStorage.setItem('jwtToken', data.accessToken || data.token);
+                window.location.href = '/card-history.html';
+            })
+            .catch(error => {
+                document.getElementById('loginError').textContent = error.message;
+            });
+    });
+</script>
+</body>
+</html>

@@ -64,12 +64,8 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
             return cardHistoryNo;
         } catch (DataAccessException e) {
-            System.out.println(e);
-            log.info(String.valueOf(e));
             throw new RuntimeException("카드 내역 생성 중 데이터베이스 오류가 발생했습니다.", e);
         } catch (Exception e) {
-            System.out.println(e);
-            log.info(String.valueOf(e));
             throw new RuntimeException("카드 내역 생성에 실패했습니다.", e);
         }
     }
@@ -77,6 +73,7 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Async  // 비동기 처리 메서드
     public void detectFraudulentTransaction(Long cardId, int newTransactionAmount, Long userNo) {
+        System.out.println(userNo);
         try {
             // 최근 거래내역 30개를 가져옴
             List<CardHistoryEntity> cardHistoryList = cardHistoryRepo.findByCard_CardId(cardId, PageRequest.of(0, 30, Sort.by(Sort.Direction.DESC, "cardHistoryApprove")));
