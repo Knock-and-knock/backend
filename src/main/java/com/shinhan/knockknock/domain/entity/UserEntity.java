@@ -80,6 +80,9 @@ public class UserEntity {
     @Column(name = "user_biopassword")
     private String userBioPassword;
 
+    @Column(name = "user_paymentpassword")
+    private String userPaymentPassword;
+
     @OneToOne(mappedBy = "userProtector", fetch = FetchType.LAZY)
     private MatchEntity matchProtector;
 

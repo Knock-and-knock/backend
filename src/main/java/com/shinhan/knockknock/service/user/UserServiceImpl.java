@@ -1,9 +1,6 @@
 package com.shinhan.knockknock.service.user;
 
-import com.shinhan.knockknock.domain.dto.user.CreateUserRequest;
-import com.shinhan.knockknock.domain.dto.user.CreateUserResponse;
-import com.shinhan.knockknock.domain.dto.user.ReadUserResponse;
-import com.shinhan.knockknock.domain.dto.user.UpdateUserRequest;
+import com.shinhan.knockknock.domain.dto.user.*;
 import com.shinhan.knockknock.domain.entity.MatchEntity;
 import com.shinhan.knockknock.domain.entity.TokenEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
@@ -202,6 +199,62 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NoSuchElementException("토큰이 없습니다."));
         tokenRepository.delete(token);
         return deleteUser.isUserIsWithdraw();
+    }
+
+    @Override
+    public SimplePaymentResponse readSimplePayment(long userNo) {
+        UserEntity user = userRepository.findById(userNo)
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
+        String message = "";
+        boolean result = false;
+        if(user.getUserPaymentPassword() == null){
+            message = "간편결제 비밀번호를 등록해주세요.";
+        } else {
+            message = "간편결제 비밀번호가 등록되어 있습니다.";
+            result = true;
+        }
+
+        return SimplePaymentResponse.builder()
+                .message(message)
+                .result(result)
+                .build();
+    }
+
+    @Override
+    public SimplePaymentResponse createSimplePayment(long userNo, SimplePaymentRequest request) {
+        UserEntity user = userRepository.findById(userNo)
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
+
+        String paymentPassword = request.getUserPaymentPassword();
+        if(!paymentPassword.isEmpty() && paymentPassword.matches("^[0-9]{6}$")) // 6자리 숫자인지 확인
+            user.setUserPaymentPassword(passwordEncoder.encode(request.getUserPaymentPassword())); // 간편결제 비밀번호 인코딩
+        else
+            throw new RuntimeException("비밀번호는 6자리 숫자만 설정할 수 있습니다.");
+
+        try {
+            userRepository.save(user);
+        } catch(Exception e) {
+            throw new RuntimeException("간편결제 비밀번호 등록 중 오류가 발생하였습니다..");
+        }
+
+        return SimplePaymentResponse.builder()
+                .message("간편 결제 비밀번호를 등록하였습니다.")
+                .result(true)
+                .build();
+    }
+
+    @Override
+    public SimplePaymentResponse validateSimplePayment(long userNo, SimplePaymentRequest request) {
+        UserEntity user = userRepository.findById(userNo)
+                .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
+
+        if(!passwordEncoder.matches(request.getUserPaymentPassword(), user.getUserPaymentPassword()))
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+
+        return SimplePaymentResponse.builder()
+                .message("비밀번호 인증에 성공하였습니다.")
+                .result(true)
+                .build();
     }
 
     private SingleMessageSentResponse sendMessage(String phone, String validationNum) {
