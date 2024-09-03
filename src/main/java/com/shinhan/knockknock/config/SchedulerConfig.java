@@ -1,9 +1,6 @@
 package com.shinhan.knockknock.config;
 
-import com.shinhan.knockknock.domain.entity.CardEntity;
-import com.shinhan.knockknock.domain.entity.CardHistoryEntity;
-import com.shinhan.knockknock.domain.entity.MatchEntity;
-import com.shinhan.knockknock.domain.entity.NotificationEntity;
+import com.shinhan.knockknock.domain.entity.*;
 import com.shinhan.knockknock.repository.CardHistoryRepository;
 import com.shinhan.knockknock.repository.CardRepository;
 import com.shinhan.knockknock.repository.MatchRepository;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Component;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
-
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -27,6 +23,7 @@ public class SchedulerConfig {
     private final CardHistoryRepository cardHistoryRepository;
     private final MatchRepository matchRepository;
     private final CardRepository cardRepository;
+    private final UserRepository userRepository;
 
     /*
         @Scheduled 속성
@@ -58,6 +55,16 @@ public class SchedulerConfig {
             CardEntity card = cardRepository.findById(cardId).orElse(null);
             if (card != null) {
                 Long userNo = card.getUserNo();
+                // 가족 카드인 경우 Kname과 phone을 사용해 실제 사용자 식별
+                if (card.isCardIsfamily() && card.getCardUserKname() != null && card.getCardUserPhone() != null) {
+                    UserEntity actualUser = userRepository.findByUserNameAndUserPhone(
+                            card.getCardUserKname(), card.getCardUserPhone()).orElse(null);
+                    if (actualUser != null) {
+                        userNo = actualUser.getUserNo();
+                    }
+                }
+
+                // 매칭된 보호자 찾기
                 MatchEntity matchEntity = matchRepository.findByUserProtege_UserNo(userNo).orElse(null);
                 if (matchEntity != null && matchEntity.getUserProtector() != null) {
                     Long protectorNo = matchEntity.getUserProtector().getUserNo();
