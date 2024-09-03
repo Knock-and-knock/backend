@@ -1,9 +1,6 @@
 package com.shinhan.knockknock.service.user;
 
-import com.shinhan.knockknock.domain.dto.user.CreateUserRequest;
-import com.shinhan.knockknock.domain.dto.user.CreateUserResponse;
-import com.shinhan.knockknock.domain.dto.user.ReadUserResponse;
-import com.shinhan.knockknock.domain.dto.user.UpdateUserRequest;
+import com.shinhan.knockknock.domain.dto.user.*;
 import com.shinhan.knockknock.domain.entity.UserEntity;
 import com.shinhan.knockknock.domain.entity.UserRoleEnum;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
@@ -17,6 +14,9 @@ public interface UserService {
     ReadUserResponse readUser(long userNo);
     ReadUserResponse updateUser(long userNo, UpdateUserRequest request);
     Boolean deleteUser(long userNo);
+    SimplePaymentResponse readSimplePayment(long userNo);
+    SimplePaymentResponse createSimplePayment(long userNo, SimplePaymentRequest request);
+    SimplePaymentResponse validateSimplePayment(long userNo, SimplePaymentRequest request);
 
     default UserEntity dtoToEntity(CreateUserRequest request){
         return UserEntity.builder()

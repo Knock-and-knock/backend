@@ -8,9 +8,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @Tag(name = "0. 인증", description = "인증 API")
 @CrossOrigin
 @RequiredArgsConstructor
@@ -37,6 +39,7 @@ public class AuthController {
                     .build();
             return ResponseEntity.status(401).body(response);
         }
+        log.info("🔑 ID/Password Login Success - UserNo : {}, UserType : {}", response.getUserNo(), response.getUserType());
         return ResponseEntity.status(200).body(response);
     }
 

@@ -136,4 +136,8 @@ public class NotificationServiceImpl implements NotificationService {
     public void readAllNotifications(Long userNo){
         notificationRepository.readAllCheckedByUserNo(userNo);
     };
+
+    /**
+     * 소비 내역 생성이 없는 사용자에게 알림
+     */
 }

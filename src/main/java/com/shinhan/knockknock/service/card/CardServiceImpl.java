@@ -2,6 +2,7 @@ package com.shinhan.knockknock.service.card;
 
 import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.card.ReadCardResponse;
+import com.shinhan.knockknock.domain.dto.card.ReadIsCardResponse;
 import com.shinhan.knockknock.domain.entity.*;
 import com.shinhan.knockknock.repository.*;
 import com.shinhan.knockknock.service.notification.NotificationServiceImpl;
@@ -53,6 +54,7 @@ public class CardServiceImpl implements CardService {
     public CreateCardIssueResponse createPostCard(CardIssueEntity cardIssueEntity, String password
             , String cardIssueKname, String cardIssuePhone) {
         Random random = new Random();
+        String phoneNum = cardIssuePhone;
 
         // 카드번호 생성
         String[] randomNumbers = new String[4];
@@ -78,8 +80,19 @@ public class CardServiceImpl implements CardService {
         else if (amountDate.equals("middleday")){amountDate="15";}
         else {amountDate="30";}
 
-        // 전화번호 user_tb랑 형식 맞추기
-        String phoneNum = cardIssuePhone.replaceAll("-", "");
+        if (cardIssueKname == null || cardIssueKname.isEmpty()) {
+            cardIssueKname = null;
+        }
+
+        if (cardIssuePhone == null || cardIssuePhone.isEmpty()) {
+            phoneNum = null;
+        } else {
+            // 전화번호 user_tb랑 형식 맞추기
+            phoneNum = phoneNum.replaceAll("-", "");
+        }
+
+        System.out.println("cardUserKname: " + cardIssueKname);
+        System.out.println("cardUserPhone: " + phoneNum);
 
         CardEntity cardEntity = CardEntity.builder()
                 .cardNo(cardNo)
@@ -186,6 +199,19 @@ public class CardServiceImpl implements CardService {
         return matchEntityOptional
                 .map(matchEntity -> matchEntity.getUserProtector().getUserNo())
                 .orElse(null);
+    }
+
+    // 카드 테이블에서 userNo의 카드가 존재하는지 여부
+    public ReadIsCardResponse readIsCard(Long userNo) {
+        boolean isCard = false;
+        long count = cardRepository.countByUserNo(userNo);
+        if (count != 0){ isCard = true; }
+        ReadIsCardResponse readIsCardResponse = ReadIsCardResponse
+                .builder()
+                .isCard(isCard)
+                .build();
+        System.out.println(isCard);
+        return readIsCardResponse;
     }
 
 }

@@ -234,6 +234,76 @@ public class UserController {
                 .build());
     }
 
+    @Operation(summary = "간편 결제 비밀번호 등록 여부 조회", description = "간편 결제 비밀번호 등록 여부 조회 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    @GetMapping("/payment")
+    public ResponseEntity<SimplePaymentResponse> readPaymentPassword(@RequestHeader("Authorization") String header) {
+        long userNo = jwtProvider.getUserNoFromHeader(header);
+        SimplePaymentResponse response = null;
+        int status = 400;
+
+        try {
+            response = userService.readSimplePayment(userNo);
+            status = 200;
+        } catch (Exception e) {
+            response = SimplePaymentResponse.builder()
+                    .message("조회 중 오류가 발생하였습니다.")
+                    .result(false)
+                    .build();
+        }
+
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @Operation(summary = "간편 결제 비밀번호 등록", description = "간편 결제 비밀번호 등록 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "등록 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @PutMapping("/payment")
+    public ResponseEntity<SimplePaymentResponse> createPaymentPassword(@RequestHeader("Authorization") String header,
+                                                                       @RequestBody SimplePaymentRequest request) {
+        long userNo = jwtProvider.getUserNoFromHeader(header);
+        SimplePaymentResponse response = null;
+        int status = 400;
+        try {
+            response = userService.createSimplePayment(userNo, request);
+            status = 200;
+        } catch (Exception e) {
+            response = SimplePaymentResponse.builder()
+                    .message(e.getMessage())
+                    .result(false)
+                    .build();
+        }
+
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @Operation(summary = "간편 결제 비밀번호 검증", description = "간편 결제 비밀번호 검증 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "검증 성공"),
+            @ApiResponse(responseCode = "400", description = "검증 실패")
+    })
+    @PostMapping("/payment")
+    public ResponseEntity<SimplePaymentResponse> createPayment(@RequestHeader("Authorization") String header,
+                                                               @RequestBody SimplePaymentRequest request) {
+        long userNo = jwtProvider.getUserNoFromHeader(header);
+        SimplePaymentResponse response = null;
+        int status = 400;
+        try {
+            response = userService.validateSimplePayment(userNo, request);
+            status = 200;
+        } catch (Exception e) {
+            response = SimplePaymentResponse.builder()
+                    .message(e.getMessage())
+                    .result(false)
+                    .build();
+        }
+        return ResponseEntity.status(status).body(response);
+    }
+
     private String generateRandomNumber() {
         Random random = new Random();
         StringBuilder numStr = new StringBuilder();

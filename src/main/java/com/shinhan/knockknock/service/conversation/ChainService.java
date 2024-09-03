@@ -112,7 +112,34 @@ public class ChainService {
                 .build();
     }
 
-    public ConsumptionResponse consumptionReportChain(List<Map<String, String>> prompt) throws JsonProcessingException {
+    public ConsumptionResponse consumptionChain(List<Map<String, String>> prompt) throws JsonProcessingException {
+        Map<String, Object> responseSchema = new HashMap<>();
+        responseSchema.put("startYear", Map.of("type", "number"));
+        responseSchema.put("startMonth", Map.of("type", "number"));
+        responseSchema.put("startDay", Map.of("type", "number"));
+        responseSchema.put("endYear", Map.of("type", "number"));
+        responseSchema.put("endMonth", Map.of("type", "number"));
+        responseSchema.put("endDay", Map.of("type", "number"));
+
+        ChatbotResponse response = chatbotService.getChatbotResponse(prompt, responseSchema);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getContent());
+        return ConsumptionResponse.builder()
+                .startYear(rootNode.path("startYear").asInt())
+                .startMonth(rootNode.path("startMonth").asInt())
+                .startDay(rootNode.path("startDay").asInt())
+                .endYear(rootNode.path("endYear").asInt())
+                .endMonth(rootNode.path("endMonth").asInt())
+                .endDay(rootNode.path("endDay").asInt())
+
+                .promptTokens(response.getPromptTokens())
+                .completionTokens(response.getCompletionTokens())
+                .totalTokens(response.getTotalTokens())
+                .build();
+    }
+
+    public ConsumptionReportResponse consumptionReportChain(List<Map<String, String>> prompt) throws JsonProcessingException {
         Map<String, Object> responseSchema = new HashMap<>();
         responseSchema.put("year", Map.of("type", "number"));
         responseSchema.put("month", Map.of("type", "number"));
@@ -121,7 +148,7 @@ public class ChainService {
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(response.getContent());
-        return ConsumptionResponse.builder()
+        return ConsumptionReportResponse.builder()
                 .year(rootNode.path("year").asInt())
                 .month(rootNode.path("month").asInt())
                 .promptTokens(response.getPromptTokens())

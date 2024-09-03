@@ -16,7 +16,26 @@ public class ConversationResponse {
     private boolean actionRequired;
     private int totalTokens;
 
-    private RedirectionResponse redirectionResult;
-    private ReservationResponse reservationResult;
+    private RedirectionResult redirectionResult;
+    private ReservationResult reservationResult;
 
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RedirectionResult {
+        private String serviceNumber;
+        private String serviceName;
+        private String serviceUrl;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReservationResult {
+        private int serviceTypeNumber;
+        private String reservationDate;
+        private int reservationTimeNumber;
+    }
 }

@@ -10,21 +10,33 @@ Reservation Time Slot: Identified by one of the following codes:
   - 3: 9:00 AM to 6:00 PM
 3.Check for Required Information: Ensure all necessary information is present.
 4.Request Missing Information: If any required information is missing, prompt the user for it.
-5.Return Reservation Information: If all information is provided, return it in the following JSON format:
-{
-  "actionRequired": true,  // true if all information is available
-  "serviceTypeNumber": 1,  // Type of care service number
-  "reservationDate": "2024-08-27",  // Reservation date
-  "reservationTimeNumber": 3  // Time slot number
-}
+5.Return Reservation Information:
+  - If all information is provided, return it in the following JSON format:
+    ```json
+    {
+      "actionRequired": true,  // true if all information is available
+      "serviceTypeNumber": 1,  // Type of care service number
+      "reservationDate": "2024-08-27",  // Reservation date
+      "reservationTimeNumber": 3  // Time slot number
+    }
+    ```
+  - If any information is missing, return it in the following JSON format:
+    ```json
+    {
+      "actionRequired": false,  // false if any information is missing
+      "serviceTypeNumber": 0,  // 0 if service type is missing
+      "reservationDate": "",  // Empty string if reservation date is missing
+      "reservationTimeNumber": 0  // 0 if time slot is missing
+    }
+    ```
 
-Example:
-User: "I want to book Home Care for 9 AM next Tuesday."
+  Example:
+  User: "I want to book Home Care for 9 AM to 3 PM next Tuesday."
 
-ChatGPT Result:
-{
-  "actionRequired": true,
-  "serviceTypeNumber": 1,
-  "reservationDate": "2024-08-27",
-  "reservationTimeNumber": 2
-}
+  ChatGPT Result:
+  {
+    "actionRequired": true,
+    "serviceTypeNumber": 1,
+    "reservationDate": "2024-08-27",
+    "reservationTimeNumber": 2
+  }

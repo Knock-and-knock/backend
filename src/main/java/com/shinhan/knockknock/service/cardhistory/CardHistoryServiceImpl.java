@@ -64,12 +64,8 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
             return cardHistoryNo;
         } catch (DataAccessException e) {
-            System.out.println(e);
-            log.info(String.valueOf(e));
             throw new RuntimeException("카드 내역 생성 중 데이터베이스 오류가 발생했습니다.", e);
         } catch (Exception e) {
-            System.out.println(e);
-            log.info(String.valueOf(e));
             throw new RuntimeException("카드 내역 생성에 실패했습니다.", e);
         }
     }
@@ -77,6 +73,7 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
     @Async  // 비동기 처리 메서드
     public void detectFraudulentTransaction(Long cardId, int newTransactionAmount, Long userNo) {
+        System.out.println(userNo);
         try {
             // 최근 거래내역 30개를 가져옴
             List<CardHistoryEntity> cardHistoryList = cardHistoryRepo.findByCard_CardId(cardId, PageRequest.of(0, 30, Sort.by(Sort.Direction.DESC, "cardHistoryApprove")));
@@ -150,6 +147,36 @@ public class CardHistoryServiceImpl implements CardHistoryService {
         } catch (Exception e) {
             throw new RuntimeException("카드 내역 조회에 실패했습니다.", e);
         }
+    }
+
+    @Override
+    public String readAllWithinDateRangeForConversation(Long cardId, Timestamp startDate, Timestamp endDate) {
+        List<ReadCardHistoryResponse> cardHistoryList = readAllWithinDateRange(cardId, startDate, endDate);
+
+        // 총 사용 내역 개수 계산
+        int totalTransactions = cardHistoryList.size();
+
+        // 조회 기간을 문자열로 변환
+        String dateRange = "Period: " + startDate.toString() + " to " + endDate.toString() + "\n";
+
+        // StringBuilder를 사용하여 문자열을 생성
+        StringBuilder result = new StringBuilder();
+        result.append(dateRange);
+        result.append("Total Transactions: ").append(totalTransactions).append("\n");
+        result.append("Showing the first 10 transactions:\n");
+        result.append("--------------------------------\n");
+
+        // 최대 10개의 사용 내역만 문자열로 변환
+        for (int i = 0; i < Math.min(10, totalTransactions); i++) {
+            ReadCardHistoryResponse history = cardHistoryList.get(i);
+            result.append("Amount: ").append(history.getCardHistoryAmount()).append(" KRW").append("\n")
+                    .append("Shop: ").append(history.getCardHistoryShopname()).append("\n")
+                    .append("Approval Date: ").append(history.getCardHistoryApprove()).append("\n")
+                    .append("Is Cancelled: ").append(history.isCardHistoryIsCansle() ? "Yes" : "No").append("\n")
+                    .append("--------------------------------\n");
+        }
+
+        return result.toString();
     }
 
     public DetailCardHistoryResponse readDetail(Long cardHistoryNo) {

@@ -7,12 +7,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -28,6 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String userNo = jwtProvider.getUserNo(accessToken);
                 Authentication authentication = jwtProvider.getAuthentication(userNo);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.info("🔒 Response Header - Authorization : {}, URI : {}", response.getHeader("Authorization"), request.getRequestURI());
             } else {
                 String userNo = jwtProvider.getUserNo(accessToken);
                 String refreshToken = jwtProvider.getRefreshToken(userNo);
@@ -44,7 +47,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     Authentication authentication = jwtProvider.getAuthentication(userNo);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                    response.setHeader("Authorization", "Bearer " + newAccessToken);
+                    response.setHeader("Authorization", newAccessToken);
+                    log.info("🔒 Response Header - Authorization : {}, URI : {}", response.getHeader("Authorization"), request.getRequestURI());
                 }
             }
         }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>카드 내역 생성용 웹페이지</title>
+</head>
+<body>
+<h1>데이터 입력</h1>
+<form id="dataForm">
+    결제 금액: <input type="number" name="cardHistoryAmount" placeholder="50000" required><br>
+    가맹점 이름: <input type="text" name="cardHistoryShopname" placeholder="명륜진사갈비 노량진점" required><br>
+    카테고리 NO: <input type="number" name="cardCategoryNo" placeholder="8" required><br>
+    카드 ID: <input type="number" name="cardId" placeholder="1" required><br>
+    <button type="submit">결제</button>
+</form>
+
+<p id="message"></p>
+
+<script>
+    document.getElementById('dataForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const jsonData = Object.fromEntries(formData);
+
+        // 로컬 스토리지에서 토큰 가져오기
+        const token = localStorage.getItem('jwtToken');
+
+        fetch('/api/v1/card-history', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+            },
+            body: JSON.stringify(jsonData),
+        })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('message').textContent = data;
+            })
+            .catch(error => {
+                document.getElementById('message').textContent = '카드 내역 생성 중 오류가 발생했습니다: ' + error.message;
+            });
+    });
+</script>
+</body>
+</html>
