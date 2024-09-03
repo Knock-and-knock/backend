@@ -224,8 +224,9 @@ public class UserServiceImpl implements UserService {
     public SimplePaymentResponse createSimplePayment(long userNo, SimplePaymentRequest request) {
         UserEntity user = userRepository.findById(userNo)
                 .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
+
         String paymentPassword = request.getUserPaymentPassword();
-        if(!paymentPassword.isEmpty() && paymentPassword.matches("^[0-9]{6}$"))
+        if(!paymentPassword.isEmpty() && paymentPassword.matches("^[0-9]{6}$")) // 6자리 숫자인지 확인
             user.setUserPaymentPassword(passwordEncoder.encode(request.getUserPaymentPassword())); // 간편결제 비밀번호 인코딩
         else
             throw new RuntimeException("비밀번호는 6자리 숫자만 설정할 수 있습니다.");
@@ -249,6 +250,7 @@ public class UserServiceImpl implements UserService {
 
         if(!passwordEncoder.matches(request.getUserPaymentPassword(), user.getUserPaymentPassword()))
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+
         return SimplePaymentResponse.builder()
                 .message("비밀번호 인증에 성공하였습니다.")
                 .result(true)
