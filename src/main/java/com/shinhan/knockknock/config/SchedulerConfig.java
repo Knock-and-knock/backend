@@ -8,13 +8,11 @@ import com.shinhan.knockknock.repository.UserRepository;
 import com.shinhan.knockknock.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -30,11 +28,11 @@ public class SchedulerConfig {
         fixedRate: 작업 수행시간과 상관없이 일정 주기마다 메소드를 호출하는 것
         fixedDelay는 (작업 수행 시간을 포함하여) 작업을 마친 후부터 주기 타이머가 돌아 메소드를 호출
         initialDelay: 스케줄러에서 메소드가 등록되자마자 수행하는 것이 아닌 초기 지연시간을 설정
-        cron: Cron 표현식을 사용하여 작업을 예약
+        cron: Cron 표현식을 사용하여 작업을 예약 ( 초 분 시 일 월 요일 )
      */
 
-    // 서버 시작 후 10초 뒤 한번 수행, 이후 1일 마다 수행
-    @Scheduled(initialDelay = 10000, fixedRate = 24 * 60 * 60 * 1000)
+    //@Scheduled(/*cron = "0 0 21 * * ?"*/) 서버와 상관없이 매일 21시에 수행
+    @Scheduled(initialDelay = 10000, fixedRate = 24 * 60 * 60 * 1000) // 서버 시작 후 10초 뒤 한번 수행, 이후 24시간 마다 수행
     public void notifyForOldCardHistory() {
         // 조건 2일 (현재 시간 - 2일)
         Timestamp twoDaysAgo = new Timestamp(System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000));
@@ -78,5 +76,13 @@ public class SchedulerConfig {
                 }
             }
         }
+    }
+
+    //@Scheduled(/*cron = "0 0 21 * * ?"*/) 서버와 상관없이 매일 21시에 수행
+    @Scheduled(initialDelay = 10000, fixedRate = 24 * 60 * 60 * 1000) // 서버 시작 후 10초 뒤 한번 수행, 이후 24시간 마다 수행
+    public void notifyForOldConversation(){
+        // 조건 3일 (현재 시간 - 3일)
+        Timestamp twoDaysAgo = new Timestamp(System.currentTimeMillis() - (3 * 24 * 60 * 60 * 1000));
+
     }
 }

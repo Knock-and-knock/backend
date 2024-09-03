@@ -210,7 +210,7 @@ public class CardServiceImpl implements CardService {
 
         // 본인이 사용할 수 있는(이름 + 전화번호) 가족카드 개수 조회
         UserEntity user = userRepository.findByUserNo(userNo);
-        count = cardRepository.countByUserNameAndUserPhone(user.getUserName(), user.getUserPhone());
+        count += cardRepository.countByUserNameAndUserPhone(user.getUserName(), user.getUserPhone());
 
         if (count != 0){ isCard = true; }
 
