@@ -86,7 +86,7 @@ public class WelfareTaskService {
     }
 
     private void validateActionRequired(ChatbotResponse response, RedirectionResponse redirectionResult, ReservationResponse reservationResult) {
-        if (response.getRedirectionResult() != null) {
+        if (redirectionResult != null) {
             response.setActionRequired(redirectionResult.isActionRequired());
             response.setRedirectionResult(redirectionResult);
             tokenService.calculateToken(response, redirectionResult);

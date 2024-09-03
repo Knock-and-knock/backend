@@ -70,7 +70,6 @@ public class CardController {
     @GetMapping("/isCard")
     public ReadIsCardResponse readIsCard(@RequestHeader("Authorization") String header) {
         Long userNo = jwtProvider.getUserNoFromHeader(header);
-        System.out.println(userNo);
         return cardService.readIsCard(userNo);
     }
 
