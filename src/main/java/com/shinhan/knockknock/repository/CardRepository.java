@@ -28,4 +28,6 @@ public interface CardRepository extends JpaRepository<CardEntity, Long> {
     @Query("SELECT c.userNo FROM CardEntity c WHERE c.cardId = :cardId")
     Long findUserNoByCardId(@Param("cardId") Long cardId);
 
+    Long countByUserNo(Long userNo);
+
 }
