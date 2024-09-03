@@ -64,12 +64,8 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
             return cardHistoryNo;
         } catch (DataAccessException e) {
-            System.out.println(e);
-            log.info(String.valueOf(e));
             throw new RuntimeException("카드 내역 생성 중 데이터베이스 오류가 발생했습니다.", e);
         } catch (Exception e) {
-            System.out.println(e);
-            log.info(String.valueOf(e));
             throw new RuntimeException("카드 내역 생성에 실패했습니다.", e);
         }
     }
