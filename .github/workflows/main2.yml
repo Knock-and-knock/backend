@@ -3,7 +3,7 @@ name: CI/CD Pipeline2
 env:
   IMAGE_NAME: knock-knock-app
   CONTAINER_NAME: knock-knock-app
-  PROJECT_DIR: /root/project/knock-knock
+  PROJECT_DIR: /home/ubuntu/knock-knock
 
 on:
   push:
