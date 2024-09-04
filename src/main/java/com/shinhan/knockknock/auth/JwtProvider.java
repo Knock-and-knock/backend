@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.io.Console;
 import java.security.Key;
 import java.util.Date;
 
@@ -93,13 +92,13 @@ public class JwtProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT Token");
+            log.info("❗ Invalid JWT Token");
         } catch (ExpiredJwtException e) {
-            log.debug("Expired JWT Token");
+            log.info("❗ Expired JWT Token");
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT Token");
+            log.info("❗ Unsupported JWT Token");
         } catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.");
+            log.info("❗ JWT claims string is empty.");
         }
         return false;
     }
