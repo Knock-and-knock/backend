@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline2
 
 env:
   IMAGE_NAME: knock-knock-app
@@ -6,8 +6,8 @@ env:
   PROJECT_DIR: /root/project/knock-knock
 
 on:
-#  push:
-#    branches: ["main"]
+  push:
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -41,13 +41,11 @@ jobs:
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}
-          port: 2222
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          host: ${{ secrets.EC2_HOST }}
+          port: 22
+          username: ${{ secrets.EC2_USERNAME }}
+          password: ${{ secrets.EC2_KEY }}
           script: |
-            podman login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} docker.io
-
             # Update .env file with the latest image tag
             echo "PROJECT_ROOT=${{ env.PROJECT_DIR }}" > ${{ env.PROJECT_DIR }}/.env.back
             echo "BACKEND_DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> ${{ env.PROJECT_DIR }}/.env.back
@@ -61,13 +59,13 @@ jobs:
             # sed -i 's|image: docker.io/.*/${{ env.IMAGE_NAME }}:.*|image: docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}|' /root/project/knock-knock/podman-compose.yml
 
             # Pull the latest image
-            podman pull docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            docker pull ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
             # Stop and remove the existing container
-            podman-compose -f ${{ env.PROJECT_DIR }}/podman-compose3.yml down || true
+            docker-compose -f ${{ env.PROJECT_DIR }}/podman-compose3.yml down || true
 
             # Start the new container using the updated podman-compose3.yml
-            podman-compose -f ${{ env.PROJECT_DIR }}/podman-compose3.yml up -d
+            docker-compose -f ${{ env.PROJECT_DIR }}/podman-compose3.yml up -d
 
             # Clean up unused Docker images
-            podman image prune -af
+            docker image prune -af
