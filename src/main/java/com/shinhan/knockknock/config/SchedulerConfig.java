@@ -1,10 +1,7 @@
 package com.shinhan.knockknock.config;
 
 import com.shinhan.knockknock.domain.entity.*;
-import com.shinhan.knockknock.repository.CardHistoryRepository;
-import com.shinhan.knockknock.repository.CardRepository;
-import com.shinhan.knockknock.repository.MatchRepository;
-import com.shinhan.knockknock.repository.UserRepository;
+import com.shinhan.knockknock.repository.*;
 import com.shinhan.knockknock.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +19,7 @@ public class SchedulerConfig {
     private final MatchRepository matchRepository;
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
+    private final ConversationRoomRepository conversationRoomRepository;
 
     /*
         @Scheduled 속성
@@ -82,7 +80,25 @@ public class SchedulerConfig {
     @Scheduled(initialDelay = 10000, fixedRate = 24 * 60 * 60 * 1000) // 서버 시작 후 10초 뒤 한번 수행, 이후 24시간 마다 수행
     public void notifyForOldConversation(){
         // 조건 3일 (현재 시간 - 3일)
-        Timestamp twoDaysAgo = new Timestamp(System.currentTimeMillis() - (3 * 24 * 60 * 60 * 1000));
+        Timestamp threeDaysAgo = new Timestamp(System.currentTimeMillis() - (3 * 24 * 60 * 60 * 1000));
 
+        // 3일 동안 사용 내역이 없는 conversationRoomEntity 조회 (startAt 기준)
+        List<ConversationRoomEntity> oldRooms = conversationRoomRepository.findRoomsInactiveSince(threeDaysAgo);
+
+        // 조회된 대화방에 대해 매칭된 보호자의 userNo를 찾아 알림 전송
+        for (ConversationRoomEntity conversationRoomEntity : oldRooms){
+            Long userNo = conversationRoomEntity.getUser().getUserNo();
+            MatchEntity matchEntity = matchRepository.findByUserProtege_UserNo(userNo).orElse(null);
+            if (matchEntity != null && matchEntity.getUserProtector() != null) {
+                Long protectorNo = matchEntity.getUserProtector().getUserNo();
+                NotificationEntity protectorNotification = NotificationEntity.builder()
+                        .notificationCategory("이상 징후")
+                        .notificationTitle("매칭된 사용자 똑똑이 미사용 3일 이상 경과")
+                        .notificationContent("매칭된 사용자가 똑똑이를 3일 이상 사용하지 않았습니다. 상황을 확인해 주세요.")
+                        .userNo(protectorNo)
+                        .build();
+                notificationService.notify(protectorNotification);
+            }
+        }
     }
 }

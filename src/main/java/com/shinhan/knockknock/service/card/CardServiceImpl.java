@@ -15,14 +15,12 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class CardServiceImpl implements CardService {
@@ -148,6 +146,12 @@ public class CardServiceImpl implements CardService {
         // 이름 + 전화번호로 카드 리스트 조회 ( 다른 사람이 자신이 사용하도록 만든 가족카드 조회 )
         List<CardEntity> cardEntitiesByNameAndPhone = cardRepository.findByCardUserKnameAndCardUserPhone(userName, userPhone);
         cardEntities.addAll(cardEntitiesByNameAndPhone);
+
+        // 중복 제거
+        Set<Long> seenCardIds = new HashSet<>();
+        List<CardEntity> uniqueCardEntities = Stream.concat(cardEntities.stream(), cardEntitiesByNameAndPhone.stream())
+                .filter(card -> seenCardIds.add(card.getCardId()))
+                .toList();
 
         if(cardEntities.isEmpty()){ // 1. if 발급된 카드가 없다
             countCardIssue = cardIssueRepository.countByUserNo(userNo);

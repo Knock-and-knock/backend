@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,5 +30,9 @@ public interface ConversationRoomRepository extends JpaRepository<ConversationRo
         List<ConversationRoomEntity> results = findTopByUserUserNoOrderByConversationRoomEndAtDesc(userNo, pageable);
         return results.isEmpty() ? null : results.get(0);
     }
+
+    @Query("SELECT cr FROM ConversationRoomEntity cr " +
+            "WHERE cr.conversationRoomStartAt < :threeDaysAgo")
+    List<ConversationRoomEntity> findRoomsInactiveSince(@Param("threeDaysAgo") Timestamp threeDaysAgo);
 
 }

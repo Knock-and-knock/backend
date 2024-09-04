@@ -173,3 +173,4 @@ INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, c
 INSERT INTO cardhistory_tb (card_id, cardhistory_shopname, cardhistory_amount, cardhistory_approve, cardcategory_no) values (7, '가성비마트 신촌점', 15000, '2024-08-23 09:53:16.670', 2);
 
 
+INSERT INTO conversationroom_tb (conversationroom_no, conversationroom_start_at, conversationroom_end_at, user_no)VALUES (1, '2024-08-23 09:53:16.670', '2024-08-23 10:53:16.670', 10)
