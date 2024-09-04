@@ -44,7 +44,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           port: 22
           username: ${{ secrets.EC2_USERNAME }}
-          password: ${{ secrets.EC2_KEY }}
+          key: ${{ secrets.EC2_KEY }}
           script: |
             # Update .env file with the latest image tag
             echo "PROJECT_ROOT=${{ env.PROJECT_DIR }}" > ${{ env.PROJECT_DIR }}/.env.back
