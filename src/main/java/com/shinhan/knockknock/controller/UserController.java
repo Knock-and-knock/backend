@@ -95,15 +95,11 @@ public class UserController {
     })
     @PostMapping("/validation/number")
     public ResponseEntity<UserValidationResponse> validationSms(@RequestBody UserValidationRequest request) {
-        /*HttpSession httpSession = request.getSession(false);
-        String validationNum = (String)httpSession.getAttribute("validationNum");
-        System.out.println(httpSession.getId());
-        System.out.println("인증번호="+validation);
-        System.out.println("세션인증번호="+validationNum);*/
+        /* 세션 활용 전화번호 인증
+        HttpSession httpSession = request.getSession(false);
+        String validationNum = (String)httpSession.getAttribute("validationNum");*/
         String validation = request.getValidationNum();
         String validationNum = validationMap.get(request.getPhone());
-        System.out.println("validation=" + validation);
-        System.out.println("validationMap2=" + validationMap);
         String message = "";
         boolean result = false;
         int status = 400;
@@ -305,7 +301,6 @@ public class UserController {
         for (int i = 0; i < 6; i++) {
             numStr.append(random.nextInt(10));
         }
-        System.out.println(numStr);
         return numStr.toString();
     }
 }
