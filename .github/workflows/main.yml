@@ -3,6 +3,7 @@ name: CI/CD Pipeline
 env:
   IMAGE_NAME: knock-knock-app
   CONTAINER_NAME: knock-knock-app
+  PROJECT_DIR: /root/project/knock-knock
 
 on:
   push:
@@ -47,9 +48,13 @@ jobs:
             podman login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} docker.io
 
             # Update .env file with the latest image tag
-            echo "BACKEND_DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > /root/project/knock-knock/.env
-            echo "BACKEND_IMAGE_NAME=${{ env.IMAGE_NAME }}" >> /root/project/knock-knock/.env
-            echo "BACKEND_IMAGE_TAG=${{ github.sha }}" >> /root/project/knock-knock/.env
+            echo "PROJECT_ROOT=${{ env.PROJECT_DIR }}" > ${{ env.PROJECT_DIR }}/.env.front
+            echo "BACKEND_DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> ${{ env.PROJECT_DIR }}/.env
+            echo "BACKEND_IMAGE_NAME=${{ env.IMAGE_NAME }}" >> ${{ env.PROJECT_DIR }}/.env
+            echo "BACKEND_IMAGE_TAG=${{ github.sha }}" >> ${{ env.PROJECT_DIR }}/.env
+
+            cat ${{ env.PROJECT_DIR }}/.env.front > ${{ env.PROJECT_DIR }}/.env
+            cat ${{ env.PROJECT_DIR }}/.env.back >> ${{ env.PROJECT_DIR }}/.env
             
             # Update podman-compose.yml with the latest image tag
             # sed -i 's|image: docker.io/.*/${{ env.IMAGE_NAME }}:.*|image: docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}|' /root/project/knock-knock/podman-compose.yml
@@ -58,10 +63,10 @@ jobs:
             podman pull docker.io/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
             # Stop and remove the existing container
-            podman-compose -f /root/project/knock-knock/podman-compose3.yml down || true
+            podman-compose -f ${{ env.PROJECT_DIR }}/podman-compose3.yml down || true
 
             # Start the new container using the updated podman-compose3.yml
-            podman-compose -f /root/project/knock-knock/podman-compose3.yml up -d
+            podman-compose -f ${{ env.PROJECT_DIR }}/podman-compose3.yml up -d
 
             # Clean up unused Docker images
             podman image prune -af
