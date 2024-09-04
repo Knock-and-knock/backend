@@ -69,22 +69,17 @@ public class UserController {
         String message = "";
         boolean result = false;
         int status = 400;
-        boolean isPresentPhone = userService.readUserPhone(phone);
 
-        if (!isPresentPhone) {
-            message = "이미 가입된 전화번호입니다.";
+        SingleMessageSentResponse messageSentResponse = userService.sendSms(phone, validationNum);
+        String messageStatus = messageSentResponse.getStatusCode(); // sms 전송 상태
+        if (messageStatus.matches("2000|3000|4000")) {  // 제대로 발송된 경우
+            validationMap.put(phone, validationNum);
+            message = "인증번호 전송이 완료되었습니다.";
+            result = true;
         } else {
-            SingleMessageSentResponse messageSentResponse = userService.sendSms(phone, validationNum);
-            String messageStatus = messageSentResponse.getStatusCode(); // sms 전송 상태
-            if (messageStatus.matches("2000|3000|4000")) {  // 제대로 발송된 경우
-                validationMap.put(phone, validationNum);
-                message = "인증번호 전송이 완료되었습니다.";
-                result = true;
-            } else {
-                message = messageSentResponse.getStatusMessage();
-            }
-            status = 200;
+            message = messageSentResponse.getStatusMessage();
         }
+        status = 200;
 
         UserValidationResponse response = UserValidationResponse.builder()
                 .message(message)

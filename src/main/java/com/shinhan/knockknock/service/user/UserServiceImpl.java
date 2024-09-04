@@ -54,6 +54,16 @@ public class UserServiceImpl implements UserService {
         this.defualtMessageService = NurigoApp.INSTANCE.initialize(apiKey, apiSecret, "https://api.coolsms.co.kr");
     }
 
+    /**
+     * <pre>
+     * 메소드명   : readUserId
+     * 설명       : 주어진 userId로 사용자가 존재하는지 확인한다.
+     *
+     * @param userId   존재 여부를 확인할 사용자 ID
+     * @return         사용자가 존재하지 않으면 true, 존재하면 false
+     * @throws RuntimeException 영문과 숫자가 아닌 경우 발생
+     * </pre>
+     */
     @Override
     public Boolean readUserId(String userId) {
         if(!validateUserId(userId))
@@ -67,6 +77,16 @@ public class UserServiceImpl implements UserService {
         return userId.matches(USER_ID_PATTERN);
     }
 
+    /**
+     * <pre>
+     * 메소드명   : readByUserId
+     * 설명       : 주어진 userId로 사용자를 조회하고 해당 사용자의 번호를 반환한다.
+     *
+     * @param userId   조회할 사용자 ID
+     * @return         사용자의 고유 번호
+     * @throws AssertionError 사용자가 존재하지 않는 경우 발생
+     * </pre>
+     */
     @Override
     public Long readByUserId(String userId) {
         UserEntity findUser = userRepository.findByUserId(userId).orElse(null);
@@ -74,19 +94,49 @@ public class UserServiceImpl implements UserService {
         return findUser.getUserNo();
     }
 
+    /**
+     * <pre>
+     * 메소드명   : readUserPhone
+     * 설명       : 주어진 전화번호로 사용자가 존재하는지 확인한다.
+     *
+     * @param phone   존재 여부를 확인할 사용자 전화번호
+     * @return        사용자가 존재하지 않으면 true, 존재하면 false
+     * </pre>
+     */
     @Override
     public Boolean readUserPhone(String phone) {
         UserEntity findUser = userRepository.findByUserPhone(phone);
         return findUser == null;
     }
 
+    /**
+     * <pre>
+     * 메소드명   : sendSms
+     * 설명       : 주어진 전화번호로 SMS를 발송하고 발송 결과를 반환한다.
+     *
+     * @param phone           SMS를 보낼 전화번호
+     * @param validationNum   인증번호
+     * @return                발송 결과 객체
+     * </pre>
+     */
     @Override
     public SingleMessageSentResponse sendSms(String phone, String validationNum) {
         SingleMessageSentResponse messageSentResponse = sendMessage(phone, validationNum);
-        log.info("✉ Send Sms - ValidationNumber: {}", validationNum);
+        log.info("📩 Send Sms - ValidationNumber: {}", validationNum);
         return messageSentResponse;
     }
 
+    /**
+     * <pre>
+     * 메소드명   : createUser
+     * 설명       : 사용자를 생성하고, 생체인증 비밀번호를 설정할 경우 랜덤 비밀번호를 생성하여 설정한다.
+     *
+     * @param request   생성할 사용자 정보
+     * @return          생성된 사용자 정보와 결과
+     * @throws DuplicateKeyException    이미 존재하는 아이디 또는 회원일 경우 발생
+     * @throws DataIntegrityViolationException 데이터 무결성 위반 시 발생
+     * </pre>
+     */
     @Override
     public CreateUserResponse createUser(CreateUserRequest request) {
         String randomPassword = null;
@@ -127,6 +177,16 @@ public class UserServiceImpl implements UserService {
         return UUID.randomUUID().toString().replace("-", "") + userPhone;
     }
 
+    /**
+     * <pre>
+     * 메소드명   : readUser
+     * 설명       : 사용자 번호를 통해 사용자의 정보를 조회하여 반환한다.
+     *
+     * @param userNo   조회할 사용자 번호
+     * @return         조회된 사용자 정보
+     * @throws NoSuchElementException 사용자나 매칭 정보가 없는 경우 발생
+     * </pre>
+     */
     @Override
     public ReadUserResponse readUser(long userNo) {
         UserEntity user = userRepository.findById(userNo)
@@ -149,6 +209,18 @@ public class UserServiceImpl implements UserService {
         return readUserResponse;
     }
 
+    /**
+     * <pre>
+     * 메소드명   : updateUser
+     * 설명       : 사용자 번호를 통해 사용자의 정보를 업데이트하고, 매칭된 사용자 정보도 함께 업데이트한다.
+     *
+     * @param userNo   업데이트할 사용자 번호
+     * @param request  업데이트할 사용자 정보
+     * @return         업데이트된 사용자 정보
+     * @throws NoSuchElementException 사용자나 매칭 정보가 없는 경우 발생
+     * @throws RuntimeException 매칭 정보가 없거나 잘못된 요청인 경우 발생
+     * </pre>
+     */
     @Override
     public ReadUserResponse updateUser(long userNo, UpdateUserRequest request) {
         UserEntity user = userRepository.findById(userNo)
@@ -174,6 +246,16 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
+    /**
+     * <pre>
+     * 메소드명   : deleteUser
+     * 설명       : 사용자 번호를 통해 사용자를 삭제하고, 관련 매칭과 토큰 정보를 삭제한다.
+     *
+     * @param userNo   삭제할 사용자 번호
+     * @return         사용자가 성공적으로 삭제되었는지 여부
+     * @throws NoSuchElementException 사용자나 매칭 또는 토큰 정보가 없는 경우 발생
+     * </pre>
+     */
     @Override
     public Boolean deleteUser(long userNo) {
         UserEntity user = userRepository.findById(userNo)
@@ -201,6 +283,16 @@ public class UserServiceImpl implements UserService {
         return deleteUser.isUserIsWithdraw();
     }
 
+    /**
+     * <pre>
+     * 메소드명   : readSimplePayment
+     * 설명       : 간편결제 비밀번호가 등록되어 있는지 확인한다.
+     *
+     * @param userNo   확인할 사용자 번호
+     * @return         간편결제 비밀번호 상태와 결과 메시지
+     * @throws NoSuchElementException 사용자가 존재하지 않는 경우 발생
+     * </pre>
+     */
     @Override
     public SimplePaymentResponse readSimplePayment(long userNo) {
         UserEntity user = userRepository.findById(userNo)
@@ -220,12 +312,25 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    /**
+     * <pre>
+     * 메소드명   : createSimplePayment
+     * 설명       : 사용자의 간편결제 비밀번호를 설정한다.
+     *
+     * @param userNo   설정할 사용자 번호
+     * @param request  설정할 비밀번호 정보
+     * @return         설정 결과와 메시지
+     * @throws NoSuchElementException 사용자가 존재하지 않는 경우 발생
+     * @throws RuntimeException 비밀번호 형식이 맞지 않거나 설정 중 오류가 발생한 경우 발생
+     * </pre>
+     */
     @Override
     public SimplePaymentResponse createSimplePayment(long userNo, SimplePaymentRequest request) {
         UserEntity user = userRepository.findById(userNo)
                 .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
 
         String paymentPassword = request.getUserPaymentPassword();
+        log.info("🔑 createSimplePayment - userNo : {}, paymentPassword : {}", user.getUserNo(), request.getUserPaymentPassword());
         if(!paymentPassword.isEmpty() && paymentPassword.matches("^[0-9]{6}$")) // 6자리 숫자인지 확인
             user.setUserPaymentPassword(passwordEncoder.encode(request.getUserPaymentPassword())); // 간편결제 비밀번호 인코딩
         else
@@ -243,11 +348,23 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    /**
+     * <pre>
+     * 메소드명   : validateSimplePayment
+     * 설명       : 사용자의 간편결제 비밀번호를 검증한다.
+     *
+     * @param userNo   검증할 사용자 번호
+     * @param request  검증할 비밀번호 정보
+     * @return         검증 성공 여부와 메시지
+     * @throws NoSuchElementException 사용자가 존재하지 않는 경우 발생
+     * @throws RuntimeException 비밀번호가 일치하지 않는 경우 발생
+     * </pre>
+     */
     @Override
     public SimplePaymentResponse validateSimplePayment(long userNo, SimplePaymentRequest request) {
         UserEntity user = userRepository.findById(userNo)
                 .orElseThrow(() -> new NoSuchElementException("회원이 존재하지 않습니다."));
-
+        log.info("🔑 validateSimplePayment - userNo : {}, paymentPassword : {}", user.getUserNo(), request.getUserPaymentPassword());
         if(!passwordEncoder.matches(request.getUserPaymentPassword(), user.getUserPaymentPassword()))
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
 
