@@ -3,6 +3,7 @@ package com.shinhan.knockknock.auth;
 import com.shinhan.knockknock.domain.dto.user.LoginUserResponse;
 import com.shinhan.knockknock.domain.entity.TokenEntity;
 import com.shinhan.knockknock.domain.entity.UserEntity;
+import com.shinhan.knockknock.exception.MissingTokenException;
 import com.shinhan.knockknock.repository.TokenRepository;
 import com.shinhan.knockknock.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
@@ -107,7 +108,7 @@ public class JwtProvider {
         TokenEntity tokenEntity = tokenRepository.findByUser(UserEntity.builder()
                         .userNo(Long.parseLong(userNo))
                         .build())
-                .orElseThrow(() -> new IllegalArgumentException("refresh token이 존재하지 않습니다."));
+                .orElseThrow(() -> new MissingTokenException("Refresh Token이 없습니다."));
         return tokenEntity.getRefreshToken();
     }
 

@@ -1,6 +1,7 @@
 package com.shinhan.knockknock.auth;
 
 import com.shinhan.knockknock.domain.entity.UserEntity;
+import com.shinhan.knockknock.exception.MissingTokenException;
 import com.shinhan.knockknock.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,14 +34,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.info("🔒 Response Header - Authorization : {}, URI : {}", response.getHeader("Authorization"), request.getRequestURI());
             } else {
                 String userNo = jwtProvider.getUserNo(accessToken);
-                String refreshToken = jwtProvider.getRefreshToken(userNo);
+                String refreshToken = "";
+                // refresh token 없을 때 예외처리
+                try {
+                    refreshToken = jwtProvider.getRefreshToken(userNo);
+                } catch (Exception e) {
+                    log.info("❗ MissingTokenException - {}", e.getMessage());
+                }
 
                 if (jwtProvider.validateToken(refreshToken)) {
                     // access token 재발급
                     UserEntity user = userRepository.findById(Long.parseLong(userNo))
                             .orElse(null);
                     if (user == null) {
-                        throw new RuntimeException("회원 정보가 없습니다.");
+                        throw new MissingTokenException("회원 정보가 없습니다.");
                     }
                     String newAccessToken = jwtProvider.createAccessToken(user.entityToDto());
 
