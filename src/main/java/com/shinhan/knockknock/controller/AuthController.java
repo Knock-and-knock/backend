@@ -84,7 +84,7 @@ public class AuthController {
     @Operation(summary = "로그아웃", description = "로그아웃 api")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
-            @ApiResponse(responseCode = "500", description = "로그아웃 실패")
+            @ApiResponse(responseCode = "400", description = "로그아웃 실패")
     })
     @PostMapping("/logout")
     public ResponseEntity<UserValidationResponse> logout(@RequestHeader("Authorization") String header) {
@@ -95,7 +95,7 @@ public class AuthController {
                     .message("로그아웃 되었습니다.")
                     .build());
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(UserValidationResponse.builder()
+            return ResponseEntity.status(400).body(UserValidationResponse.builder()
                     .message(e.getMessage())
                     .build());
         }
