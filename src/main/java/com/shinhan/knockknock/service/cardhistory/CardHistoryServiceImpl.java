@@ -98,13 +98,17 @@ public class CardHistoryServiceImpl implements CardHistoryService {
 
             // 탐지 결과 확인 및 알림 발송
             if (newTransactionAmount > threshold) {
-                String notificationContent = newTransactionAmount + "원 결제되어 이상결제 탐지 되었습니다.";
+                // 천 단위로 쉼표 추가
+                String formattedAmount = String.format("%,d", newTransactionAmount);
+                String notificationContent = formattedAmount + "원 결제되어 이상결제 탐지 되었습니다.";
+
                 NotificationEntity notificationEntity = NotificationEntity.builder()
                         .notificationCategory("이상거래 탐지")
                         .notificationTitle("이상거래 알림")
                         .notificationContent(notificationContent)
                         .userNo(userNo)
                         .build();
+
                 notificationService.notify(notificationEntity);
             }
         } catch (Exception e) {
