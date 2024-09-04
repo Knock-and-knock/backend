@@ -2,6 +2,7 @@ package com.shinhan.knockknock.service.card;
 
 import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.card.ReadCardResponse;
+import com.shinhan.knockknock.domain.dto.card.ReadIsCardResponse;
 import com.shinhan.knockknock.domain.entity.*;
 import com.shinhan.knockknock.repository.*;
 import com.shinhan.knockknock.service.notification.NotificationServiceImpl;
@@ -115,7 +116,7 @@ public class CardServiceImpl implements CardService {
 
         // 알림 서비스 수행
         NotificationEntity notificationEntity = NotificationEntity.builder()
-                .notificationCategory("card")
+                .notificationCategory("카드")
                 .notificationTitle("카드 발급 완료")
                 .notificationContent("회원님의 카드 발급이 완료되었습니다.")
                 .userNo(cardIssueEntity.getUserNo())
@@ -198,6 +199,26 @@ public class CardServiceImpl implements CardService {
         return matchEntityOptional
                 .map(matchEntity -> matchEntity.getUserProtector().getUserNo())
                 .orElse(null);
+    }
+
+    // 카드 테이블에서 userNo의 카드가 존재하는지 여부
+    public ReadIsCardResponse readIsCard(Long userNo) {
+        boolean isCard = false;
+        Long count = 0L;
+        // 본인이 발급한 카드 개수 조회
+        count = cardRepository.countByUserNo(userNo);
+
+        // 본인이 사용할 수 있는(이름 + 전화번호) 가족카드 개수 조회
+        UserEntity user = userRepository.findByUserNo(userNo);
+        count += cardRepository.countByUserNameAndUserPhone(user.getUserName(), user.getUserPhone());
+
+        if (count != 0){ isCard = true; }
+
+        ReadIsCardResponse readIsCardResponse = ReadIsCardResponse
+                .builder()
+                .isCard(isCard)
+                .build();
+        return readIsCardResponse;
     }
 
 }

@@ -2,6 +2,7 @@ package com.shinhan.knockknock.service.card;
 
 import com.shinhan.knockknock.domain.dto.card.CreateCardIssueResponse;
 import com.shinhan.knockknock.domain.dto.card.ReadCardResponse;
+import com.shinhan.knockknock.domain.dto.card.ReadIsCardResponse;
 import com.shinhan.knockknock.domain.entity.CardEntity;
 import com.shinhan.knockknock.domain.entity.CardIssueEntity;
 
@@ -17,6 +18,9 @@ public interface CardService {
 
     // 본인 카드 리스트 조회
     public List<ReadCardResponse> readGetCards(Long userNo);
+
+    // 본인 카드 유무 조회
+    public ReadIsCardResponse readIsCard(Long userNo);
 
     // Entity -> DTO
     default ReadCardResponse transformEntityToDTO(CardEntity cardEntity){

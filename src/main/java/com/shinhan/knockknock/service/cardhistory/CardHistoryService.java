@@ -21,6 +21,8 @@ public interface CardHistoryService {
     // 카드 내역 날짜별 조회
     List<ReadCardHistoryResponse> readAllWithinDateRange(Long cardId, Timestamp startDate, Timestamp endDate);
 
+    String readAllWithinDateRangeForConversation(Long cardId, Timestamp startDate, Timestamp endDate);
+
     // 가족 카드의 관련 사용자의 이름을 찾는 메서드
     String findUserNameForFamilyCard(CardEntity card);
 

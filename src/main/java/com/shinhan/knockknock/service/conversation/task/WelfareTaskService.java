@@ -13,9 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,18 +79,40 @@ public class WelfareTaskService {
         // 답변 생성
         ChatbotResponse response = chainService.chatbotChain(chatbotPrompt);
 
-        // 추가 정보 입력
+        // 추가 정보 입력 & 페이지 이동 검증
+        validateActionRequired(response, redirectionResult, reservationResult);
+
+        return response;
+    }
+
+    private void validateActionRequired(ChatbotResponse response, RedirectionResponse redirectionResult, ReservationResponse reservationResult) {
         if (redirectionResult != null) {
             response.setActionRequired(redirectionResult.isActionRequired());
             response.setRedirectionResult(redirectionResult);
             tokenService.calculateToken(response, redirectionResult);
         }
+
         if (reservationResult != null) {
-            response.setActionRequired(reservationResult.isActionRequired());
+            boolean isValidDate = isDateValid(reservationResult.getReservationDate());
+            boolean newActionRequired = reservationResult.isActionRequired() && isValidDate && reservationResult.getReservationTimeNumber() != 0 && reservationResult.getServiceTypeNumber() != 0;
+
+            response.setActionRequired(newActionRequired);
             response.setReservationResult(reservationResult);
             tokenService.calculateToken(response, reservationResult);
         }
+    }
 
-        return response;
+    private boolean isDateValid(String date) {
+        if (date == null || date.isEmpty()) {
+            return false;
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        try {
+            LocalDate.parse(date, formatter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
     }
 }

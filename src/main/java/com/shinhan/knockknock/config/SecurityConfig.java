@@ -34,7 +34,7 @@ public class SecurityConfig {
             "/api/v1/auth/login/**", "/api/v1/users/signup", "/api/v1/users/validation/**",
             "/swagger-ui/**", "/v3/api-docs/**", "/error",
             "/conversation", "/conversation.html", "/stt", "/stt.html",
-            "/api/v1/notification/**", "/Notification.html"
+            "/api/v1/notification/**", "/Notification.html", "/login.html", "/card-history.html"
     };
 
     @Bean

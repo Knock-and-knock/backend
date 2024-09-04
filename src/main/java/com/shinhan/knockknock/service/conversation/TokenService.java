@@ -34,7 +34,16 @@ public class TokenService {
         response.setTotalTokens(response.getTotalTokens() + reservationResult.getTotalTokens());
     }
 
-    public void calculateToken(ChatbotResponse response, ConsumptionResponse consumptionReportResult) {
+    public void calculateToken(ChatbotResponse response, ConsumptionResponse consumptionResult) {
+        log.debug("🪙 Reservation Tokens - PromptTokens: {}, CompletionTokens: {}, TotalTokens: {}", consumptionResult.getPromptTokens(), consumptionResult.getCompletionTokens(), consumptionResult.getTotalTokens());
+        log.debug("🪙 Chatbot Tokens - PromptTokens: {}, CompletionTokens: {}, TotalTokens: {}", response.getPromptTokens(), response.getCompletionTokens(), response.getTotalTokens());
+
+        response.setPromptTokens(response.getPromptTokens() + consumptionResult.getPromptTokens());
+        response.setCompletionTokens(response.getCompletionTokens() + consumptionResult.getCompletionTokens());
+        response.setTotalTokens(response.getTotalTokens() + consumptionResult.getTotalTokens());
+    }
+
+    public void calculateToken(ChatbotResponse response, ConsumptionReportResponse consumptionReportResult) {
         log.debug("🪙 Reservation Tokens - PromptTokens: {}, CompletionTokens: {}, TotalTokens: {}", consumptionReportResult.getPromptTokens(), consumptionReportResult.getCompletionTokens(), consumptionReportResult.getTotalTokens());
         log.debug("🪙 Chatbot Tokens - PromptTokens: {}, CompletionTokens: {}, TotalTokens: {}", response.getPromptTokens(), response.getCompletionTokens(), response.getTotalTokens());
 

@@ -58,13 +58,31 @@ public class ConversationService {
         // 오디오 데이터를 Base64로 인코딩
         String audioBase64 = Base64.getEncoder().encodeToString(audioData);
 
+        ConversationResponse.RedirectionResult redirectionResult = null;
+        if (response.getRedirectionResult() != null){
+            redirectionResult = ConversationResponse.RedirectionResult.builder()
+                    .serviceName(response.getRedirectionResult().getServiceName())
+                    .serviceNumber(response.getRedirectionResult().getServiceNumber())
+                    .serviceUrl(response.getRedirectionResult().getServiceUrl())
+                    .build();
+        }
+
+        ConversationResponse.ReservationResult reservationResult = null;
+        if (response.getReservationResult() != null) {
+            reservationResult = ConversationResponse.ReservationResult.builder()
+                    .serviceTypeNumber(response.getReservationResult().getServiceTypeNumber())
+                    .reservationDate(response.getReservationResult().getReservationDate())
+                    .reservationTimeNumber(response.getReservationResult().getReservationTimeNumber())
+                    .build();
+        }
+
         return ConversationResponse.builder()
                 .content(response.getContent())
                 .audioData(audioBase64)
                 .actionRequired(response.isActionRequired())
                 .totalTokens(response.getTotalTokens())
-                .redirectionResult(response.getRedirectionResult())
-                .reservationResult(response.getReservationResult())
+                .redirectionResult(redirectionResult)
+                .reservationResult(reservationResult)
                 .build();
     }
 
