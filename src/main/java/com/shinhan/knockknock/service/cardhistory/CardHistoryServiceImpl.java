@@ -100,7 +100,7 @@ public class CardHistoryServiceImpl implements CardHistoryService {
             if (newTransactionAmount > threshold) {
                 // 천 단위로 쉼표 추가
                 String formattedAmount = String.format("%,d", newTransactionAmount);
-                String notificationContent = formattedAmount + "원 결제되어 이상결제 탐지 되었습니다.";
+                String notificationContent = formattedAmount + "원 결제되어 이상결제가 탐지 되었습니다.";
 
                 NotificationEntity notificationEntity = NotificationEntity.builder()
                         .notificationCategory("이상거래 탐지")
