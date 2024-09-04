@@ -48,10 +48,10 @@ jobs:
             podman login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} docker.io
 
             # Update .env file with the latest image tag
-            echo "PROJECT_ROOT=${{ env.PROJECT_DIR }}" > ${{ env.PROJECT_DIR }}/.env.front
-            echo "BACKEND_DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> ${{ env.PROJECT_DIR }}/.env
-            echo "BACKEND_IMAGE_NAME=${{ env.IMAGE_NAME }}" >> ${{ env.PROJECT_DIR }}/.env
-            echo "BACKEND_IMAGE_TAG=${{ github.sha }}" >> ${{ env.PROJECT_DIR }}/.env
+            echo "PROJECT_ROOT=${{ env.PROJECT_DIR }}" > ${{ env.PROJECT_DIR }}/.env.back
+            echo "BACKEND_DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> ${{ env.PROJECT_DIR }}/.env.back
+            echo "BACKEND_IMAGE_NAME=${{ env.IMAGE_NAME }}" >> ${{ env.PROJECT_DIR }}/.env.back
+            echo "BACKEND_IMAGE_TAG=${{ github.sha }}" >> ${{ env.PROJECT_DIR }}/.env.back
 
             cat ${{ env.PROJECT_DIR }}/.env.front > ${{ env.PROJECT_DIR }}/.env
             cat ${{ env.PROJECT_DIR }}/.env.back >> ${{ env.PROJECT_DIR }}/.env
