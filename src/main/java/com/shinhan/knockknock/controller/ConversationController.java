@@ -54,7 +54,7 @@ public class ConversationController {
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/test")
     @Operation(summary = "말동무 대화 test [In Progress]", description = "말동무의 답변을 생성합니다.")
     public ResponseEntity<ConversationResponse> conversationTest(
             @RequestHeader("Authorization") String header,
