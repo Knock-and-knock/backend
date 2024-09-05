@@ -77,11 +77,13 @@ public class ConversationController {
         log.info("📌 Chatbot response: totalTokens=\u001B[34m{}\u001B[0m, duration=\u001B[34m{}ms\u001B[0m", response.getTotalTokens(), duration);
 
         ConversationResponse.ReservationResult reservationTest= ConversationResponse.ReservationResult.builder()
-                .serviceTypeNumber(1)
-                .reservationDate("2024-09-06")
-                .reservationTimeNumber(1)
+                .welfareNo(1)
+                .welfareBookStartDate("2024-09-06")
+                .welfareBookEndDate("2024-09-06")
+                .welfareBookUseTime(1)
                 .build();
 
+        response.setActionRequired(true);
         response.setReservationResult(reservationTest);
 
         HttpHeaders headers = new HttpHeaders();
