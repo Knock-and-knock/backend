@@ -34,8 +34,9 @@ public class ConversationResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ReservationResult {
-        private int serviceTypeNumber;
-        private String reservationDate;
-        private int reservationTimeNumber;
+        private int welfareNo;
+        private String welfareBookStartDate;
+        private String welfareBookEndDate;
+        private int welfareBookUseTime;
     }
 }

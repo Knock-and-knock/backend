@@ -70,9 +70,10 @@ public class ConversationService {
         ConversationResponse.ReservationResult reservationResult = null;
         if (response.getReservationResult() != null) {
             reservationResult = ConversationResponse.ReservationResult.builder()
-                    .serviceTypeNumber(response.getReservationResult().getServiceTypeNumber())
-                    .reservationDate(response.getReservationResult().getReservationDate())
-                    .reservationTimeNumber(response.getReservationResult().getReservationTimeNumber())
+                    .welfareNo(response.getReservationResult().getServiceTypeNumber())
+                    .welfareBookStartDate(response.getReservationResult().getReservationDate())
+                    .welfareBookEndDate(response.getReservationResult().getReservationDate())
+                    .welfareBookUseTime(response.getReservationResult().getReservationTimeNumber())
                     .build();
         }
 
