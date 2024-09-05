@@ -53,4 +53,39 @@ public class ConversationController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
+
+    @PostMapping
+    @Operation(summary = "말동무 대화 test [In Progress]", description = "말동무의 답변을 생성합니다.")
+    public ResponseEntity<ConversationResponse> conversationTest(
+            @RequestHeader("Authorization") String header,
+            @RequestBody ConversationRequest request,
+            HttpServletRequest httpServletRequest) {
+
+        long userNo = jwtProvider.getUserNoFromHeader(header);
+
+        // 사용자 IP 주소 추출
+        String clientIp = IpUtil.getClientIp(httpServletRequest);
+
+        log.info("📌 Received conversation request from IP: \u001B[34m{}\u001B[0m, input=\u001B[34m{}\u001B[0m, conversationRoomNo=\u001B[34m{}\u001B[0m",
+                clientIp, request.getInput(), request.getConversationRoomNo());
+
+        long startTime = System.currentTimeMillis();
+        ConversationResponse response = conversationService.conversation(request, userNo);
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+
+        log.info("📌 Chatbot response: totalTokens=\u001B[34m{}\u001B[0m, duration=\u001B[34m{}ms\u001B[0m", response.getTotalTokens(), duration);
+
+        ConversationResponse.ReservationResult reservationTest= ConversationResponse.ReservationResult.builder()
+                .serviceTypeNumber(1)
+                .reservationDate("2024-09-06")
+                .reservationTimeNumber(1)
+                .build();
+
+        response.setReservationResult(reservationTest);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(response, headers, HttpStatus.OK);
+    }
 }
