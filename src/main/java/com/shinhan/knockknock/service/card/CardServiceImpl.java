@@ -114,7 +114,7 @@ public class CardServiceImpl implements CardService {
 
         // 알림 서비스 수행
         NotificationEntity notificationEntity = NotificationEntity.builder()
-                .notificationCategory("카드")
+                .notificationCategory("카드 발급")
                 .notificationTitle("카드 발급 완료")
                 .notificationContent("회원님의 카드 발급이 완료되었습니다.")
                 .userNo(cardIssueEntity.getUserNo())
