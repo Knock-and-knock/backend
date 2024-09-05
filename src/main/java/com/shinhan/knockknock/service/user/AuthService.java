@@ -15,8 +15,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -67,9 +65,11 @@ public class AuthService {
 
     public void logoutUser(long userNo) {
         TokenEntity tokenEntity = tokenRepository.findByUser_UserNo(userNo)
-                .orElseThrow(() -> new NoSuchElementException("Refresh Token이 존재하지 않습니다."));
+                .orElse(null);
         try {
-            tokenRepository.delete(tokenEntity);
+            if (tokenEntity != null) {
+                tokenRepository.delete(tokenEntity);
+            }
         } catch (Exception e) {
             throw new RuntimeException("로그아웃에 실패하였습니다.");
         }
