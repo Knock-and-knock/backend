@@ -106,7 +106,7 @@ public class CardHistoryServiceImpl implements CardHistoryService {
                 String notificationContent = formattedAmount + "원 결제되어 이상결제가 탐지 되었습니다.";
 
                 NotificationEntity notificationEntity = NotificationEntity.builder()
-                        .notificationCategory("이상거래 탐지")
+                        .notificationCategory("이상 거래")
                         .notificationTitle("이상거래 알림")
                         .notificationContent(notificationContent)
                         .userNo(userNo)
