@@ -69,3 +69,4 @@ jobs:
 
             # Clean up unused Docker images
             sudo docker image prune -af
+
