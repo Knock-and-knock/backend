@@ -43,7 +43,9 @@ public class WelfareBookServiceImpl implements WelfareBookService {
 
         WelfareBookEntity newWelfareBook = welfareBookRepo.save(dtoToEntity(request, user, welfare));
 
-        String fullAddress = request.getProtegeAddress() + "/" + request.getProtegeAddressDetail();
+        String fullAddress = request.getProtegeAddress() != null
+                ? request.getProtegeAddress() + "/" + request.getProtegeAddressDetail()
+                : null;
 
         user.setUserAddress(fullAddress);
         user.setUserHeight(request.getUserHeight());
