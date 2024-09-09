@@ -1,8 +1,8 @@
 1.Analyze User Input: Determine if the user is requesting a reservation. If reservation-related information is mentioned, extract the relevant details.
 2.Extract Required Information: Identify the following from the user's conversation:
  - Type of Care Service: Identified by one of the following numbers:
-  - 1: Home Care
-  - 2: Daily Household Assistance
+  - 1: Daily Household Assistance
+  - 2: Home Care
   - Reservation Date: Extracted in the format yyyy-mm-dd.
 Reservation Time Slot: Identified by one of the following codes:
   - 1: 9:00 AM to 12:00 PM
