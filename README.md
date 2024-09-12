@@ -2,7 +2,6 @@
 
 신한DS SW 아카데미 2차 팀 프로젝트
 
-![ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/6718d4a5-cf31-446b-a4a7-6a8a287ba2b6)
 
 #### 🎥 시연 영상 보러가기([Click](https://youtu.be/Yr2v2oFtGDk))
 #### 📙 발표자료 보러가기([Click]())
@@ -26,18 +25,20 @@
   <tr>
 <td align="center"><b>권대현</b></td>
     <td align="center"><b>정민교</b></td>
-    <td align="center"><b>서세란</b></td>
-    <td align="center"><b>장현지</b></td>
-    <td align="center"><b>김시형</b></td>
-    <td align="center"><b>김유리</b></td>
+    <td align="center"><b>양승건</b></td>
+    <td align="center"><b>홍정민</b></td>
+    <td align="center"><b>이두리</b></td>
+    <td align="center"><b>손동희</b></td>
+    <td align="center"><b>정성진</b></td>
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/DevHyun2"><img src="https://avatars.githubusercontent.com/DevHyun2" width="120px;" alt=""><br/><b>@DevHyun2</b>
     <td align="center"><a href="https://github.com/MinkyoDev"><img src="https://avatars.githubusercontent.com/MinkyoDev" width="120px;" alt=""><br/><b>@MinkyoDev</b>
-    <td align="center"><a href="https://github.com/imrani-i"><img src="https://avatars.githubusercontent.com/imrani-i" width="120px;" alt=""><br/><b>@imrani-i</b>
-    <td align="center"><a href="https://github.com/JhyunJ1"><img src="https://avatars.githubusercontent.com/JhyunJ1" width="120px;" alt=""><br/><b>@JhyunJ1</b>
-    <td align="center"><a href="https://github.com/kimsh300"><img src="https://avatars.githubusercontent.com/kimsh300" width="120px;" alt=""><br/><b>@kimsh300</b>
-    <td align="center"><a href="https://github.com/kimyurie"><img src="https://avatars.githubusercontent.com/kimyurie" width="120px;" alt=""><br/><b>@kimyurie</b>
+    <td align="center"><a href="https://github.com/YangxGeon"><img src="https://avatars.githubusercontent.com/YangxGeon" width="120px;" alt=""><br/><b>@YangxGeon</b>
+    <td align="center"><a href="https://github.com/wjdals898"><img src="https://avatars.githubusercontent.com/wjdals898" width="120px;" alt=""><br/><b>@wjdals898</b>
+    <td align="center"><a href="https://github.com/lee21330"><img src="https://avatars.githubusercontent.com/lee21330" width="120px;" alt=""><br/><b>@lee21330</b>
+    <td align="center"><a href="https://github.com/Sondonghee123"><img src="https://avatars.githubusercontent.com/Sondonghee123" width="120px;" alt=""><br/><b>@Sondonghee123</b>
+    <td align="center"><a href="https://github.com/cocopg"><img src="https://avatars.githubusercontent.com/cocopg" width="120px;" alt=""><br/><b>@cocopg</b>
     </td>
   </tr>
 </table>
@@ -46,17 +47,23 @@
 
 ### ✔️ 세부 역할 분담
 
-🔹권대현: 공지사항 / Q&A / FAQ / 에디터
+#### 🔹Backend
 
-🔹김유리: 상품 시스템 / 상품 카테고리 / 위시리스트 / 장바구니
+- 권대현: 복지 예약 / 카드 내역 / 이상 거래 탐지
 
-🔹정민교: PM / 수거 시스템 / 재활용품 분류 모델 제작 / 포인트 / CICD
+- 정민교: PM / 똑똑이 / 대화방, 대화 내역 / CICD
 
-🔹김시형: 로그인 / 회원가입 / 유저 관리 / 프로젝트 환경 구축
+- 양승건: 카드발급 / 알림 / 소비 리포트
 
-🔹서세란: 주문 관리 / 상품 결제 / 반품
+- 홍정민: 로그인 / 회원가입 / 매칭 / CICD
 
-🔹장현지: 환경자료 / 퀴즈 / 환경뉴스 / 상품 검색 / 상품 리뷰 및 알림 관리 / data pipeline 제작
+#### 🔹Frontend
+
+- 이두리: 메인 / 소비 내역 / 알림 페이지 / 로그인 / 회원가입
+
+- 손동희: 복지 / 소비 리포트 / 생체 로그인
+
+- 정성진: 카드 발급 / 매칭 / 똑똑이 / 메인
 
 <br/>
 
@@ -64,44 +71,28 @@
 
 ### ✔️ 올레픽: 플라스틱 수거 서비스
 
-올레픽(Olepic)이란 플라스틱의 원료인 올레핀(Olefin)과 수거를 뜻하는 Pick up의 합성어입니다.
 
 #### - 수거 페이지
 
-![수거페이지](https://github.com/user-attachments/assets/34349660-cce0-4eae-aab6-3c8666cda026)
-
 #### - 수거 서비스 플로우
 
-<img src="https://github.com/user-attachments/assets/b98245fb-46af-4463-820f-578bb81bdedc" width="70%">
-
 #### - AI 물품 검사
-
-YOLOv5를 이용한 Object detection 모델을 사용하여 재활용품 분류
-
-[AI Repository 바로가기]()
 
 ### ✔️ 친환경 커뮤니티
 
 #### - 환경 커뮤니티 페이지
 
-![환경자료 페이지](https://github.com/user-attachments/assets/e5841af4-0120-4999-b1d4-d0ca5886783d)
-
 ### ✔️ 친환경 장터
 
 #### - 거래 품목페이지
-![거래 품목 페이지](https://github.com/user-attachments/assets/d76df7c0-b7ca-4abd-b963-d9c851aa378c)
 
 ### ✔️ 고객샌터
 
 #### - 고객센터 페이지
 
-![고객센터 페이지](https://github.com/user-attachments/assets/b7d7448e-3e4d-4f55-85ef-254a5ecf9c33)
-
 <br/>
 
 ## 🗃️ 시스템 아키텍처
-
-<img src="https://github.com/user-attachments/assets/67a53617-b33f-42bb-9efa-fd2ec60d65d5" width="80%">
 
 <br/>
 
