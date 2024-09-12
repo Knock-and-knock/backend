@@ -2,7 +2,7 @@
 
 신한DS SW 아카데미 2차 팀 프로젝트
 
-🥇 신한DS SW 아카데미 6회차 최종프로젝트 최우수상 수상작
+**🥇 신한DS SW 아카데미 6회차 최종프로젝트 최우수상 수상작**
 
 ![슬라이드1](https://github.com/user-attachments/assets/fd35c88a-7cee-42ee-a329-854ccc2a60d9)
 
