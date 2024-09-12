@@ -35,13 +35,13 @@
     <td align="center"><b>정성진</b></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/DevHyun2"><img src="https://avatars.githubusercontent.com/DevHyun2" width="120px;" alt=""><br/><b>@DevHyun2</b>
-    <td align="center"><a href="https://github.com/MinkyoDev"><img src="https://avatars.githubusercontent.com/MinkyoDev" width="120px;" alt=""><br/><b>@MinkyoDev</b>
-    <td align="center"><a href="https://github.com/YangxGeon"><img src="https://avatars.githubusercontent.com/YangxGeon" width="120px;" alt=""><br/><b>@YangxGeon</b>
-    <td align="center"><a href="https://github.com/wjdals898"><img src="https://avatars.githubusercontent.com/wjdals898" width="120px;" alt=""><br/><b>@wjdals898</b>
-    <td align="center"><a href="https://github.com/lee21330"><img src="https://avatars.githubusercontent.com/lee21330" width="120px;" alt=""><br/><b>@lee21330</b>
-    <td align="center"><a href="https://github.com/Sondonghee123"><img src="https://avatars.githubusercontent.com/Sondonghee123" width="120px;" alt=""><br/><b>@Sondonghee123</b>
-    <td align="center"><a href="https://github.com/cocopg"><img src="https://avatars.githubusercontent.com/cocopg" width="120px;" alt=""><br/><b>@cocopg</b>
+    <td align="center"><a href="https://github.com/DevHyun2"><img src="https://avatars.githubusercontent.com/DevHyun2" width="100px;" alt=""><br/><b>@DevHyun2</b>
+    <td align="center"><a href="https://github.com/MinkyoDev"><img src="https://avatars.githubusercontent.com/MinkyoDev" width="100px;" alt=""><br/><b>@MinkyoDev</b>
+    <td align="center"><a href="https://github.com/YangxGeon"><img src="https://avatars.githubusercontent.com/YangxGeon" width="100px;" alt=""><br/><b>@YangxGeon</b>
+    <td align="center"><a href="https://github.com/wjdals898"><img src="https://avatars.githubusercontent.com/wjdals898" width="100px;" alt=""><br/><b>@wjdals898</b>
+    <td align="center"><a href="https://github.com/lee21330"><img src="https://avatars.githubusercontent.com/lee21330" width="100px;" alt=""><br/><b>@lee21330</b>
+    <td align="center"><a href="https://github.com/Sondonghee123"><img src="https://avatars.githubusercontent.com/Sondonghee123" width="100px;" alt=""><br/><b>@Sondonghee123</b>
+    <td align="center"><a href="https://github.com/cocopg"><img src="https://avatars.githubusercontent.com/cocopg" width="100px;" alt=""><br/><b>@cocopg</b>
     </td>
   </tr>
 </table>
