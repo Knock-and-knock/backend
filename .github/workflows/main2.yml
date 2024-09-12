@@ -6,8 +6,8 @@ env:
   PROJECT_DIR: /home/ubuntu/knock-knock
 
 on:
-  push:
-    branches: ["main"]
+#   push:
+#     branches: ["main"]
   workflow_dispatch:
 
 jobs:
