@@ -2,6 +2,7 @@
 
 신한DS SW 아카데미 2차 팀 프로젝트
 
+![슬라이드1](https://github.com/user-attachments/assets/fd35c88a-7cee-42ee-a329-854ccc2a60d9)
 
 #### 🎥 시연 영상 보러가기([Click](https://youtu.be/Yr2v2oFtGDk))
 #### 📙 발표자료 보러가기([Click]())
@@ -14,6 +15,8 @@
 <br/>
 
 ### ✔️ 서비스 구조도
+
+<img src="https://github.com/user-attachments/assets/653e6193-e58e-4f49-90e8-e53b80fd4f2e" width="70%">
 
 <br/>
 
@@ -93,6 +96,8 @@
 <br/>
 
 ## 🗃️ 시스템 아키텍처
+
+<img src="https://github.com/user-attachments/assets/7ce12a22-2c87-4374-a59a-e6f6bc359bc9" width="80%">
 
 <br/>
 
