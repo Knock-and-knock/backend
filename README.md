@@ -98,9 +98,31 @@
 
 ### ✔️ 카드 발급 및 소비 관련 기능
 
+#### - 개인 및 가족 카드 발급
+<div style="display: flex;">
+    <img src="https://github.com/user-attachments/assets/c78ccee6-b53f-455e-9259-372364cd5f74" width="200px" />
+    <img src="https://github.com/user-attachments/assets/7f969343-a321-4294-a4dc-174e0e90f9a8" width="200px" />
+</div>
+
+#### - 소비 내역, 소비 리포트 확인
+<div style="display: flex;">
+    <img src="https://github.com/user-attachments/assets/950bc988-a3f5-4f88-90f6-6ee97f712bb8" width="200px" />
+    <img src="https://github.com/user-attachments/assets/09b9bf18-7c68-4da5-98e2-3a735eb8e436" width="200px" />
+</div>
+
+#### - 소비 이상징후 알림
+<div style="display: flex;">
+    <img src="https://github.com/user-attachments/assets/02cc2744-1651-4e78-b9fe-f2f4d7841f53" width="200px" />
+</div>
+
 ### ✔️ 복지 서비스 예약 및 결제
 
 ### ✔️ 대화형 챗봇 '똑똑이'
+
+<div style="display: flex;">
+    <img src="" width="200px" />
+    <img src="" width="200px" />
+</div>
 
 <br/>
 
