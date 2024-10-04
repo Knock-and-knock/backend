@@ -86,12 +86,16 @@
 ### ✔️ 간편 로그인 및 보호자-피보호자 매칭 구현
 
 #### - 회원가입 및 간편 로그인
+
+고령자분들의 손쉬운 사용을 위하여 간결한 회원가입 과정과 간편 로그인 기능을 구현하였습니다.
 <div style="display: flex;">
     <img src="https://github.com/user-attachments/assets/1a2c7631-34ab-45b5-b2b4-416048711994" alt="보호자회원가입" width="200px" />
     <img src="https://github.com/user-attachments/assets/5ae933e5-e115-41db-ab55-dd9504f228be" alt="생체로그인" width="200px" />
 </div>
 
 #### - 보호자-피보호자 매칭
+
+보호자로 회원가입 시 피보호자와 매칭을 진행하게 되고 매칭된다면 대신 정보 입력, 이상징후 알림 받기 등의 서비스를 이용할 수 있습니다.
 <div style="display: flex;">
     <img src="https://github.com/user-attachments/assets/f60ffecf-cbfd-4813-902b-b07d3a25c539" alt="보호자매칭화면" width="200px" />
     <img src="https://github.com/user-attachments/assets/dc987764-f2d8-47b9-b159-4a7f68e2eba6" alt="피보호자매칭" width="200px" />
@@ -100,18 +104,24 @@
 ### ✔️ 카드 발급 및 소비 관련 기능
 
 #### - 개인 및 가족 카드 발급
+
+어르신의 카드 사용을 손쉽게 하기 위해서 보호자가 가족카드를 발급할 수 있도록 하였습니다.
 <div style="display: flex;">
     <img src="https://github.com/user-attachments/assets/c78ccee6-b53f-455e-9259-372364cd5f74" alt="개인카드발급" width="200px" />
     <img src="https://github.com/user-attachments/assets/7f969343-a321-4294-a4dc-174e0e90f9a8" alt="가족카드신청" width="200px" />
 </div>
 
 #### - 소비 내역, 소비 리포트 확인
+
+발급한 카드의 소비 내역과 소비 리포트를 확인할 수 있습니다.
 <div style="display: flex;">
     <img src="https://github.com/user-attachments/assets/950bc988-a3f5-4f88-90f6-6ee97f712bb8" alt="소비내역" width="200px" />
     <img src="https://github.com/user-attachments/assets/09b9bf18-7c68-4da5-98e2-3a735eb8e436" alt="소비리포트" width="200px" />
 </div>
 
 #### - 소비 이상징후 알림
+
+보호자는 피보호자의 카드 사용 내역에서 이상 거래가 탐지된다면 알림을 받을 수 있습니다.
 <div style="display: flex;">
     <img src="https://github.com/user-attachments/assets/02cc2744-1651-4e78-b9fe-f2f4d7841f53" alt="소비이상징후알림" width="200px" />
 </div>
@@ -119,6 +129,8 @@
 ### ✔️ 복지 서비스 예약 및 결제
 
 #### - 복지 서비스 예약
+
+보호자는 피보호자의 복지 서비스를 대신 예약할 수 있습니다.
 <div style="display: flex;">
     <img src="https://github.com/user-attachments/assets/d00dd4c9-d862-4c6c-aebc-dd7ec7ba6032" alt="보호자예약" width="200px" />
     <img src="https://github.com/user-attachments/assets/3e4d0cc3-48c4-48fd-8fb7-d39cda49c7bc" alt="보호자예약확인" width="200px" />
@@ -126,6 +138,10 @@
 </div>
 
 ### ✔️ 대화형 챗봇 '똑똑이'
+
+똑똑이는 LLM과 TTS 모델을 사용하여 사용자와 대화를 통해 상호작용합니다. 똑똑이와 대화를 통하여 어르신들은 화면을 보지 않고 다양한 서비스를 이용할 수 있습니다.
+
+예를 들어 원하는 날짜와 시간을 알려준다면 똑똑이가 복지 서비스를 대신 예약해 줍니다.
 <div style="display: flex;">
     <img src="https://github.com/user-attachments/assets/00b38939-209b-44ba-9dc3-7088416e2336" alt="똑똑이일상대화" width="200px" />
     <img src="https://github.com/user-attachments/assets/d65ec333-e8d9-4214-9d90-1dc6e6c997f9" alt="똑똑이복지로" width="200px" />
