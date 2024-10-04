@@ -85,8 +85,9 @@
 
 ### ✔️ 간편 로그인 및 보호자-피보호자 매칭 구현
 
-#### - 간편 로그인
+#### - 회원가입 및 간편 로그인
 <div style="display: flex;">
+    <img src="https://github.com/user-attachments/assets/1a2c7631-34ab-45b5-b2b4-416048711994" alt="보호자회원가입" width="200px" />
     <img src="https://github.com/user-attachments/assets/5ae933e5-e115-41db-ab55-dd9504f228be" alt="생체로그인" width="200px" />
 </div>
 
@@ -119,12 +120,19 @@
 
 #### - 복지 서비스 예약
 <div style="display: flex;">
-    <img src="https://github.com/user-attachments/assets/d00dd4c9-d862-4c6c-aebc-dd7ec7ba6032" alt="보호자 예약" width="200px" />
-    <img src="https://github.com/user-attachments/assets/3e4d0cc3-48c4-48fd-8fb7-d39cda49c7bc" alt="보호자 예약 확인" width="200px" />
+    <img src="https://github.com/user-attachments/assets/d00dd4c9-d862-4c6c-aebc-dd7ec7ba6032" alt="보호자예약" width="200px" />
+    <img src="https://github.com/user-attachments/assets/3e4d0cc3-48c4-48fd-8fb7-d39cda49c7bc" alt="보호자예약확인" width="200px" />
+    <img src="https://github.com/user-attachments/assets/bfd4fca7-9818-49ce-a776-f9e946d10259" alt="보호자예약취소" width="200px" />
+</div>
+
+### ✔️ 대화형 챗봇 '똑똑이'
+<div style="display: flex;">
+    <img src="https://github.com/user-attachments/assets/00b38939-209b-44ba-9dc3-7088416e2336" alt="똑똑이일상대화" width="200px" />
+    <img src="https://github.com/user-attachments/assets/d65ec333-e8d9-4214-9d90-1dc6e6c997f9" alt="똑똑이복지로" width="200px" />
 </div>
 
 
-### ✔️ 대화형 챗봇 '똑똑이'
+
 
 <div style="display: flex;">
     <img src="" alt="" width="200px" />
