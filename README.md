@@ -83,7 +83,18 @@
 
 ## 📒 주요 내용
 
-### ✔️ 간편 로그인 구현
+### ✔️ 간편 로그인 및 보호자-피보호자 매칭 구현
+
+#### - 간편 로그인
+<div style="display: flex;">
+    <img src="https://github.com/user-attachments/assets/5ae933e5-e115-41db-ab55-dd9504f228be" width="200px" />
+</div>
+
+#### - 보호자-피보호자 매칭
+<div style="display: flex;">
+    <img src="https://github.com/user-attachments/assets/f60ffecf-cbfd-4813-902b-b07d3a25c539" width="200px" />
+    <img src="https://github.com/user-attachments/assets/dc987764-f2d8-47b9-b159-4a7f68e2eba6" width="200px" />
+</div>
 
 ### ✔️ 카드 발급 및 소비 관련 기능
 
