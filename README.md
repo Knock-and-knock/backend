@@ -87,32 +87,32 @@
 
 #### - 간편 로그인
 <div style="display: flex;">
-    <img src="https://github.com/user-attachments/assets/5ae933e5-e115-41db-ab55-dd9504f228be" width="200px" />
+    <img src="https://github.com/user-attachments/assets/5ae933e5-e115-41db-ab55-dd9504f228be" alt="생체로그인" width="200px" />
 </div>
 
 #### - 보호자-피보호자 매칭
 <div style="display: flex;">
-    <img src="https://github.com/user-attachments/assets/f60ffecf-cbfd-4813-902b-b07d3a25c539" width="200px" />
-    <img src="https://github.com/user-attachments/assets/dc987764-f2d8-47b9-b159-4a7f68e2eba6" width="200px" />
+    <img src="https://github.com/user-attachments/assets/f60ffecf-cbfd-4813-902b-b07d3a25c539" alt="보호자매칭화면" width="200px" />
+    <img src="https://github.com/user-attachments/assets/dc987764-f2d8-47b9-b159-4a7f68e2eba6" alt="피보호자매칭" width="200px" />
 </div>
 
 ### ✔️ 카드 발급 및 소비 관련 기능
 
 #### - 개인 및 가족 카드 발급
 <div style="display: flex;">
-    <img src="https://github.com/user-attachments/assets/c78ccee6-b53f-455e-9259-372364cd5f74" width="200px" />
-    <img src="https://github.com/user-attachments/assets/7f969343-a321-4294-a4dc-174e0e90f9a8" width="200px" />
+    <img src="https://github.com/user-attachments/assets/c78ccee6-b53f-455e-9259-372364cd5f74" alt="개인카드발급" width="200px" />
+    <img src="https://github.com/user-attachments/assets/7f969343-a321-4294-a4dc-174e0e90f9a8" alt="가족카드신청" width="200px" />
 </div>
 
 #### - 소비 내역, 소비 리포트 확인
 <div style="display: flex;">
-    <img src="https://github.com/user-attachments/assets/950bc988-a3f5-4f88-90f6-6ee97f712bb8" width="200px" />
-    <img src="https://github.com/user-attachments/assets/09b9bf18-7c68-4da5-98e2-3a735eb8e436" width="200px" />
+    <img src="https://github.com/user-attachments/assets/950bc988-a3f5-4f88-90f6-6ee97f712bb8" alt="소비내역" width="200px" />
+    <img src="https://github.com/user-attachments/assets/09b9bf18-7c68-4da5-98e2-3a735eb8e436" alt="소비리포트" width="200px" />
 </div>
 
 #### - 소비 이상징후 알림
 <div style="display: flex;">
-    <img src="https://github.com/user-attachments/assets/02cc2744-1651-4e78-b9fe-f2f4d7841f53" width="200px" />
+    <img src="https://github.com/user-attachments/assets/02cc2744-1651-4e78-b9fe-f2f4d7841f53" alt="소비이상징후알림" width="200px" />
 </div>
 
 ### ✔️ 복지 서비스 예약 및 결제
