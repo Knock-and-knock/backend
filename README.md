@@ -117,11 +117,18 @@
 
 ### ✔️ 복지 서비스 예약 및 결제
 
+#### - 복지 서비스 예약
+<div style="display: flex;">
+    <img src="https://github.com/user-attachments/assets/d00dd4c9-d862-4c6c-aebc-dd7ec7ba6032" alt="보호자 예약" width="200px" />
+    <img src="https://github.com/user-attachments/assets/3e4d0cc3-48c4-48fd-8fb7-d39cda49c7bc" alt="보호자 예약 확인" width="200px" />
+</div>
+
+
 ### ✔️ 대화형 챗봇 '똑똑이'
 
 <div style="display: flex;">
-    <img src="" width="200px" />
-    <img src="" width="200px" />
+    <img src="" alt="" width="200px" />
+    <img src="" alt="" width="200px" />
 </div>
 
 <br/>
