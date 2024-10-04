@@ -157,6 +157,12 @@
 
 <br/>
 
+## 📲 서비스 이용
+
+<img src="https://github.com/user-attachments/assets/cccd2183-3aa9-4080-9b94-a0acd6c479c9" width="80%">
+
+<br/>
+
 ## 🗃️ 시스템 아키텍처
 
 <img src="https://github.com/user-attachments/assets/7ce12a22-2c87-4374-a59a-e6f6bc359bc9" width="80%">
